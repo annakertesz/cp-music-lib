@@ -10,19 +10,18 @@ package main
 
 import (
 	"flag"
-	"github.com/annakertesz/cp-music-lib/src/cp-music-lib/transport"
+	//"github.com/annakertesz/cp-music-lib/src/cp-music-lib/transport"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 func main(){
-	listenAddr := flag.String("listen", "0.0.0.0:3003", "Listen address")
+	//listenAddr := flag.String("listen", "0.0.0.0:3003", "Listen address")
 	flag.Parse()
 	logger, _ := zap.NewDevelopment()
-	transp := transport.NewHTTP(logger)
+	//transp := transport.NewHTTP(logger)
 
 	logger.Info("Started", zap.String("version", "dev"))
-	if err := http.ListenAndServe(*listenAddr, transp.Routes()); err != nil {
-		logger.Fatal("Could not start HTTP server", zap.Error(err))
-	}
+	//if err := http.ListenAndServe(*listenAddr, transp.Routes()); err != nil {
+	//	logger.Fatal("Could not start HTTP server", zap.Error(err))
+	//}
 }
