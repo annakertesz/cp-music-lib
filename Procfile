@@ -1,1 +1,1 @@
-web: cp-music-lib
+web: bin/cp-music-lib
