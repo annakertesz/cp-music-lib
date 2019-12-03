@@ -1,1 +1,0 @@
-web: bin/cmd/cp-music-lib
