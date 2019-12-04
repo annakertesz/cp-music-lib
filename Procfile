@@ -1,1 +1,1 @@
-web: cp-music-lib/src/cmd/cp-music-lib
+web: cp-music-lib

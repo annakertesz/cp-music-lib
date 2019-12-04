@@ -10,7 +10,7 @@ package main
 
 import (
 	"flag"
-	"github.com/annakertesz/cp-music-lib/src/cp-music-lib/transport"
+	"github.com/annakertesz/cp-music-lib/transport"
 	"go.uber.org/zap"
 	"net/http"
 )
