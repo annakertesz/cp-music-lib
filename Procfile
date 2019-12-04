@@ -1,1 +1,1 @@
-web: ls
+web: cp-music-lib
