@@ -1,5 +1,5 @@
 {
-	"ImportPath": "cp-music-lib",
+	"ImportPath": "github.com/annakertesz/cp-music-lib",
 	"GoVersion": "go1.13",
 	"GodepVersion": "v80",
 	"Deps": []
