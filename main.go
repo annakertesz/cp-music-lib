@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/annakertesz/cp-music-lib/library"
 	"log"
 	"net/http"
 	"os"
@@ -15,7 +14,8 @@ func determineListenAddress() (string, error) {
 	return ":" + port, nil
 }
 func hello(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "library.Function(4,7) %v", library.Function(5,6))
+	x := "fdf"
+	fmt.Fprintf(w, "library.Function(4,7) %v", x)
 }
 func main() {
 	addr, err := determineListenAddress()
