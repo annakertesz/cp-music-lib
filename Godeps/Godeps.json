@@ -2,5 +2,11 @@
 	"ImportPath": "github.com/annakertesz/cp-music-lib",
 	"GoVersion": "go1.13",
 	"GodepVersion": "v80",
-	"Deps": []
+	"Deps": [
+		{
+			"ImportPath": "github.com/go-chi/chi",
+			"Comment": "v4.0.2-24-g7fb3452",
+			"Rev": "7fb34524d9ab7c9e3dd0f9c17c1ec808d8c77f33"
+		}
+	]
 }
