@@ -33,7 +33,7 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	"io/ioutil"
+	"github.com/annakertesz/cp-music-lib/models"
 	"log"
 	"net/http"
 	"os"
@@ -45,10 +45,10 @@ var db *sql.DB
 
 type e map[string]string
 
-type User struct {
-	Id       int64  `json:"id"`
-	Username string `json:"username"`
-}
+//type User struct {
+//	Id       int64  `json:"id"`
+//	Username string `json:"username"`
+//}
 
 func main() {
 	var err error
@@ -77,7 +77,7 @@ func main() {
 		if r.URL.Path == "/" {
 			switch r.Method {
 			case "GET":
-				users, err := users(db)
+				users, err := models.Users(db)
 
 				if err != nil {
 					errorResponse(r, w, err)
@@ -85,14 +85,14 @@ func main() {
 
 				respond(r, w, http.StatusOK, users)
 			case "POST":
-				user, err := unmarshalUser(r)
+				user, err := models.UnmarshalUser(r)
 
 				if err != nil {
 					errorResponse(r, w, err)
 					return
 				}
 
-				created, err := createUser(db, user.Username)
+				created, err := models.CreateUser(db, user.Username)
 
 				if err != nil {
 					errorResponse(r, w, err)
@@ -144,70 +144,10 @@ func connect(dbURL string) (*sql.DB, error) {
 	return db, nil
 }
 
-func users(db *sql.DB) ([]User, error) {
-	rows, err := db.Query(
-		`SELECT id, username FROM users ORDER BY username`,
-	)
 
-	if err != nil {
-		return nil, err
-	}
 
-	defer rows.Close()
 
-	users := make([]User, 0, 5)
 
-	for rows.Next() {
-		u := User{}
-
-		err = rows.Scan(&u.Id, &u.Username)
-
-		if err != nil {
-			return nil, err
-		}
-
-		users = append(users, u)
-	}
-
-	return users, nil
-}
-
-func unmarshalUser(r *http.Request) (*User, error) {
-	defer r.Body.Close()
-
-	var user User
-
-	bytes, err := ioutil.ReadAll(r.Body)
-
-	if err != nil {
-		return nil, err
-	}
-
-	err = json.Unmarshal(bytes, &user)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &user, nil
-}
-
-func createUser(db *sql.DB, username string) (*User, error) {
-	created := User{}
-
-	row := db.QueryRow(
-		`INSERT INTO users (username) VALUES ($1) RETURNING id, username`,
-		username,
-	)
-
-	err := row.Scan(&created.Id, &created.Username)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &created, nil
-}
 
 func respond(r *http.Request, w http.ResponseWriter, status int, data interface{}) {
 	if data != nil {
