@@ -4,9 +4,19 @@
 	"GodepVersion": "v80",
 	"Deps": [
 		{
-			"ImportPath": "github.com/go-chi/chi",
-			"Comment": "v4.0.2-24-g7fb3452",
-			"Rev": "7fb34524d9ab7c9e3dd0f9c17c1ec808d8c77f33"
+			"ImportPath": "github.com/lib/pq",
+			"Comment": "v1.3.0-2-gd6fd202",
+			"Rev": "d6fd2025777896bf42bbb81fa748af573ad799f4"
+		},
+		{
+			"ImportPath": "github.com/lib/pq/oid",
+			"Comment": "v1.3.0-2-gd6fd202",
+			"Rev": "d6fd2025777896bf42bbb81fa748af573ad799f4"
+		},
+		{
+			"ImportPath": "github.com/lib/pq/scram",
+			"Comment": "v1.3.0-2-gd6fd202",
+			"Rev": "d6fd2025777896bf42bbb81fa748af573ad799f4"
 		}
 	]
 }
