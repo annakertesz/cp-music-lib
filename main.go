@@ -28,16 +28,16 @@
 //}
 //
 //
+
 package main
 
 import (
 	"database/sql"
 	"encoding/json"
-	"github.com/annakertesz/cp-music-lib/models"
+	"github.com/annakertesz/cp-music-lib/controller"
 	"log"
 	"net/http"
 	"os"
-
 	_ "github.com/lib/pq"
 )
 
@@ -45,14 +45,8 @@ var db *sql.DB
 
 type e map[string]string
 
-//type User struct {
-//	Id       int64  `json:"id"`
-//	Username string `json:"username"`
-//}
-
 func main() {
 	var err error
-
 	url, ok := os.LookupEnv("DATABASE_URL")
 
 	if !ok {
@@ -71,49 +65,53 @@ func main() {
 		port = "8080"
 	}
 
-	handler := http.NewServeMux()
-
-	handler.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/" {
-			switch r.Method {
-			case "GET":
-				users, err := models.Users(db)
-
-				if err != nil {
-					errorResponse(r, w, err)
-				}
-
-				respond(r, w, http.StatusOK, users)
-			case "POST":
-				user, err := models.UnmarshalUser(r)
-
-				if err != nil {
-					errorResponse(r, w, err)
-					return
-				}
-
-				created, err := models.CreateUser(db, user.Username)
-
-				if err != nil {
-					errorResponse(r, w, err)
-					return
-				}
-
-				respond(r, w, http.StatusOK, created)
-			default:
-				respond(r, w, http.StatusNotFound, nil)
-			}
-		} else {
-			respond(r, w, http.StatusNotFound, nil)
-		}
-	})
-
-	log.Printf("Starting server on port %s\n", port)
-
-	if err := http.ListenAndServe(":"+port, handler); err != nil {
-		log.Fatalf("Could not start server: %s\n", err.Error())
+	log.Println("Started")
+	if err := http.ListenAndServe(":"+port, controller.Routes(db)); err != nil {
+		log.Fatal("Could not start HTTP server", err.Error())
 	}
-
+//	handler := http.NewServeMux()
+//
+//	handler.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+//		if r.URL.Path == "/" {
+//			switch r.Method {
+//			case "GET":
+//				users, err := models.Users(db)
+//
+//				if err != nil {
+//					errorResponse(r, w, err)
+//				}
+//
+//				respond(r, w, http.StatusOK, users)
+//			case "POST":
+//				user, err := models.UnmarshalUser(r)
+//
+//				if err != nil {
+//					errorResponse(r, w, err)
+//					return
+//				}
+//
+//				created, err := models.CreateUser(db, user.Username)
+//
+//				if err != nil {
+//					errorResponse(r, w, err)
+//					return
+//				}
+//
+//				respond(r, w, http.StatusOK, created)
+//			default:
+//				respond(r, w, http.StatusNotFound, nil)
+//			}
+//		} else {
+//			respond(r, w, http.StatusNotFound, nil)
+//		}
+//	})
+//
+//	log.Printf("Starting server on port %s\n", port)
+//
+//	if err := http.ListenAndServe(":"+port, handler); err != nil {
+//		log.Fatalf("Could not start server: %s\n", err.Error())
+//	}
+//
 }
 
 func connect(dbURL string) (*sql.DB, error) {
@@ -180,3 +178,4 @@ func response(r *http.Request, w http.ResponseWriter, status int, bytes []byte) 
 		r.Method, r.URL.Path, r.Proto, status, len(bytes),
 	)
 }
+
