@@ -66,7 +66,7 @@ func CreateUser(db *sql.DB, username string) (*User, error) {
 
 	row := db.QueryRow(
 		`INSERT INTO users (username) VALUES ($1) RETURNING id, username`,
-		username,
+		username+"new",
 	)
 
 	err := row.Scan(&created.Id, &created.Username)

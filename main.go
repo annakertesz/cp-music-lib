@@ -144,11 +144,6 @@ func connect(dbURL string) (*sql.DB, error) {
 	return db, nil
 }
 
-
-
-
-
-
 func respond(r *http.Request, w http.ResponseWriter, status int, data interface{}) {
 	if data != nil {
 		bytes, err := json.Marshal(data)
