@@ -12,7 +12,7 @@ type User struct {
 	Username string `json:"username"`
 }
 
-func Users(db *sql.DB) ([]User, error) {
+func GetUsers(db *sql.DB) ([]User, error) {
 	rows, err := db.Query(
 		`SELECT id, username FROM users ORDER BY username`,
 	)
