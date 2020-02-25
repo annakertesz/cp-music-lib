@@ -1,16 +1,16 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"github.com/annakertesz/cp-music-lib/controller"
+	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 	"log"
 	"net/http"
 	"os"
-	_ "github.com/lib/pq"
 )
 
-var db *sql.DB
+var db *sqlx.DB
 
 const (
 	host     = "localhost"
@@ -26,13 +26,14 @@ func main() {
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
 	fmt.Println(psqlInfo)
-	url, ok := os.LookupEnv("DATABASE_URL")
+	//url, ok := os.LookupEnv("DATABASE_URL")
+	//
+	//if !ok {
+	//	url = "jdbc:postgresql://localhost:5432/postgres"
+	//	//log.Fatalln("$DATABASE_URL is required")
+	//}
 
-	if !ok {
-		log.Fatalln("$DATABASE_URL is required")
-	}
-
-	db, err = connect(url)
+	db, err = connect(psqlInfo)
 
 	if err != nil {
 		log.Fatalf("Connection error: %s", err.Error())
@@ -43,15 +44,16 @@ func main() {
 	if !ok {
 		port = "8080"
 	}
+	server := controller.NewServer(db)
 
 	log.Println("Started")
-	if err := http.ListenAndServe(":"+port, controller.Routes(db)); err != nil {
+	if err := http.ListenAndServe(":"+port, server.Routes()); err != nil {
 		log.Fatal("Could not start HTTP server", err.Error())
 	}
 }
 
-func connect(dbURL string) (*sql.DB, error) {
-	db, err := sql.Open("postgres", dbURL)
+func connect(dbURL string) (*sqlx.DB, error) {
+	db, err := sqlx.Open("postgres", dbURL)
 
 	if err != nil {
 		return nil, err
@@ -68,13 +70,6 @@ func connect(dbURL string) (*sql.DB, error) {
       id       SERIAL,
       username VARCHAR(64) NOT NULL UNIQUE,
       CHECK (CHAR_LENGTH(TRIM(username)) > 0)
-    );
-  `)
-	_, err = db.Exec(`
-    CREATE TABLE IF NOT EXISTS album (
-      id       SERIAL,
-      album_name VARCHAR(64) NOT NULL UNIQUE,
-      
     );
   `)
 
