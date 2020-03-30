@@ -1,7 +1,6 @@
 package updater
 
 import (
-	"fmt"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	"os"
@@ -11,14 +10,14 @@ import (
 func TestUploadSong(t *testing.T) {
 	db, err := connectToDB()
 	if err!=nil {
-		fmt.Println(err)
+		panic("couldnt connect to db")
 	}
 	file, _ := os.Open("../sources/The Somersault Boy_ Hate Love Hate (Instrumental) (1).mp3")
 	UploadSong(file, "be1423", db)
 }
 
 func connectToDB()(*sqlx.DB, error) {
-	url := "host=localhost port=5432 user=postgres password= dbname=postgres sslmode=disable"
+	url := "host=localhost port=5432 user=anna password=gfd dbname=centralp sslmode=disable"
 	db, err := sqlx.Open("postgres", url)
 
 	if err != nil {

@@ -15,9 +15,9 @@ var db *sqlx.DB
 const (
 	host     = "localhost"
 	port     = 5432
-	user     = "postgres"
-	password = ""
-	dbname   = "postgres"
+	user     = "anna"
+	password = "anna"
+	dbname   = "centralp"
 )
 
 func main() {
@@ -25,7 +25,7 @@ func main() {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
-	fmt.Println(psqlInfo)
+	fmt.Println("sdsd " + psqlInfo)
 	//url, ok := os.LookupEnv("DATABASE_URL")
 	//
 	//if !ok {

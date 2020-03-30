@@ -25,17 +25,30 @@ func (artist *Artist) CreateArtist(db *sqlx.DB) error {
 	return nil
 }
 
-func GetArtistByID(id int, db *sqlx.DB) (Artist, error){
-	rows, err := db.Queryx(
+func GetArtistByID(id int, db *sqlx.DB) (*Artist, error){
+	var artist Artist
+	err := db.QueryRowx(
 		`SELECT * FROM artist WHERE id = $1` , id,
+	).StructScan(&artist)
+	if err != nil {
+		return nil, err
+	}
+	return &artist, nil
+}
+
+func GetArtist(db *sqlx.DB) ([]Artist, error){
+	rows, err := db.Queryx(
+		`SELECT * FROM artist`,
 	)
 	if err != nil {
-		return Artist{}, err
+		return nil, err
 	}
 	defer rows.Close()
+	var artists []Artist
 	var artist Artist
 	for rows.Next() {
 		rows.StructScan(&artist)
+		artists = append(artists, artist)
 	}
-	return artist, nil
+	return artists, nil
 }

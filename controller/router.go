@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/go-chi/chi"
 	"github.com/jmoiron/sqlx"
 	"net/http"
@@ -20,43 +21,57 @@ func (server *Server) Routes() chi.Router {
 	r := chi.NewRouter()
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		getUsers(server.db, w, r)
-	})
-	r.Post("/", func(w http.ResponseWriter, r *http.Request){
-		createUser(server.db, w, r)
+		fmt.Fprint(w, "cp")
 	})
 
-	r.Get("/getSongs", func(w http.ResponseWriter, r *http.Request) {
-		//params: album, artist, tag, id, playlist
-
+	//Songs
+	r.Get("/song/{songId}", func(w http.ResponseWriter, r *http.Request) {
+		getSongByID(server.db, w, r)
+	})
+	r.Get("/song/findByAlbum", func(w http.ResponseWriter, r *http.Request) {
+		getSongByAlbum(server.db, w, r)
+	})
+	r.Get("/song/findByArtist", func(w http.ResponseWriter, r *http.Request) {
+		getSongByArtist(server.db, w, r)
+	})
+	r.Get("/song/findByTag", func(w http.ResponseWriter, r *http.Request) {
+		getSongByTag(server.db, w, r)
+	})
+	r.Get("/song/findByFreeSearch", func(w http.ResponseWriter, r *http.Request) {
+		searchSong(server.db, w, r)
 	})
 
-	r.Get("/getArtists", func(w http.ResponseWriter, r *http.Request) {
-		//params: id
+	//Albums
+	r.Get("/album", func(w http.ResponseWriter, r *http.Request) {
+		getAllAlbum(server.db, w, r)
+	})
+	r.Get("/album/findByArtist", func(w http.ResponseWriter, r *http.Request) {
+		getAlbumsByArtist(server.db, w, r)
+	})
+	r.Get("/album/{albumId}", func(w http.ResponseWriter, r *http.Request) {
+		getAlbumsById(server.db, w, r)
 	})
 
-	r.Get("/getAlbum", func(w http.ResponseWriter, r *http.Request) {
-		//params: id, artist
+	//Artists
+	r.Get("/artist", func(w http.ResponseWriter, r *http.Request) {
+		getAllArtist(server.db, w, r)
 	})
-
-	r.Get("/getTags", func(w http.ResponseWriter, r *http.Request) {
-		//params: id
+	r.Get("/artist/{artistId}", func(w http.ResponseWriter, r *http.Request) {
+		getArtistById(server.db, w, r)
 	})
-
-	r.Get("/search/", func(w http.ResponseWriter, r *http.Request) {
-		//params: keyword
-	})
-
-	r.Get("/getPlaylist", func(w http.ResponseWriter, r *http.Request) {
-		//params: user
-	})
-
-	r.Get("/getPlaylist", func(w http.ResponseWriter, r *http.Request) {
-		//params: user
-	})
-
 	
+	//Tags
+	r.Get("/tag", func(w http.ResponseWriter, r *http.Request) {
+		getAllTag(server.db, w, r)
+	})
 
+	//Playlist
+	r.Get("/playlist/findByUser", func(w http.ResponseWriter, r *http.Request) {
+		getPlaylistByUser(server.db, w, r)
+	})
+	r.Get("/playlist/{playlistId}", func(w http.ResponseWriter, r *http.Request) {
+		getPlaylistById(server.db, w, r)
+	})
 	return r
 }
 

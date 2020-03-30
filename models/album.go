@@ -1,7 +1,6 @@
 package models
 
 import (
-	"errors"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -29,32 +28,33 @@ func (album *Album) CreateAlbum(db *sqlx.DB) error {
 	return nil
 }
 
-func GetAlbumByID(id int, db *sqlx.DB) (Album, error){
-	rows, err := db.Queryx(
-		`SELECT * FROM album WHERE id = $1` , id,
-	)
-	if err != nil {
-		return Album{}, err
-	}
-	defer rows.Close()
-	for rows.Next() {
-		var id int
-		var album_name string
-		var album_artist int
-		var cover_url string
-		var cover_thumbnail_url string
-		rows.Scan(&id, &album_name, &album_artist, &cover_thumbnail_url, &cover_url)
-		artist, err := GetArtistByID(album_artist, db)
-		if err != nil {
-			return Album{}, err
-		}
-		return Album{
-			AlbumID:                id,
-			AlbumName:              album_name,
-			AlbumArtist:            &artist,
-			AlbumCoverUrl:          cover_url,
-			AlbumCoverThumbnailUrl: cover_thumbnail_url,
-		}, nil
-	}
-	return Album{}, errors.New("there is no album with this id")
-}
+//func GetAlbum(db *sqlx.DB, w http.ResponseWriter, r *http.Request) ([]Album, error){
+//
+//	rows, err := db.Queryx(
+//		`SELECT * FROM album WHERE id = $1` , id,
+//	)
+//	if err != nil {
+//		return nil, err
+//	}
+//	defer rows.Close()
+//	for rows.Next() {
+//		var id int
+//		var album_name string
+//		var album_artist int
+//		var cover_url string
+//		var cover_thumbnail_url string
+//		rows.Scan(&id, &album_name, &album_artist, &cover_thumbnail_url, &cover_url)
+//		artist, err := GetArtistByID(album_artist, db)
+//		if err != nil {
+//			return nil, err
+//		}
+//		return Album{
+//			AlbumID:                id,
+//			AlbumName:              album_name,
+//			AlbumArtist:            &artist,
+//			AlbumCoverUrl:          cover_url,
+//			AlbumCoverThumbnailUrl: cover_thumbnail_url,
+//		}, nil
+//	}
+//	return Album{}, errors.New("there is no album with this id")
+//}
