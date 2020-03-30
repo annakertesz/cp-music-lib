@@ -45,8 +45,9 @@ func GetArtist(db *sqlx.DB) ([]Artist, error){
 	}
 	defer rows.Close()
 	var artists []Artist
-	var artist Artist
+
 	for rows.Next() {
+		var artist Artist
 		rows.StructScan(&artist)
 		artists = append(artists, artist)
 	}

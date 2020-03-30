@@ -56,7 +56,7 @@ func (server *Server) Routes() chi.Router {
 	r.Get("/artist", func(w http.ResponseWriter, r *http.Request) {
 		getAllArtist(server.db, w, r)
 	})
-	r.Get("/artist/{artistId}", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/artist/{artistID}", func(w http.ResponseWriter, r *http.Request) {
 		getArtistById(server.db, w, r)
 	})
 	
