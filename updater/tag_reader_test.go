@@ -12,7 +12,7 @@ func TestUpdate(t *testing.T) {
 	if err!=nil {
 		panic("couldnt connect to db")
 	}
-	Update(11056063660, "2017-05-15T13:35:01-07:00", "sddXCkiTVNS8YC42WAAtzd07YIioPDCt", db )
+	Update(11056063660, "2017-05-15T13:35:01-07:00", "NBHZNGZKqsIIQnNQOQhlUsOMqa1msDId", db )
 }
 
 func TestUploadSong(t *testing.T) {

@@ -27,6 +27,7 @@ func DownloadFile(token string, id int) error{
 		out, err := os.Create(fmt.Sprintf("../sources/music/%v.mp3", id))
 		if err != nil {
 			fmt.Println("error in oepning mp3 file in download")
+			fmt.Println(err.Error())
 			return errors.New("error")
 		}
 		defer out.Close()
@@ -38,6 +39,7 @@ func DownloadFile(token string, id int) error{
 
 			return err
 		}
+		return nil
 	}
 	return errors.New(fmt.Sprintf("error from downloader: %v %v", resp.Status, resp.Body))
 }
