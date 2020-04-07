@@ -1,8 +1,8 @@
 package models
 
 import (
-	"database/sql"
 	"encoding/json"
+	"github.com/jmoiron/sqlx"
 	"io/ioutil"
 	"net/http"
 )
@@ -12,7 +12,7 @@ type User struct {
 	Username string `json:"username"`
 }
 
-func GetUsers(db *sql.DB) ([]User, error) {
+func GetUsers(db *sqlx.DB) ([]User, error) {
 	rows, err := db.Query(
 		`SELECT id, username FROM users ORDER BY username`,
 	)
@@ -61,7 +61,7 @@ func UnmarshalUser(r *http.Request) (*User, error) {
 	return &user, nil
 }
 
-func CreateUser(db *sql.DB, username string) (*User, error) {
+func CreateUser(db *sqlx.DB, username string) (*User, error) {
 	created := User{}
 
 	row := db.QueryRow(

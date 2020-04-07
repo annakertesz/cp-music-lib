@@ -1,13 +1,13 @@
 package controller
 
 import (
-	"database/sql"
 	"encoding/json"
 	"github.com/annakertesz/cp-music-lib/models"
+	"github.com/jmoiron/sqlx"
 	"net/http"
 )
 
-func getUsers(db *sql.DB, w http.ResponseWriter, r *http.Request){
+func getUsers(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	users, err := models.GetUsers(db)
 	b, err := json.Marshal(users)
 
@@ -20,7 +20,7 @@ func getUsers(db *sql.DB, w http.ResponseWriter, r *http.Request){
 	w.Write(b)
 }
 
-func createUser(db *sql.DB, w http.ResponseWriter, r *http.Request){
+func createUser(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	user, err := models.UnmarshalUser(r)
 	if err != nil {
 		http.Error(w, err.Error(), 422)

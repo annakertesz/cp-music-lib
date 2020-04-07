@@ -3,13 +3,27 @@
 	"GoVersion": "go1.13",
 	"GodepVersion": "v80",
 	"Packages": [
-		"."
+		"./..."
 	],
 	"Deps": [
+		{
+			"ImportPath": "github.com/dhowden/tag",
+			"Rev": "7e5c04feccd822269ccfabb38b2eb5f127c3b181"
+		},
 		{
 			"ImportPath": "github.com/go-chi/chi",
 			"Comment": "v4.0.2-24-g7fb3452",
 			"Rev": "7fb34524d9ab7c9e3dd0f9c17c1ec808d8c77f33"
+		},
+		{
+			"ImportPath": "github.com/jmoiron/sqlx",
+			"Comment": "v1.2.0-26-g2ba0fc6",
+			"Rev": "2ba0fc60eb4a54030f3a6d73ff0a047349c7eeca"
+		},
+		{
+			"ImportPath": "github.com/jmoiron/sqlx/reflectx",
+			"Comment": "v1.2.0-26-g2ba0fc6",
+			"Rev": "2ba0fc60eb4a54030f3a6d73ff0a047349c7eeca"
 		},
 		{
 			"ImportPath": "github.com/lib/pq",
@@ -25,6 +39,16 @@
 			"ImportPath": "github.com/lib/pq/scram",
 			"Comment": "v1.3.0-2-gd6fd202",
 			"Rev": "d6fd2025777896bf42bbb81fa748af573ad799f4"
+		},
+		{
+			"ImportPath": "github.com/pkg/errors",
+			"Comment": "v0.8.1-27-g7f95ac1",
+			"Rev": "7f95ac13edff643b8ce5398b6ccab125f8a20c1a"
+		},
+		{
+			"ImportPath": "github.com/robbert229/jwt",
+			"Comment": "v2.0.0-5-g5d9a261",
+			"Rev": "5d9a261c51a5c5cb4b8821808cd26abe340f74e0"
 		}
 	]
 }
