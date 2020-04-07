@@ -2,16 +2,15 @@ package controller
 
 import (
 	"github.com/annakertesz/cp-music-lib/updater"
-	"github.com/go-chi/chi"
 	"github.com/jmoiron/sqlx"
 	"net/http"
 	"strconv"
 )
 
 func update(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
-	token := chi.URLParam(r, "token")
-	folder := chi.URLParam(r, "folderID")
-	date := chi.URLParam(r, "date")
+	token := r.URL.Query().Get("token")
+	folder := r.URL.Query().Get("folderID")
+	date := r.URL.Query().Get("date")
 	folderID, err := strconv.Atoi(folder)
 	if err!= nil {
 		w.WriteHeader(http.StatusBadRequest)
