@@ -14,6 +14,7 @@ func DownloadFile(token string, id int) error{
 
 	req, err := http.NewRequest("GET", fmt.Sprintf("https://api.box.com/2.0/files/%v/content", id), nil)
 	if err != nil {
+		fmt.Println("error in download request")
 		return err
 	}
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %v", token))
@@ -25,6 +26,7 @@ func DownloadFile(token string, id int) error{
 		// Create the file
 		out, err := os.Create(fmt.Sprintf("../sources/music/%v.mp3", id))
 		if err != nil {
+			fmt.Println("error in oepning mp3 file in download")
 			return errors.New("error")
 		}
 		defer out.Close()
@@ -32,8 +34,10 @@ func DownloadFile(token string, id int) error{
 		// Write the body to file
 		_, err = io.Copy(out, resp.Body)
 		if err!= nil {
+			fmt.Println("error in writing mp3 file in download")
+
 			return err
 		}
 	}
-	return errors.New("error")
+	return errors.New(fmt.Sprintf("error from downloader: %v %v", resp.Status, resp.Body))
 }
