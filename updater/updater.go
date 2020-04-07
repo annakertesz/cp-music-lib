@@ -20,7 +20,7 @@ func Update(folder int, date string, token string, db *sqlx.DB) error {
 			fmt.Println(err.Error())
 			return err
 		}
-		file, err := os.Open(fmt.Sprintf("../sources/music/%v.mp3", idList[i]))
+		file, err := os.Create(fmt.Sprintf("../sources/music/%v.mp3", idList[i]))
 		if err != nil {
 			fmt.Println(err.Error())
 			return err
