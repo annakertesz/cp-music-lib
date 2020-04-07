@@ -10,11 +10,10 @@ import (
 	"strings"
 )
 
-func UploadSong(file *os.File, songBoxID int, db *sqlx.DB) {
+func UploadSong(file *os.File, songBoxID int, db *sqlx.DB) error {
 	metadata, err := tag.ReadFrom(file)
 	if err != nil {
-		fmt.Printf("!!!!!!!!!! with %v", songBoxID)
-		fmt.Println(err)
+		return err
 	}
 	artist := models.Artist{
 		ArtistName: metadata.Artist(),
@@ -40,7 +39,7 @@ func UploadSong(file *os.File, songBoxID int, db *sqlx.DB) {
 
 			err = binary.Write(out, binary.BigEndian, metadata.Picture().Data)
 			if err != nil {
-				fmt.Printf("couldn't find image for the album %v", album.AlbumName)
+				return err
 			}
 		}
 	}
@@ -60,6 +59,7 @@ func UploadSong(file *os.File, songBoxID int, db *sqlx.DB) {
 		}
 		tagSong.CreateTagSong(db)
 	}
+	return nil
 }
 
 //func checkIfSongExists(title string, album string) bool {

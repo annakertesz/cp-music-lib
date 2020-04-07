@@ -65,6 +65,11 @@ func (server *Server) Routes() chi.Router {
 		getAllTag(server.db, w, r)
 	})
 
+	r.Get("/update", func(w http.ResponseWriter, r *http.Request) {
+		update(server.db, w, r)
+	})
+
+
 	//Playlist
 	r.Get("/playlist/findByUser", func(w http.ResponseWriter, r *http.Request) {
 		getPlaylistByUser(server.db, w, r)

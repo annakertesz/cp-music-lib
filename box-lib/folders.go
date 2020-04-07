@@ -2,6 +2,7 @@ package box_lib
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -62,8 +63,7 @@ func getPageOfIds(token string, folderID int, date string, limit int, offset int
 		if err != nil {
 			return idRO{}, err
 		}
-
+		return RO, nil
 	}
-	fmt.Println(RO.TotalCount)
-	return RO, nil
+	return RO, errors.New("Error")
 }

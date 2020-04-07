@@ -7,15 +7,30 @@ import (
 	"os"
 )
 
-func Update(folder int, date string, token string, db *sqlx.DB) {
-	idList, _ := box_lib.GetFileIDsToUpload(token, folder, date)
+func Update(folder int, date string, token string, db *sqlx.DB) error {
+	idList, err := box_lib.GetFileIDsToUpload(token, folder, date)
+	if err != nil {
+		return err
+	}
 	fmt.Println("progressBar")
 	for i := range idList {
-			fmt.Println(idList[i])
-			box_lib.DownloadFile(token, idList[i])
-			file, _ := os.Open(fmt.Sprintf("../sources/music/%v.mp3", idList[i]))
-			UploadSong(file, idList[i], db)
-			os.Remove(fmt.Sprintf("../sources/music/%v.mp3", idList[i]))
-
+		fmt.Println(idList[i])
+		err := box_lib.DownloadFile(token, idList[i])
+		if err != nil {
+			return err
+		}
+		file, err := os.Open(fmt.Sprintf("../sources/music/%v.mp3", idList[i]))
+		if err != nil {
+			return err
+		}
+		err = UploadSong(file, idList[i], db)
+		if err != nil {
+			return err
+		}
+		err = os.Remove(fmt.Sprintf("../sources/music/%v.mp3", idList[i]))
+		if err != nil {
+			return err
+		}
 	}
+	return nil
 }

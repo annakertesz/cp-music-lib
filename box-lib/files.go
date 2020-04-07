@@ -1,19 +1,20 @@
 package box_lib
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 )
 
-func DownloadFile(token string, id int){
+func DownloadFile(token string, id int) error{
 	client := &http.Client{
 	}
 
 	req, err := http.NewRequest("GET", fmt.Sprintf("https://api.box.com/2.0/files/%v/content", id), nil)
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %v", token))
 	resp, err := client.Do(req)
@@ -24,11 +25,15 @@ func DownloadFile(token string, id int){
 		// Create the file
 		out, err := os.Create(fmt.Sprintf("../sources/music/%v.mp3", id))
 		if err != nil {
-			fmt.Println(err.Error())
+			return errors.New("error")
 		}
 		defer out.Close()
 
 		// Write the body to file
 		_, err = io.Copy(out, resp.Body)
+		if err!= nil {
+			return err
+		}
 	}
+	return errors.New("error")
 }
