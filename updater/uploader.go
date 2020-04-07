@@ -1,6 +1,7 @@
 package updater
 
 import (
+	"encoding/binary"
 	"fmt"
 	"github.com/annakertesz/cp-music-lib/models"
 	"github.com/dhowden/tag"
@@ -9,62 +10,55 @@ import (
 	"strings"
 )
 
-func UploadSong(file *os.File, songID string, db *sqlx.DB) {
-	metadata, _ := tag.ReadFrom(file)
-
+func UploadSong(file *os.File, songBoxID int, db *sqlx.DB) {
+	metadata, err := tag.ReadFrom(file)
+	if err != nil {
+		fmt.Printf("!!!!!!!!!! with %v", songBoxID)
+		fmt.Println(err)
+	}
 	artist := models.Artist{
 		ArtistName: metadata.Artist(),
 	}
-	err := artist.CreateArtist(db)
-	if err != nil {
-		fmt.Print("artist: ")
-		fmt.Printf(err.Error())
+	artistID := artist.CreateArtist(db)
+	if artistID == 0 {
+		panic("artist")
 	}
+
 	album := models.Album{
-		AlbumID:                0,
-		AlbumName:              metadata.Title(),
-		AlbumArtist:            &artist,
-		AlbumCoverUrl:          songID,
-		AlbumCoverThumbnailUrl: songID,
+		AlbumName:   metadata.Album(),
+		AlbumArtist: artistID,
 	}
-	err = album.CreateAlbum(db)
-	if err != nil {
-		fmt.Print("album: ")
-		fmt.Printf(err.Error())
+	albumID, createdNewAlbum := album.CreateAlbum(db)
+	if albumID == 0 {
+		panic("album")
 	}
-	song := models.Song{
-		SongName:              metadata.Title(),
-		SongLqURL:             songID,
-		SongHqURL:             songID,
-		SongInstrumentalLqURL: songID,
-		SongInstrumentalHqURL: songID,
-		SongAlbum:             &album,
-		SongArtist:            &artist,
-		SongTags:              nil,
+	if createdNewAlbum {
+		out, err := os.Create(fmt.Sprintf("../sources/imgs/%v.jpg", albumID))
+		if metadata.Picture() == nil {
+			fmt.Printf("couldn't find image for the album %v", album.AlbumName)
+		} else {
+
+			err = binary.Write(out, binary.BigEndian, metadata.Picture().Data)
+			if err != nil {
+				fmt.Printf("couldn't find image for the album %v", album.AlbumName)
+			}
+		}
 	}
-	err = song.CreateSong(db)
-	if err != nil {
-		fmt.Print("song: ")
-		fmt.Printf(err.Error())
+	if albumID == 0 {
+		panic("album")
 	}
+	song := models.NewSong(metadata.Title(), albumID, songBoxID)
+
+	songID, _ := song.CreateSong(db)
 	tags := strings.Split(metadata.Genre(), "/")
 	for _, tag := range tags {
-		tag := strings.Trim(tag, " ")
-		tagObj := models.Tag{TagName: strings.Trim(tag, " ")}
-		err = tagObj.CreateTag(db)
-		if err != nil {
-			fmt.Print("tag: ")
-			fmt.Printf(err.Error())
-		}
+		tagObj := models.Tag{TagName: strings.TrimSpace(tag)}
+		tagID, _ := tagObj.CreateTag(db)
 		tagSong := models.TagSong{
-			Tag:  &tagObj,
-			Song: &song,
+			Tag:  tagID,
+			Song: songID,
 		}
-		err = tagSong.CreateTagSong(db)
-		if err != nil {
-			fmt.Print("tag-song: ")
-			fmt.Printf(err.Error())
-		}
+		tagSong.CreateTagSong(db)
 	}
 }
 

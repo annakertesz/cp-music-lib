@@ -26,12 +26,6 @@ func main() {
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
 	fmt.Println("sdsd " + psqlInfo)
-	//url, ok := os.LookupEnv("DATABASE_URL")
-	//
-	//if !ok {
-	//	url = "jdbc:postgresql://localhost:5432/postgres"
-	//	//log.Fatalln("$DATABASE_URL is required")
-	//}
 
 	db, err = connect(psqlInfo)
 

@@ -9,20 +9,18 @@ type Artist struct {
 	ArtistName string `json:"artist_name" db:"artist_name"`
 }
 
-func (artist *Artist) CreateArtist(db *sqlx.DB) error {
-
-	row := db.QueryRow(
-		`INSERT INTO artist (artist_name) VALUES ($1) RETURNING id`,
-		artist.ArtistName,
-	)
-
-	err := row.Scan(&artist.ArtistID)
-
-	if err != nil {
-		return err
+func (artist *Artist) CreateArtist(db *sqlx.DB) int{
+	var id int
+	db.QueryRow(
+		`SELECT id FROM artist where artist_name = $1`, artist.ArtistName,
+	).Scan(&id)
+	if id==0{
+		db.QueryRow(
+			`INSERT INTO artist (artist_name) VALUES ($1) RETURNING id`,
+			artist.ArtistName,
+		).Scan(&id)
 	}
-
-	return nil
+	return id
 }
 
 func GetArtistByID(id int, db *sqlx.DB) (*Artist, error){

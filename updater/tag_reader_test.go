@@ -7,13 +7,21 @@ import (
 	"testing"
 )
 
+func TestUpdate(t *testing.T) {
+	db, err := connectToDB()
+	if err!=nil {
+		panic("couldnt connect to db")
+	}
+	Update(11056063660, "2017-05-15T13:35:01-07:00", "sddXCkiTVNS8YC42WAAtzd07YIioPDCt", db )
+}
+
 func TestUploadSong(t *testing.T) {
 	db, err := connectToDB()
 	if err!=nil {
 		panic("couldnt connect to db")
 	}
-	file, _ := os.Open("../sources/The Somersault Boy_ Hate Love Hate (Instrumental) (1).mp3")
-	UploadSong(file, "be1423", db)
+	file, _ := os.Open("../sources/music/Dorothy.mp3")
+	UploadSong(file, 124324, db)
 }
 
 func connectToDB()(*sqlx.DB, error) {
