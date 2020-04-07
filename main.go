@@ -25,9 +25,13 @@ func main() {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
-	fmt.Println("sdsd " + psqlInfo)
+	url, ok := os.LookupEnv("DATABASE_URL")
 
-	db, err = connect(psqlInfo)
+	if !ok {
+		url = psqlInfo
+	}
+
+	db, err = connect(url)
 
 	if err != nil {
 		log.Fatalf("Connection error: %s", err.Error())
