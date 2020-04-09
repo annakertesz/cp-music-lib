@@ -8,10 +8,10 @@ import (
 	"os"
 )
 
-func DownloadFile(token string, id int) error{
+func DownloadFile(token string, id int) error {
 	client := &http.Client{
 	}
-
+	fmt.Println("download file")
 	req, err := http.NewRequest("GET", fmt.Sprintf("https://api.box.com/2.0/files/%v/content", id), nil)
 	if err != nil {
 		fmt.Println("error in download request")
@@ -19,24 +19,23 @@ func DownloadFile(token string, id int) error{
 	}
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %v", token))
 	resp, err := client.Do(req)
-	//fmt.Println(resp.Status)
 	if resp.StatusCode == http.StatusOK {
 		defer resp.Body.Close()
-
-		// Create the file
-		out, err := os.Create(fmt.Sprintf("../sources/music/%v.mp3", id))
+		fmt.Println("create file")
+		file, err := os.Create(fmt.Sprintf("sources/music/%v.mp3", id))
 		if err != nil {
-			fmt.Println("error in oepning mp3 file in download")
+			fmt.Println("error in creating mp3 file in download")
 			fmt.Println(err.Error())
 			return errors.New("error")
 		}
-		defer out.Close()
+		defer file.Close()
 
 		// Write the body to file
-		_, err = io.Copy(out, resp.Body)
-		if err!= nil {
+		fmt.Println("write body to file")
+		_, err = io.Copy(file, resp.Body)
+		if err != nil {
 			fmt.Println("error in writing mp3 file in download")
-
+			fmt.Println(err.Error())
 			return err
 		}
 		return nil

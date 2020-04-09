@@ -10,17 +10,18 @@ import (
 func Update(folder int, date string, token string, db *sqlx.DB) error {
 	idList, err := box_lib.GetFileIDsToUpload(token, folder, date)
 	if err != nil {
+		fmt.Println(err.Error())
 		return err
 	}
-	fmt.Println("progressBar")
+	fmt.Println("Start upload the list items.")
 	for i := range idList {
-		fmt.Println(idList[i])
+		fmt.Printf("\n%v\n",idList[i])
 		err := box_lib.DownloadFile(token, idList[i])
 		if err != nil {
 			fmt.Println(err.Error())
 			return err
 		}
-		file, err := os.Create(fmt.Sprintf("../sources/music/%v.mp3", idList[i]))
+		file, err := os.Open(fmt.Sprintf("sources/music/%v.mp3", idList[i]))
 		if err != nil {
 			fmt.Println(err.Error())
 			return err
@@ -30,11 +31,13 @@ func Update(folder int, date string, token string, db *sqlx.DB) error {
 			fmt.Println(err.Error())
 			return err
 		}
-		err = os.Remove(fmt.Sprintf("../sources/music/%v.mp3", idList[i]))
+		fmt.Println("\nremove file")
+		err = os.Remove(fmt.Sprintf("sources/music/%v.mp3", idList[i]))
 		if err != nil {
 			fmt.Println(err.Error())
 			return err
 		}
 	}
+	fmt.Println("done")
 	return nil
 }

@@ -11,17 +11,24 @@ import (
 )
 
 func UploadSong(file *os.File, songBoxID int, db *sqlx.DB) error {
+	fmt.Println("upload song")
+	defer file.Close()
+	fmt.Print("read metadata from file")
 	metadata, err := tag.ReadFrom(file)
 	if err != nil {
+		fmt.Println(err.Error())
 		return err
 	}
 	artist := models.Artist{
 		ArtistName: metadata.Artist(),
 	}
+	fmt.Printf("\ncreate artist %v", metadata.Artist())
 	artistID := artist.CreateArtist(db)
 	if artistID == 0 {
 		panic("artist")
 	}
+
+	fmt.Printf("\ncreate album %v", metadata.Album())
 
 	album := models.Album{
 		AlbumName:   metadata.Album(),
@@ -46,9 +53,11 @@ func UploadSong(file *os.File, songBoxID int, db *sqlx.DB) error {
 	if albumID == 0 {
 		panic("album")
 	}
+	fmt.Printf("\ncreate song %v", metadata.Title())
 	song := models.NewSong(metadata.Title(), albumID, songBoxID)
 
 	songID, _ := song.CreateSong(db)
+	fmt.Printf("\ncreate tags %v", metadata.Genre())
 	tags := strings.Split(metadata.Genre(), "/")
 	for _, tag := range tags {
 		tagObj := models.Tag{TagName: strings.TrimSpace(tag)}

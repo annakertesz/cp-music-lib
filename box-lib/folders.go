@@ -65,5 +65,5 @@ func getPageOfIds(token string, folderID int, date string, limit int, offset int
 		}
 		return RO, nil
 	}
-	return RO, errors.New("Error")
+	return RO, errors.New(fmt.Sprintf("GetSongID box api call returns %v", resp.Status))
 }
