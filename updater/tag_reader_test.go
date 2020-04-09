@@ -1,9 +1,12 @@
 package updater
 
 import (
+	"bytes"
+	"fmt"
+	"github.com/dhowden/tag"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
-	"os"
+	"io/ioutil"
 	"testing"
 )
 
@@ -15,13 +18,26 @@ func TestUpdate(t *testing.T) {
 	Update(11056063660, "2017-05-15T13:35:01-07:00", "NBHZNGZKqsIIQnNQOQhlUsOMqa1msDId", db )
 }
 
+func TestTagReader(t *testing.T){
+	readFile, err := ioutil.ReadFile("../sources/instr.mp3")
+	if err!=nil {
+		fmt.Println(err.Error())
+	}
+	reader := bytes.NewReader(readFile)
+	from, err := tag.ReadFrom(reader)
+	if err!=nil {
+		fmt.Println(err.Error())
+	}
+	fmt.Println(from)
+}
+
 func TestUploadSong(t *testing.T) {
 	db, err := connectToDB()
 	if err!=nil {
 		panic("couldnt connect to db")
 	}
-	file, _ := os.Open("../sources/music/Dorothy.mp3")
-	UploadSong(file, 124324, db)
+	readFile, err := ioutil.ReadFile("../sources/instr.mp3")
+	UploadSong(readFile, 124324, db)
 }
 
 func connectToDB()(*sqlx.DB, error) {

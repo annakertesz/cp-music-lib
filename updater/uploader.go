@@ -1,6 +1,7 @@
 package updater
 
 import (
+	"bytes"
 	"encoding/binary"
 	"fmt"
 	"github.com/annakertesz/cp-music-lib/models"
@@ -10,11 +11,11 @@ import (
 	"strings"
 )
 
-func UploadSong(file *os.File, songBoxID int, db *sqlx.DB) error {
+func UploadSong(fileBytes []byte, songBoxID int, db *sqlx.DB) error {
+	reader := bytes.NewReader(fileBytes)
 	fmt.Println("upload song")
-	defer file.Close()
 	fmt.Print("read metadata from file")
-	metadata, err := tag.ReadFrom(file)
+	metadata, err := tag.ReadFrom(reader)
 	if err != nil {
 		fmt.Println(err.Error())
 		return err

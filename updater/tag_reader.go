@@ -11,7 +11,7 @@ func getTags(file *os.File){
 }
 
 func a(){
-	file, _ := os.Open("../sources/The Somersault Boy_ Hate Love Hate (Instrumental) (1).mp3")
+	file, _ := os.Open("../sources/instr.mp3")
 	metadata, _ := tag.ReadFrom(file)
 	fmt.Println(metadata.Album())
 	fmt.Println(metadata.Genre())
