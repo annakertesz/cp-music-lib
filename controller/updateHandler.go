@@ -13,7 +13,7 @@ func update(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	token := r.URL.Query().Get("token")
 	folder := r.URL.Query().Get("folderID")
 	date := r.URL.Query().Get("date")
-	fmt.Printf("\nfolder id: %v   date: %v")
+	fmt.Printf("\nfolder id: %v   date: %v", token, date)
 	folderID, err := strconv.Atoi(folder)
 	if err!= nil {
 		fmt.Println("Need numeric folder id")
