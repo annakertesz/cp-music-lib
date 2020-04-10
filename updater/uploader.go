@@ -7,7 +7,6 @@ import (
 	"github.com/annakertesz/cp-music-lib/models"
 	"github.com/dhowden/tag"
 	"github.com/jmoiron/sqlx"
-	"os"
 	"strings"
 )
 
@@ -40,7 +39,6 @@ func UploadSong(token string, fileBytes []byte, songBoxID int, db *sqlx.DB) erro
 		panic("album")
 	}
 	if createdNewAlbum {
-		out, err := os.Create(fmt.Sprintf("../sources/imgs/%v.jpg", albumID))
 		if metadata.Picture() == nil {
 			fmt.Printf("couldn't find image for the album %v", album.AlbumName)
 		} else {
