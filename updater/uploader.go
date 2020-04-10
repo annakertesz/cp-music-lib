@@ -2,8 +2,8 @@ package updater
 
 import (
 	"bytes"
-	"encoding/binary"
 	"fmt"
+	box_lib "github.com/annakertesz/cp-music-lib/box-lib"
 	"github.com/annakertesz/cp-music-lib/models"
 	"github.com/dhowden/tag"
 	"github.com/jmoiron/sqlx"
@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-func UploadSong(fileBytes []byte, songBoxID int, db *sqlx.DB) error {
+func UploadSong(token string, fileBytes []byte, songBoxID int, db *sqlx.DB) error {
 	reader := bytes.NewReader(fileBytes)
 	fmt.Println("upload song")
 	fmt.Print("read metadata from file")
@@ -44,11 +44,7 @@ func UploadSong(fileBytes []byte, songBoxID int, db *sqlx.DB) error {
 		if metadata.Picture() == nil {
 			fmt.Printf("couldn't find image for the album %v", album.AlbumName)
 		} else {
-
-			err = binary.Write(out, binary.BigEndian, metadata.Picture().Data)
-			if err != nil {
-				return err
-			}
+			box_lib.UploadFile(token, 110166546915, metadata.Picture().Data)
 		}
 	}
 	if albumID == 0 {

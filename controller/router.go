@@ -69,6 +69,10 @@ func (server *Server) Routes() chi.Router {
 		update(server.db, w, r)
 	})
 
+	r.Get("/download/{boxID}", func(w http.ResponseWriter, r *http.Request) {
+		download(server.db, w, r)
+	})
+
 
 	//Playlist
 	r.Get("/playlist/findByUser", func(w http.ResponseWriter, r *http.Request) {

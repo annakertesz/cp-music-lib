@@ -15,7 +15,7 @@ func Update(folder int, date string, token string, db *sqlx.DB) error {
 	fmt.Println("Start upload the list items.")
 	for i := range idList {
 		fmt.Printf("\n%v\n",idList[i])
-		fileBytes, err := box_lib.DownloadFile(token, idList[i])
+		fileBytes, _, err := box_lib.DownloadFileBytes(token, idList[i])
 		if err != nil {
 			fmt.Println(err.Error())
 			return err
@@ -25,7 +25,7 @@ func Update(folder int, date string, token string, db *sqlx.DB) error {
 		//	fmt.Println(err.Error())
 		//	return err
 		//}
-		err = UploadSong(fileBytes, idList[i], db)
+		err = UploadSong(token, fileBytes, idList[i], db)
 		if err != nil {
 			fmt.Println(err.Error())
 			return err

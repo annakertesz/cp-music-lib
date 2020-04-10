@@ -1,53 +1,75 @@
 package box_lib
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"mime/multipart"
+
+
 	"net/http"
 )
 
-func DownloadFile(token string, id int) ([]byte, error) {
-	client := &http.Client{
+func DownloadFileBytes(token string, id int) ([]byte, string, error) {
+	responseBody, contentType, err := DownloadFile(token, id)
+	if err != nil {
+		return nil, "",  err
 	}
-	fmt.Println("download file")
+	defer responseBody.Close()
+	bytes, err := ioutil.ReadAll(responseBody)
+	if err != nil {
+		fmt.Println("couldnt read bytes from response body")
+		errors.New("couldnt read bytes from response body")
+	}
+	return bytes, contentType, nil
+
+}
+
+func DownloadFile(token string, id int) (io.ReadCloser, string, error) {
+	client := &http.Client{}
 	req, err := http.NewRequest("GET", fmt.Sprintf("https://api.box.com/2.0/files/%v/content", id), nil)
 	if err != nil {
 		fmt.Println("error in download request")
-		return nil, err
+		return nil, "", err
 	}
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %v", token))
 	resp, err := client.Do(req)
 	if resp.StatusCode == http.StatusOK {
-		defer resp.Body.Close()
-		//fmt.Println("create file")
-		//file, err := os.Open(fmt.Sprintf("../sources/music/tmp.mp3"))
-		//if err != nil {
-		//	fmt.Println("error in creating mp3 file in download")
-		//	fmt.Println(err.Error())
-		//	return errors.New("error")
-		//}
-		//defer file.Close()
-		//_, err = file.WriteAt([]byte{}, 0)
-		//if err != nil {
-		//	fmt.Println("error in cleaning mp3 file in download")
-		//	fmt.Println(err.Error())
-		//	return err
-		//}
-		//// Write the body to file
-		//fmt.Println("write body to file")
-		//bytes, err := ioutil.ReadAll(resp.Body)
-		//_, err = file.WriteAt(bytes, 0)
-		//if err != nil {
-		//	fmt.Println("error in writing mp3 file in download")
-		//	fmt.Println(err.Error())
-		//	return err
-		//}
-		bytes, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			fmt.Println("couldnt read bytes from response body")
-		}
-		return bytes, nil
+		return resp.Body, resp.Header.Get("Content-Type"), nil
 	}
-	return nil, errors.New(fmt.Sprintf("error from downloader: %v %v", resp.Status, resp.Body))
+	return nil, "",  errors.New(fmt.Sprintf("error from downloader: %v %v", resp.Status, resp.Body))
 }
+
+func UploadFile(token string, folderID int, image []byte){
+	client := &http.Client{}
+	body := new(bytes.Buffer)
+	writer := multipart.NewWriter(body)
+	writer.SetBoundary("myBoundary")
+	writer.WriteField("attributes", "{\"name\":\"Photo.jpg\", \"parent\":{\"id\":\"110166546915\"}}")
+	part, err := writer.CreateFormFile("file", "file.jpg")
+	if err != nil {
+		return
+	}
+
+	part.Write(image)
+
+	err = writer.Close()
+	if err != nil {
+		return
+	}
+	req, err := http.NewRequest("POST", fmt.Sprintf("https://upload.box.com/api/2.0/files/content"), body)
+	if err != nil {
+		fmt.Println("error in upload request")
+	}
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %v", token))
+	req.Header.Add("Content-Type", "multipart/form-data; boundary=myBoundary")
+	fmt.Printf("%s %s %s\n", req.RemoteAddr, req.Method, req.URL)
+	resp, err := client.Do(req)
+	fmt.Println(resp.Status)
+	all, _ := ioutil.ReadAll(resp.Body)
+	fmt.Println(string(all))
+}
+
+
