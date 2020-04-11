@@ -42,7 +42,8 @@ func DownloadFile(token string, id int) (io.ReadCloser, string, error) {
 	return nil, "",  errors.New(fmt.Sprintf("error from downloader: %v %v", resp.Status, resp.Body))
 }
 
-func UploadFile(token string, folderID int, image []byte){
+func UploadFile(token string, folderID int, image []byte) error {
+	fmt.Println("upload cover photo")
 	client := &http.Client{}
 	body := new(bytes.Buffer)
 	writer := multipart.NewWriter(body)
@@ -50,14 +51,14 @@ func UploadFile(token string, folderID int, image []byte){
 	writer.WriteField("attributes", "{\"name\":\"Photo.jpg\", \"parent\":{\"id\":\"110166546915\"}}")
 	part, err := writer.CreateFormFile("file", "file.jpg")
 	if err != nil {
-		return
+		return err
 	}
 
 	part.Write(image)
 
 	err = writer.Close()
 	if err != nil {
-		return
+		return err
 	}
 	req, err := http.NewRequest("POST", fmt.Sprintf("https://upload.box.com/api/2.0/files/content"), body)
 	if err != nil {
@@ -70,6 +71,7 @@ func UploadFile(token string, folderID int, image []byte){
 	fmt.Println(resp.Status)
 	all, _ := ioutil.ReadAll(resp.Body)
 	fmt.Println(string(all))
+	return nil
 }
 
 
