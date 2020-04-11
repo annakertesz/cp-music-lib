@@ -64,6 +64,22 @@ func connect(dbURL string) (*sqlx.DB, error) {
 	}
 
 	_, err = db.Exec(`
+drop table users;
+
+drop table tag_song;
+
+drop table song;
+
+drop table tag;
+
+drop table album;
+
+drop table artist;
+`)
+	if err != nil {
+		return nil, err
+	}
+	_, err = db.Exec(`
     CREATE TABLE IF NOT EXISTS artist
 (
     id          SERIAL NOT NULL,
