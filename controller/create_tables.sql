@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS album
     id                  SERIAL NOT NULL,
     album_name          varchar(150),
     album_artist        SERIAL REFERENCES artist (id),
+    album_cover INT,
     PRIMARY KEY (id)
 );
 

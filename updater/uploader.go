@@ -42,7 +42,11 @@ func UploadSong(token string, fileBytes []byte, songBoxID int, db *sqlx.DB) erro
 		if metadata.Picture() == nil {
 			fmt.Printf("couldn't find image for the album %v", album.AlbumName)
 		} else {
-			box_lib.UploadFile(token, 110166546915, metadata.Picture().Data)
+			boxID, err := box_lib.UploadFile(token, 110166546915, albumID, metadata.Picture().Data)
+			if err != nil {
+				fmt.Println("couldnt upload cover to box")
+			}
+			album.SaveAlbumImageID(db, boxID)
 		}
 	}
 	if albumID == 0 {

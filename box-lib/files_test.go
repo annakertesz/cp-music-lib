@@ -2,6 +2,7 @@ package box_lib
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/dhowden/tag"
 	"io/ioutil"
 	"testing"
@@ -19,5 +20,6 @@ func TestUploadFile(t *testing.T) {
 	if err != nil {
 		panic("panic")
 	}
-	UploadFile("oYcHcVVv1IjsBGDmtltdBHrAovvcBss7", 110166546915, picture.Data)
+	file, _ := UploadFile("x6u5mPHFoGp2J1NNhJwa2ujkqN7khbAM", 110166546915, 8, picture.Data)
+	fmt.Println(file)
 }

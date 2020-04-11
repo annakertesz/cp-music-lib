@@ -2,12 +2,13 @@ package box_lib
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
-
+	"strconv"
 
 	"net/http"
 )
@@ -42,23 +43,23 @@ func DownloadFile(token string, id int) (io.ReadCloser, string, error) {
 	return nil, "",  errors.New(fmt.Sprintf("error from downloader: %v %v", resp.Status, resp.Body))
 }
 
-func UploadFile(token string, folderID int, image []byte) error {
+func UploadFile(token string, folderID int, filename int, file []byte) (int, error) {
 	fmt.Println("upload cover photo")
 	client := &http.Client{}
 	body := new(bytes.Buffer)
 	writer := multipart.NewWriter(body)
 	writer.SetBoundary("myBoundary")
-	writer.WriteField("attributes", "{\"name\":\"Photo.jpg\", \"parent\":{\"id\":\"110166546915\"}}")
+	writer.WriteField("attributes", fmt.Sprintf("{\"name\":\"%v.jpg\", \"parent\":{\"id\":\"%v\"}}", filename, folderID))
 	part, err := writer.CreateFormFile("file", "file.jpg")
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	part.Write(image)
+	part.Write(file)
 
 	err = writer.Close()
 	if err != nil {
-		return err
+		return 0, err
 	}
 	req, err := http.NewRequest("POST", fmt.Sprintf("https://upload.box.com/api/2.0/files/content"), body)
 	if err != nil {
@@ -70,8 +71,26 @@ func UploadFile(token string, folderID int, image []byte) error {
 	resp, err := client.Do(req)
 	fmt.Println(resp.Status)
 	all, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println(string(all))
-	return nil
+	var result Result
+	err = json.Unmarshal(all, &result)
+	if err != nil {
+		fmt.Println(err.Error())
+		return 0, err
+	}
+	if len(result.Entries)<1 {
+		return 0, errors.New("box doesnt return file id")
+	}
+	id, err := strconv.Atoi(result.Entries[0].Id)
+	if err != nil {
+		return 0, err
+	}
+	return id,nil
+}
+
+type Result struct {
+	Entries []struct{
+		Id string `json:"id"`
+	} `json:"entries"`
 }
 
 
