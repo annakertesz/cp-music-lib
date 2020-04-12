@@ -9,9 +9,9 @@ import (
 type Song struct {
 	SongID int `json:"song_id" db:"id"`
 	SongName string `json:"song_name" db:"song_name"`
-	SongLqURL string `json:"song_lq_url" db:"song_lq_url"`
+	SongLqURL *string `json:"song_lq_url" db:"song_lq_url"`
 	SongHqURL *string `json:"song_hq_url" db:"song_hq_url"`
-	SongInstrumentalLqURL string `json:"song_instrumental_lq_url" db:"instrumental_lq_url"`
+	SongInstrumentalLqURL *string `json:"song_instrumental_lq_url" db:"instrumental_lq_url"`
 	SongInstrumentalHqURL *string `json:"song_instrumental_hq_url" db:"instrumental_hq_url"`
 	SongAlbum int `json:"song_album" db:"song_album"`
 	Song_Tag *string `db:"song_tag"` //todo:remove!
