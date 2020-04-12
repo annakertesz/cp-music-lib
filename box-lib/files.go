@@ -37,12 +37,13 @@ func DownloadFile(token string, id int) (io.ReadCloser, string, error) {
 		fmt.Println("error in download request")
 		return nil, "", err
 	}
+	fmt.Println(req.URL)
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %v", token))
 	resp, err := client.Do(req)
 	if resp.StatusCode == http.StatusOK {
 		return resp.Body, resp.Header.Get("Content-Type"), nil
 	}
-	return nil, "",  errors.New(fmt.Sprintf("error from downloader: %v %v", resp.Status, resp.Body))
+	return nil, "",  errors.New(fmt.Sprintf("error from downloader: %v %v", resp.Status))
 }
 
 func UploadFile(token string, folderID int, filename int, file []byte) (int, error) {
