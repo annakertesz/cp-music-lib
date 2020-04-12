@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -29,8 +30,10 @@ func GetArtistByID(id int, db *sqlx.DB) (*Artist, error){
 		`SELECT * FROM artist WHERE id = $1` , id,
 	).StructScan(&artist)
 	if err != nil {
+		fmt.Printf("error in find album %v", id)
 		return nil, err
 	}
+	fmt.Sprintf("found album %v", artist.ArtistID)
 	return &artist, nil
 }
 

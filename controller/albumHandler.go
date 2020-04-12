@@ -18,6 +18,7 @@ func getAllAlbum(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	fmt.Printf("found %v albums", len(albums))
 	AlbumROs, err := albumROListFromAlbums(albums, db)
 	if err != nil {
 		fmt.Println(err.Error())
