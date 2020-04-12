@@ -138,7 +138,7 @@ func GetSongByAlbum(id int, db *sqlx.DB) ([]Song, error) {
 
 func GetSongByTag(id int, db *sqlx.DB) ([]Song, error) {
 	rows, err := db.Queryx(
-		`select * from tag_song join tag on tag.id = tag_song.map_tag join song on song.id = tag_song.map_song where tag.id = $1` , id,
+		`select song.id, song.instrumental_hq_url, song.instrumental_lq_url, song.song_album, song.song_hq_url, song.song_lq_url, song.song_name, song.song_tag from tag_song join tag on tag.id = tag_song.map_tag join song on song.id = tag_song.map_song where tag.id = $1` , id,
 	)
 	if err != nil {
 		return nil, err
