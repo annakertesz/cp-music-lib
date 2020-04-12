@@ -40,7 +40,7 @@ func getSongByID(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	tags, err := models.GetTagsOfSong(song.SongID, db)
+	tags, err := models.GetTagsOfSong(db,song.SongID)
 	if err != nil {
 		fmt.Sprintf("\n couldnt find tag for song %v",  song.SongID)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -167,7 +167,7 @@ func songROListFromSongs(songs []models.Song, db *sqlx.DB) ([]SongRO, error) {
 			fmt.Sprintf("\n couldnt find artist %v for album %v, for song %v", album.AlbumArtist, album.AlbumID, song.SongID)
 			return nil, err
 		}
-		tags, err := models.GetTagsOfSong(song.SongID, db)
+		tags, err := models.GetTagsOfSong(db, song.SongID)
 		if err != nil {
 			fmt.Sprintf("\n couldnt find tag for song %v",  song.SongID)
 			return nil, err

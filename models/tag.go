@@ -43,7 +43,7 @@ func GetTag(db *sqlx.DB) ( []Tag, error){
 	return tags, nil
 }
 
-func GetTag(db *sqlx.DB, songID int) ( []Tag, error){
+func GetTagsOfSong(db *sqlx.DB, songID int) ( []Tag, error){
 	rows, err := db.Queryx(
 		`SELECT * from tag join tag_song on tag_song.map_tag=tag.id where tag_song.map_song= $1`, songID,
 	)
