@@ -119,17 +119,22 @@ func getSongByArtist(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 }
 
 func getSongByTag(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
+	fmt.Println("1")
 	param := r.URL.Query().Get("tagID")
+	fmt.Println("2")
 	id, err := strconv.Atoi(param)
+	fmt.Println("3")
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)  //TODO: bad request to swagger
 		return
 	}
+	fmt.Println("4")
 	songs, err := models.GetSongByTag(id, db)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	fmt.Println("5")
 	SongROs, err := songROListFromSongs(songs, db)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
