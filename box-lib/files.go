@@ -29,6 +29,8 @@ func DownloadFileBytes(token string, id int) ([]byte, string, error) {
 }
 
 func DownloadFile(token string, id int) (io.ReadCloser, string, error) {
+	fmt.Println(token)
+	fmt.Println(id)
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", fmt.Sprintf("https://api.box.com/2.0/files/%v/content", id), nil)
 	if err != nil {
