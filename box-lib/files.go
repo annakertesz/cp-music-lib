@@ -39,6 +39,7 @@ func DownloadFile(token string, id int) (io.ReadCloser, string, error) {
 	}
 	fmt.Println(req.URL)
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %v", token))
+	fmt.Println(req.Header.Get("Authorization"))
 	resp, err := client.Do(req)
 	if resp.StatusCode == http.StatusOK {
 		return resp.Body, resp.Header.Get("Content-Type"), nil
