@@ -55,7 +55,10 @@ func GetAlbum(db *sqlx.DB) ([]Album, error) {
 	albums := make([]Album, 0)
 	for rows.Next() {
 		var album Album
-		rows.StructScan(&album)
+		err := rows.StructScan(&album)
+		if err != nil {
+			fmt.Println(err)
+		}
 		albums = append(albums, album)
 	}
 	return albums, nil
