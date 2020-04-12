@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/annakertesz/cp-music-lib/models"
 	"github.com/go-chi/chi"
 	"github.com/jmoiron/sqlx"
@@ -13,6 +14,7 @@ func getSongByID(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	param:= chi.URLParam(r, "songID")
 	id, err := strconv.Atoi(param)
 	if err != nil {
+		fmt.Printf("\nsong id %v isnt a number")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -23,11 +25,13 @@ func getSongByID(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	}
 	album, err := models.GetAlbumByID(song.SongAlbum, db)
 	if album == nil {
-		w.WriteHeader(http.StatusNotFound)
+		fmt.Sprintf("\n couldnt find album %v for song %v", song.SongAlbum, song.SongID)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	artist, err := models.GetArtistByID(album.AlbumArtist, db)
 	if err != nil {
+		fmt.Sprintf("\n couldnt find artist %v for album %v, for song %v", album.AlbumArtist, album.AlbumID, song.SongID)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
