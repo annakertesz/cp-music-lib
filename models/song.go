@@ -108,7 +108,7 @@ func GetSongByArtist(id int, db *sqlx.DB) ([]Song, error) {
 func GetSongByAlbum(id int, db *sqlx.DB) ([]Song, error) {
 	fmt.Println("getSongByAlbum()")
 	rows, err := db.Queryx(
-		`SELECT * FROM album WHERE song_album = $1` , id,
+		`SELECT * FROM song WHERE song_album = $1` , id,
 	)
 	if err != nil {
 		fmt.Println("error in query")
