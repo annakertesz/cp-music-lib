@@ -14,6 +14,7 @@ func getAllAlbum(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	fmt.Println("getAllAlbum")
 	albums, err := models.GetAlbum(db)
 	if err != nil {
+		fmt.Println(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
