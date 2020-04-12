@@ -58,12 +58,14 @@ func getSongByID(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 
 func getSongByAlbum(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	param := r.URL.Query().Get("albumID")
+	fmt.Println(param)
 	id, err := strconv.Atoi(param)
 	if err != nil {
-		fmt.Printf("\nsong id %v isnt a number")
+		fmt.Printf("\nsong id %v isnt a number", id)
 		w.WriteHeader(http.StatusBadRequest)  //TODO: bad request to swagger
 		return
 	}
+	fmt.Println(id)
 	songs, err := models.GetSongByAlbum(id, db)
 	if err != nil {
 		fmt.Printf("error in getSongByAlbum: %v", err.Error())
