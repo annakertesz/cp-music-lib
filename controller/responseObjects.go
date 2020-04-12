@@ -9,10 +9,10 @@ type SongRO struct {
 	ID int `json:"id"`
 	Title string `json:"title"`
 	Album AlbumRO `json:"album"`
-	LqSong string `json:"lq_song"`
-	HqSong string `json:"hq_song"`
-	LqInstr string `json:"lq_instr"`
-	HqInstr string `json:"hq_instr"`
+	LqSong *string `json:"lq_song"`
+	HqSong *string `json:"hq_song"`
+	LqInstr *string `json:"lq_instr"`
+	HqInstr *string `json:"hq_instr"`
 	Tags []TagRO
 }
 
