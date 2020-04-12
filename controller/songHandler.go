@@ -147,9 +147,9 @@ func songROFromSong(song models.Song, album models.Album, artist models.Artist, 
 		Title:   song.SongName,
 		Album:   albumROFromAlbum(album, artist),
 		LqSong:  song.SongLqURL,
-		HqSong:  song.SongHqURL,
+		HqSong:  *song.SongHqURL,
 		LqInstr: song.SongInstrumentalLqURL,
-		HqInstr: song.SongInstrumentalHqURL,
+		HqInstr: *song.SongInstrumentalHqURL,
 		Tags:tagROListFromTag(tags),
 	}
 }
