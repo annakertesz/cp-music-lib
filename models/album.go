@@ -10,7 +10,7 @@ type Album struct {
 	AlbumID     int    `json:"album_id" db:"id"`
 	AlbumName   string `json:"album_name" db:"album_name"`
 	AlbumArtist int    `json:"artist" db:"album_artist"`
-	AlbumCover string `json:"album_cover" db:"album_cover"`
+	AlbumCover *string `json:"album_cover" db:"album_cover"`
 }
 
 func (album *Album) CreateAlbum(db *sqlx.DB) (int, bool, error) {
