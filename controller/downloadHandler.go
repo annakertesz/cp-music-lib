@@ -9,9 +9,8 @@ import (
 	"strconv"
 )
 
-func download(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
+func download(db *sqlx.DB, token string, w http.ResponseWriter, r *http.Request){
 	param:= chi.URLParam(r, "boxID")
-	token := r.URL.Query().Get("token")
 	fmt.Println("download")
 	fmt.Println(param)
 	id, err := strconv.Atoi(param)

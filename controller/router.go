@@ -10,12 +10,13 @@ import (
 
 type Server struct {
 	db *sqlx.DB
+	token string
 }
 
 type e map[string]string
 
-func NewServer(db *sqlx.DB) *Server {
-	return &Server{db:db}
+func NewServer(db *sqlx.DB, token string) *Server {
+	return &Server{db:db, token:token}
 }
 
 func (server *Server) Routes() chi.Router {
@@ -82,7 +83,7 @@ func (server *Server) Routes() chi.Router {
 	})
 
 	r.Get("/download/{boxID}", func(w http.ResponseWriter, r *http.Request) {
-		download(server.db, w, r)
+		download(server.db, server.token, w, r)
 	})
 
 

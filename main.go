@@ -18,6 +18,7 @@ const (
 	user     = "anna"
 	password = "anna"
 	dbname   = "centralp"
+	developerToken = "no"
 )
 
 func main() {
@@ -29,6 +30,10 @@ func main() {
 
 	if !ok {
 		url = psqlInfo
+	}
+	token, ok := os.LookupEnv("TOKEN")
+	if !ok {
+		token = developerToken
 	}
 
 	db, err = connect(url)
