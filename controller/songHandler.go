@@ -140,11 +140,13 @@ func getSongByTag(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	fmt.Println("6")
 	songsJSON, err := json.Marshal(SongROs)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	fmt.Println("7")
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(songsJSON)
 	w.WriteHeader(http.StatusOK)
