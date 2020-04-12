@@ -137,6 +137,7 @@ func getSongByTag(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	fmt.Println("5")
 	SongROs, err := songROListFromSongs(songs, db)
 	if err != nil {
+		fmt.Println(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
