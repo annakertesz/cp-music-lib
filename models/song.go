@@ -14,7 +14,7 @@ type Song struct {
 	SongInstrumentalLqURL string `json:"song_instrumental_lq_url" db:"instrumental_lq_url"`
 	SongInstrumentalHqURL string `json:"song_instrumental_hq_url" db:"instrumental_hq_url"`
 	SongAlbum int `json:"song_album" db:"song_album"`
-	Song_Tag int `db:"song_tag"` //todo:remove!
+	Song_Tag string `db:"song_tag"` //todo:remove!
 	boxID int
 }
 
