@@ -106,17 +106,22 @@ func GetSongByArtist(id int, db *sqlx.DB) ([]Song, error) {
 }
 
 func GetSongByAlbum(id int, db *sqlx.DB) ([]Song, error) {
+	fmt.Println("getSongByAlbum()")
 	rows, err := db.Queryx(
 		`SELECT * FROM album WHERE song_album = $1` , id,
 	)
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println("got")
 	defer rows.Close()
 	songs := make([]Song, 0)
 	for rows.Next() {
 		var song Song
-		rows.StructScan(&song)
+		err := rows.StructScan(&song)
+		if err != nil {
+			fmt.Println("ittahiba")
+		}
 		songs = append(songs, song)
 	}
 	return songs, nil
