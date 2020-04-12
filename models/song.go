@@ -80,7 +80,7 @@ func (song *Song) CreateSong(db *sqlx.DB) (int, bool, error) {
 func GetSongByID(id int, db *sqlx.DB) (*Song, error) {
 	fmt.Printf("\nquery for id %v", id)
 	var song Song
-	err := db.QueryRowx(`SELECT * FROM song WHERE id = $q`, id,
+	err := db.QueryRowx(`SELECT * FROM song WHERE id = $1`, id,
 	).StructScan(&song)
 	if err!=nil{
 		return nil, err
