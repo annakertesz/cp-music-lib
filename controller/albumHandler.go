@@ -20,11 +20,13 @@ func getAllAlbum(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	}
 	AlbumROs, err := albumROListFromAlbums(albums, db)
 	if err != nil {
+		fmt.Println(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	albumsJSON, err := json.Marshal(AlbumROs)
 	if err != nil {
+		fmt.Println(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
