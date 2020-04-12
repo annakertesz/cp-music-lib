@@ -25,7 +25,7 @@ func (server *Server) Routes() chi.Router {
 	})
 
 	//Songs
-	r.Get("/song/{songId}", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/song/{songID}", func(w http.ResponseWriter, r *http.Request) {
 		getSongByID(server.db, w, r)
 	})
 	r.Get("/song/findByAlbum", func(w http.ResponseWriter, r *http.Request) {
@@ -49,7 +49,7 @@ func (server *Server) Routes() chi.Router {
 	r.Get("/album/findByArtist", func(w http.ResponseWriter, r *http.Request) {
 		getAlbumsByArtist(server.db, w, r)
 	})
-	r.Get("/album/{albumId}", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/album/{albumID}", func(w http.ResponseWriter, r *http.Request) {
 		getAlbumsById(server.db, w, r)
 	})
 
@@ -79,7 +79,7 @@ func (server *Server) Routes() chi.Router {
 	r.Get("/playlist/findByUser", func(w http.ResponseWriter, r *http.Request) {
 		getPlaylistByUser(server.db, w, r)
 	})
-	r.Get("/playlist/{playlistId}", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/playlist/{playlistID}", func(w http.ResponseWriter, r *http.Request) {
 		getPlaylistById(server.db, w, r)
 	})
 	return r
