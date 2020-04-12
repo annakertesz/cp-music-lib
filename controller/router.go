@@ -43,6 +43,7 @@ func (server *Server) Routes() chi.Router {
 
 	//Albums
 	r.Get("/album", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("album request")
 		getAllAlbum(server.db, w, r)
 	})
 	r.Get("/album/findByArtist", func(w http.ResponseWriter, r *http.Request) {

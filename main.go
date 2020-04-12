@@ -63,23 +63,23 @@ func connect(dbURL string) (*sqlx.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	_, err = db.Exec(`
-drop table if exists users;
-
-drop table if exists tag_song;
-
-drop table if exists song;
-
-drop table if exists tag;
-
-drop table if exists album;
-
-drop table if exists artist;
-`)
-	if err != nil {
-		return nil, err
-	}
+//
+//	_, err = db.Exec(`
+//drop table if exists users;
+//
+//drop table if exists tag_song;
+//
+//drop table if exists song;
+//
+//drop table if exists tag;
+//
+//drop table if exists album;
+//
+//drop table if exists artist;
+//`)
+//	if err != nil {
+//		return nil, err
+//	}
 	_, err = db.Exec(`
     CREATE TABLE IF NOT EXISTS artist
 (

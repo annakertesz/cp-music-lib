@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/annakertesz/cp-music-lib/models"
 	"github.com/go-chi/chi"
 	"github.com/jmoiron/sqlx"
@@ -10,6 +11,7 @@ import (
 )
 
 func getAllAlbum(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
+	fmt.Println("getAllAlbum")
 	albums, err := models.GetAlbum(db)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
