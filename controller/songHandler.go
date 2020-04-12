@@ -40,7 +40,13 @@ func getSongByID(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	songJSON, err := json.Marshal(songROFromSong(*song, *album, *artist))
+	tags, err := models.GetTagsOfSong(song.SongID, db)
+	if err != nil {
+		fmt.Sprintf("\n couldnt find tag for song %v",  song.SongID)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	songJSON, err := json.Marshal(songROFromSong(*song, *album, *artist, tags))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -135,7 +141,7 @@ func searchSong(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	w.WriteHeader(http.StatusOK)
 }
 
-func songROFromSong(song models.Song, album models.Album, artist models.Artist) SongRO{
+func songROFromSong(song models.Song, album models.Album, artist models.Artist, tags []models.Tag) SongRO{
 	return SongRO{
 		ID:      song.SongID,
 		Title:   song.SongName,
@@ -144,6 +150,7 @@ func songROFromSong(song models.Song, album models.Album, artist models.Artist) 
 		HqSong:  song.SongHqURL,
 		LqInstr: song.SongInstrumentalLqURL,
 		HqInstr: song.SongInstrumentalHqURL,
+		Tags:tagROListFromTag(tags),
 	}
 }
 
@@ -151,11 +158,21 @@ func songROListFromSongs(songs []models.Song, db *sqlx.DB) ([]SongRO, error) {
 	songROs := make([]SongRO, 0)
 	for _, song := range songs {
 		album, err := models.GetAlbumByID(song.SongAlbum, db)
-		artist, err := models.GetArtistByID(album.AlbumArtist, db)
-		if err != nil {
+		if album == nil {
+			fmt.Sprintf("\n couldnt find album %v for song %v", song.SongAlbum, song.SongID)
 			return nil, err
 		}
-		songROs = append(songROs, songROFromSong(song, *album, *artist))
+		artist, err := models.GetArtistByID(album.AlbumArtist, db)
+		if err != nil {
+			fmt.Sprintf("\n couldnt find artist %v for album %v, for song %v", album.AlbumArtist, album.AlbumID, song.SongID)
+			return nil, err
+		}
+		tags, err := models.GetTagsOfSong(song.SongID, db)
+		if err != nil {
+			fmt.Sprintf("\n couldnt find tag for song %v",  song.SongID)
+			return nil, err
+		}
+		songROs = append(songROs, songROFromSong(song, *album, *artist,  tags))
 	}
 	return songROs, nil
 }

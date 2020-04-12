@@ -13,6 +13,7 @@ type SongRO struct {
 	HqSong string `json:"hq_song"`
 	LqInstr string `json:"lq_instr"`
 	HqInstr string `json:"hq_instr"`
+	Tags []TagRO
 }
 
 type AlbumRO struct {

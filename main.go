@@ -109,7 +109,6 @@ CREATE TABLE IF NOT EXISTS song
     id                  SERIAL NOT NULL,
     song_name           varchar(150),
     song_album          INTEGER REFERENCES album (id),
-    song_tag            INTEGER REFERENCES tag (id),
     song_lq_url         varchar(500),
     song_hq_url         varchar(500),
     instrumental_lq_url varchar(500),
