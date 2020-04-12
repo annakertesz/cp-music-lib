@@ -12,7 +12,7 @@ type Album struct {
 	AlbumArtist int    `json:"artist" db:"album_artist"`
 }
 
-func (album *Album) CreateAlbum(db *sqlx.DB) (int, bool) {
+func (album *Album) CreateAlbum(db *sqlx.DB) (int, bool, error) {
 	if strings.Contains(album.AlbumName, "nstrumental") {
 		if strings.Index(album.AlbumName, "(") > 0 {
 			album.AlbumName = strings.TrimSpace(album.AlbumName[:strings.Index(album.AlbumName, "(")])
@@ -20,18 +20,18 @@ func (album *Album) CreateAlbum(db *sqlx.DB) (int, bool) {
 	}
 	var id int
 	createdNew := false
-	db.QueryRow(
+	err := db.QueryRow(
 		`SELECT id from album where album_name = $1`, album.AlbumName,
 	).Scan(&id)
 	if id == 0 {
-		db.QueryRow(
+		err = db.QueryRow(
 			`INSERT INTO album (album_name, album_artist) VALUES ($1, $2) RETURNING id`,
 			album.AlbumName, album.AlbumArtist,
 		).Scan(&id)
 		createdNew = true
 	}
 	album.AlbumID=id
-	return id, createdNew
+	return id, createdNew, err
 }
 
 func (album *Album) SaveAlbumImageID(db *sqlx.DB, id int){

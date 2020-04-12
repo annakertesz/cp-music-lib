@@ -70,6 +70,7 @@ func UploadFile(token string, folderID int, filename int, file []byte) (int, err
 	fmt.Printf("%s %s %s\n", req.RemoteAddr, req.Method, req.URL)
 	resp, err := client.Do(req)
 	fmt.Println(resp.Status)
+	if resp.StatusCode == 201 {
 	all, _ := ioutil.ReadAll(resp.Body)
 	var result Result
 	err = json.Unmarshal(all, &result)
@@ -84,7 +85,8 @@ func UploadFile(token string, folderID int, filename int, file []byte) (int, err
 	if err != nil {
 		return 0, err
 	}
-	return id,nil
+	return id,nil}
+	return 0, errors.New("file already exists")
 }
 
 type Result struct {

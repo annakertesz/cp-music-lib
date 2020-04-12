@@ -26,7 +26,7 @@ func NewSong(name string, album int, boxID int) Song {
 	}
 }
 
-func (song *Song) CreateSong(db *sqlx.DB) (int, bool) {
+func (song *Song) CreateSong(db *sqlx.DB) (int, bool, error) {
 	isInstrumental := false
 	createdNew := false
 	var id int
@@ -35,26 +35,26 @@ func (song *Song) CreateSong(db *sqlx.DB) (int, bool) {
 		song.SongName = strings.TrimSpace(song.SongName[:strings.Index(song.SongName,"(")])
 		isInstrumental = true}
 	}
-	db.QueryRow(
+	err := db.QueryRow(
 		`SELECT id from song where song_name = $1`, song.SongName,
 	).Scan(&id)
 	if id != 0 {
 		if isInstrumental {
-			db.Query(`UPDATE song SET instrumental_lq_url = $1 WHERE id=$2`, song.boxID, id)
+			_, err = db.Query(`UPDATE song SET instrumental_lq_url = $1 WHERE id=$2`, song.boxID, id)
 			fmt.Printf("\nfound %v and inserted instrumental version", song.SongName)
 		} else {
-			db.Query(`UPDATE song SET song_lq_url = $1 WHERE id=$2`, song.boxID, id)
+			_, err = db.Query(`UPDATE song SET song_lq_url = $1 WHERE id=$2`, song.boxID, id)
 			fmt.Printf("\nfound %v and inserted vocal version", song.SongName)
 
 		}
 	} else {
 		if isInstrumental {
-			db.QueryRow(
+			err = db.QueryRow(
 				`INSERT INTO song (song_name, song_album,instrumental_lq_url) VALUES ($1, $2, $3) RETURNING id`,
 				song.SongName,  song.SongAlbum, song.boxID,
 			).Scan(&id)
 		} else {
-			db.QueryRow(
+			err = db.QueryRow(
 				`INSERT INTO song (song_name, song_album,song_lq_url) VALUES ($1, $2, $3) RETURNING id`,
 				song.SongName,  song.SongAlbum, song.boxID,
 			).Scan(&id)
@@ -62,7 +62,7 @@ func (song *Song) CreateSong(db *sqlx.DB) (int, bool) {
 		createdNew=true
 	}
 
-	return id, createdNew
+	return id, createdNew, err
 }
 
 func GetSongByID(id int, db *sqlx.DB) (*Song, error) {

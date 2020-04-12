@@ -2,6 +2,7 @@ package updater
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	box_lib "github.com/annakertesz/cp-music-lib/box-lib"
 	"github.com/annakertesz/cp-music-lib/models"
@@ -23,9 +24,13 @@ func UploadSong(token string, fileBytes []byte, songBoxID int, db *sqlx.DB) erro
 		ArtistName: metadata.Artist(),
 	}
 	fmt.Printf("\ncreate artist %v", metadata.Artist())
-	artistID := artist.CreateArtist(db)
-	if artistID == 0 {
-		panic("artist")
+	artistID, err := artist.CreateArtist(db)
+	if artistID == 0 || err != nil {
+		fmt.Println("Couldnt create artist")
+		if err != nil {
+			return err
+		}
+		return errors.New("unexpected error while creating artist")
 	}
 
 	fmt.Printf("\ncreate album %v", metadata.Album())
@@ -34,9 +39,13 @@ func UploadSong(token string, fileBytes []byte, songBoxID int, db *sqlx.DB) erro
 		AlbumName:   metadata.Album(),
 		AlbumArtist: artistID,
 	}
-	albumID, createdNewAlbum := album.CreateAlbum(db)
-	if albumID == 0 {
-		panic("album")
+	albumID, createdNewAlbum, err := album.CreateAlbum(db)
+	if albumID == 0 || err != nil {
+		fmt.Println("Couldnt create album")
+		if err != nil {
+			return err
+		}
+		return errors.New("unexpected error while creating album")
 	}
 	if createdNewAlbum {
 		if metadata.Picture() == nil {
@@ -49,13 +58,17 @@ func UploadSong(token string, fileBytes []byte, songBoxID int, db *sqlx.DB) erro
 			album.SaveAlbumImageID(db, boxID)
 		}
 	}
-	if albumID == 0 {
-		panic("album")
-	}
 	fmt.Printf("\ncreate song %v", metadata.Title())
 	song := models.NewSong(metadata.Title(), albumID, songBoxID)
 
-	songID, _ := song.CreateSong(db)
+	songID, _, err := song.CreateSong(db)
+	if songID == 0 || err != nil {
+		fmt.Println("Couldnt create song")
+		if err != nil {
+			return err
+		}
+		return errors.New("unexpected error while creating song")
+	}
 	fmt.Printf("\ncreate tags %v", metadata.Genre())
 	tags := strings.Split(metadata.Genre(), "/")
 	for _, tag := range tags {
