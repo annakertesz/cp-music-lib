@@ -20,7 +20,7 @@ type AlbumRO struct {
 	ID int `json:"id"`
 	Title string `json:"title"`
 	Artist ArtistRO `json:"artist"`
-	Cover string `json:"cover"`
+	Cover *string `json:"cover"`
 }
 
 type ArtistRO struct {
