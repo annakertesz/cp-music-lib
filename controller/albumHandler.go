@@ -103,6 +103,7 @@ func albumROFromAlbum(album models.Album, artist models.Artist) AlbumRO {
 func albumROListFromAlbums(albums []models.Album, db *sqlx.DB) ([]AlbumRO, error) {
 	albumROs := make([]AlbumRO, 0)
 	for _, album := range albums {
+		fmt.Println(album.AlbumID, album.AlbumName, album.AlbumArtist)
 		artist, err := models.GetArtistByID(album.AlbumArtist, db)
 		if err != nil {
 			return nil, err
