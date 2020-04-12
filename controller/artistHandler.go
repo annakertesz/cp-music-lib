@@ -26,7 +26,7 @@ func getAllArtist(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 }
 
 func getArtistById(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
-	param := chi.URLParam(r, "artistId")
+	param := chi.URLParam(r, "artistID")
 	id, err := strconv.Atoi(param)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)  //TODO: bad request to swagger
