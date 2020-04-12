@@ -30,10 +30,10 @@ func GetArtistByID(id int, db *sqlx.DB) (*Artist, error){
 		`SELECT * FROM artist WHERE id = $1` , id,
 	).StructScan(&artist)
 	if err != nil {
-		fmt.Printf("error in find artist %v", id)
+		fmt.Printf("\nerror in find artist %v", id)
 		return nil, err
 	}
-	fmt.Sprintf("found album %v", artist.ArtistID)
+	fmt.Sprintf("\nfound album %v", artist.ArtistID)
 	return &artist, nil
 }
 
