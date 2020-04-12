@@ -35,6 +35,8 @@ func main() {
 	if !ok {
 		token = developerToken
 	}
+	fmt.Println("token:")
+	fmt.Println(token)
 
 	db, err = connect(url)
 
@@ -47,7 +49,7 @@ func main() {
 	if !ok {
 		port = "8080"
 	}
-	server := controller.NewServer(db)
+	server := controller.NewServer(db, token)
 
 	log.Println("Started")
 	if err := http.ListenAndServe(":"+port, server.Routes()); err != nil {
