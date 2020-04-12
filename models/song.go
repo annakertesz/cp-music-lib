@@ -93,6 +93,8 @@ func GetSongByArtist(id int, db *sqlx.DB) ([]Song, error) {
 		`SELECT * from song join album on song.song_album = album.id where album_artist = $1` , id,
 	)
 	if err != nil {
+		fmt.Println("error in query")
+		fmt.Println(err.Error())
 		return nil, err
 	}
 	defer rows.Close()
@@ -101,6 +103,8 @@ func GetSongByArtist(id int, db *sqlx.DB) ([]Song, error) {
 		var song Song
 		err := rows.StructScan(&song)
 		if err != nil {
+			fmt.Println("error in scan songs")
+			fmt.Println(err.Error())
 			return nil, err
 		}
 		songs = append(songs, song)
