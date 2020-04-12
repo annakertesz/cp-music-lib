@@ -38,7 +38,7 @@ func getAllAlbum(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 
 
 func getAlbumsById(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
-	param := chi.URLParam(r, "albumId")
+	param := chi.URLParam(r, "albumID")
 	id, err := strconv.Atoi(param)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)  //TODO: bad request to swagger
