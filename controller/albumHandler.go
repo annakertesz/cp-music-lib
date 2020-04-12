@@ -97,6 +97,7 @@ func albumROFromAlbum(album models.Album, artist models.Artist) AlbumRO {
 		ID:        album.AlbumID,
 		Title:     album.AlbumName,
 		Artist:    artistROFromArtist(artist),
+		Cover:album.AlbumCover,
 	}
 }
 
