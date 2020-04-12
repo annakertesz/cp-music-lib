@@ -99,7 +99,10 @@ func GetSongByArtist(id int, db *sqlx.DB) ([]Song, error) {
 	songs := make([]Song, 0)
 	for rows.Next() {
 		var song Song
-		rows.StructScan(&song)
+		err := rows.StructScan(&song)
+		if err != nil {
+			return nil, err
+		}
 		songs = append(songs, song)
 	}
 	return songs, nil
