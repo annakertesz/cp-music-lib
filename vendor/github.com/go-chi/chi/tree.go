@@ -417,6 +417,8 @@ func (n *node) findRoute(rctx *Context, method methodTyp, path string) *node {
 				continue
 			}
 
+			found := false
+
 			// serially loop through each node grouped by the tail delimiter
 			for idx := 0; idx < len(nds); idx++ {
 				xn = nds[idx]
@@ -443,7 +445,12 @@ func (n *node) findRoute(rctx *Context, method methodTyp, path string) *node {
 
 				rctx.routeParams.Values = append(rctx.routeParams.Values, xsearch[:p])
 				xsearch = xsearch[p:]
+				found = true
 				break
+			}
+
+			if !found {
+				rctx.routeParams.Values = append(rctx.routeParams.Values, "")
 			}
 
 		default:
@@ -516,15 +523,6 @@ func (n *node) findEdge(ntyp nodeTyp, label byte) *node {
 	default: // catch all
 		return nds[idx]
 	}
-}
-
-func (n *node) isEmpty() bool {
-	for _, nds := range n.children {
-		if len(nds) > 0 {
-			return false
-		}
-	}
-	return true
 }
 
 func (n *node) isLeaf() bool {
@@ -830,6 +828,7 @@ func walk(r Routes, walkFn WalkFunc, parentRoute string, parentMw ...func(http.H
 			}
 
 			fullRoute := parentRoute + route.Pattern
+			fullRoute = strings.Replace(fullRoute, "/*/", "/", -1)
 
 			if chain, ok := handler.(*ChainHandler); ok {
 				if err := walkFn(method, fullRoute, chain.Endpoint, append(mws, chain.Middlewares...)...); err != nil {
