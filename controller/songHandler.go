@@ -92,16 +92,19 @@ func getSongByArtist(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	param := r.URL.Query().Get("artistID")
 	id, err := strconv.Atoi(param)
 	if err != nil {
+		fmt.Printf("\nartist id %v isnt a number", id)
 		w.WriteHeader(http.StatusBadRequest)  //TODO: bad request to swagger
 		return
 	}
 	songs, err := models.GetSongByArtist(id, db)
 	if err != nil {
+		fmt.Printf("error in getSongByArtist: %v", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	SongROs, err := songROListFromSongs(songs, db)
 	if err != nil {
+		fmt.Printf("error in createSongRO: %v", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
