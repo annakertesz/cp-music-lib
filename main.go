@@ -52,7 +52,8 @@ func main() {
 
 func connect(dbURL string) (*sqlx.DB, error) {
 	db, err := sqlx.Open("postgres", dbURL)
-	db.SetMaxOpenConns(15)
+	db.SetMaxIdleConns(2)
+	db.SetMaxOpenConns(2)
 	if err != nil {
 		return nil, err
 	}
