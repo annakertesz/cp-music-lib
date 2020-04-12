@@ -35,10 +35,11 @@ func (album *Album) CreateAlbum(db *sqlx.DB) (int, bool, error) {
 }
 
 func (album *Album) SaveAlbumImageID(db *sqlx.DB, id int){
-	_, err := db.Queryx(`UPDATE album SET album_cover = $1 WHERE id=$2`, id, album.AlbumID)
+	rows, err := db.Queryx(`UPDATE album SET album_cover = $1 WHERE id=$2`, id, album.AlbumID)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
+	defer rows.Close()
 }
 
 func GetAlbum(db *sqlx.DB) ([]Album, error) {
