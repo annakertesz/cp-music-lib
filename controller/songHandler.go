@@ -18,6 +18,7 @@ func getSongByID(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	fmt.Sprintf("id=%v (string: %v", id, param)
 	song, err := models.GetSongByID(id, db)
 	if song == nil {
 		w.WriteHeader(http.StatusNotFound)
