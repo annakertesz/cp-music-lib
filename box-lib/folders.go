@@ -47,8 +47,10 @@ func GetFileIDsToUpload(token string, folderID int, date string) ([]int, error) 
 func getPageOfIds(token string, folderID int, date string, limit int, offset int) (idRO, error){
 	client := &http.Client{
 	}
-
-	req, err := http.NewRequest("GET", fmt.Sprintf("https://api.box.com/2.0/search?query=mp3&ancestor_folder_ids=%v&fields=id&offset=%v&limit=%v&created_at_range=%v,",folderID, offset, limit, date), nil)
+	url := fmt.Sprintf("https://api.box.com/2.0/search?query=mp3&ancestor_folder_ids=%v&fields=id&offset=%v&limit=%v&created_at_range=%v,",folderID, offset, limit, date)
+	fmt.Println(url)
+	fmt.Println(token)
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return idRO{}, err
 	}
@@ -66,5 +68,5 @@ func getPageOfIds(token string, folderID int, date string, limit int, offset int
 		}
 		return RO, nil
 	}
-	return RO, errors.New(fmt.Sprintf("GetSongID box api call returns %v", resp.Status))
+	return RO, errors.New(fmt.Sprintf("GetSongIDs box api call returns %v", resp.Status))
 }

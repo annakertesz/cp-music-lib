@@ -45,8 +45,8 @@ CREATE TABLE IF NOT EXISTS tag_song
 );
 CREATE TABLE IF NOT EXISTS cp_update
 (
-    id           SERIAL NOT NULL,
-    ud_date         DATE,
+    id            SERIAL NOT NULL,
+    ud_date       DATE,
     found_songs   INTEGER,
     created_songs INTEGER,
     failed_songs  INTEGER,
@@ -56,12 +56,24 @@ CREATE TABLE IF NOT EXISTS cp_update
 
 CREATE TABLE IF NOT EXISTS failed_song
 (
-    id           SERIAL NOT NULL,
+    id            SERIAL NOT NULL,
     box_id        varchar(500),
     error_message varchar(500),
-    cp_update       INTEGER REFERENCES cp_update (id),
+    cp_update     INTEGER REFERENCES cp_update (id),
     PRIMARY KEY (id)
-)
+);
 
 
+CREATE TABLE IF NOT EXISTS user
+(
+    id            SERIAL NOT NULL,
+    username      varchar(150),
+    first_name    varchar(150),
+    last_name     varchar(150),
+    email         varchar(150),
+    password_hash varchar(150),
+    phone         varchar(500),
+    user_status   int,
+    PRIMARY KEY (id)
+);
 

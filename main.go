@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	box_lib "github.com/annakertesz/cp-music-lib/box-lib"
 	"github.com/annakertesz/cp-music-lib/controller"
+	"github.com/annakertesz/cp-music-lib/updater"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	"log"
@@ -20,14 +22,27 @@ const (
 	password = "anna"
 	dbname   = "centralp"
 	developerToken = "3luIrU57KaYyTb1eD3kP0iL3yjU90zwr"
-	testFolder = "110382122639"
-	cpFolder = "11056063660"
-)
+	testFolder = "114476926207"
+	cpFolder = "11059102688"
+	)
+
 
 func main() {
 	songFolderStr, ok := os.LookupEnv("SONG_FOLDER")
 	if !ok {
 		songFolderStr = cpFolder
+	}
+	clientID, ok := os.LookupEnv("CLIENT_ID")
+	if !ok {
+		panic("need box credentials: CLIENT_ID")
+	}
+	clientSecret, ok := os.LookupEnv("CLIENT_SECRET")
+	if !ok {
+		panic("need box credentials: CLIENT_SECRET")
+	}
+	privateKey, ok := os.LookupEnv("PRIVATE_KEY")
+	if !ok {
+		panic("need box credentials: PRIVATE_KEY")
 	}
 	songFolder, err := strconv.Atoi(songFolderStr)
 	if err != nil {
@@ -41,10 +56,6 @@ func main() {
 	if err != nil {
 		panic("coverFolder var should be numeric")
 	}
-	token, ok := os.LookupEnv("TOKEN")
-	if !ok {
-		token = developerToken
-	}
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
@@ -54,6 +65,7 @@ func main() {
 		url = psqlInfo
 	}
 
+	token := box_lib.AuthOfBox(clientID, clientSecret, privateKey)
 	fmt.Println("token:")
 	fmt.Println(token)
 
@@ -64,7 +76,7 @@ func main() {
 	}
 
 	port, ok := os.LookupEnv("PORT")
-	//updater.Update(songFolder, coverFolder, token, db)
+	updater.Update(songFolder, coverFolder, token, db)
 	if !ok {
 		port = "8080"
 	}
