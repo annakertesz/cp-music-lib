@@ -90,7 +90,7 @@ paths:
           type: string
           format: uuid
           required: true
-        - name: "album"
+        - name: "albumID"
           in: "query"
           description: "id of the album you want to filter for"
           required: true
@@ -124,7 +124,7 @@ paths:
           type: string
           format: uuid
           required: true
-        - name: "artist"
+        - name: "artistID"
           in: "query"
           description: "id of the artist you want to filter for"
           required: true
@@ -158,7 +158,7 @@ paths:
           type: string
           format: uuid
           required: true
-        - name: "tag"
+        - name: "tagID"
           in: "query"
           description: "id of the tag you want to filter for"
           required: true
