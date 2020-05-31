@@ -279,7 +279,7 @@ paths:
           type: string
           format: uuid
           required: true
-        - name: "artist"
+        - name: "artistID"
           in: "query"
           description: "id of the artist you want to filter for"
           required: true
@@ -531,7 +531,7 @@ definitions:
         description: "title of the album"
       artist:
         $ref: "#/definitions/Artist"
-      thumbnail:
+      cover:
         type: "string"
         description: "url of the thumbnail image"
   Artist:
