@@ -32,18 +32,18 @@ func main() {
 	if !ok {
 		songFolderStr = cpFolder
 	}
-	//clientID, ok := os.LookupEnv("CLIENT_ID")
-	//if !ok {
-	//	panic("need box credentials: CLIENT_ID")
-	//}
-	//clientSecret, ok := os.LookupEnv("CLIENT_SECRET")
-	//if !ok {
-	//	panic("need box credentials: CLIENT_SECRET")
-	//}
-	//privateKey, ok := os.LookupEnv("PRIVATE_KEY")
-	//if !ok {
-	//	panic("need box credentials: PRIVATE_KEY")
-	//}
+	clientID, ok := os.LookupEnv("CLIENT_ID")
+	if !ok {
+		panic("need box credentials: CLIENT_ID")
+	}
+	clientSecret, ok := os.LookupEnv("CLIENT_SECRET")
+	if !ok {
+		panic("need box credentials: CLIENT_SECRET")
+	}
+	privateKey, ok := os.LookupEnv("PRIVATE_KEY")
+	if !ok {
+		panic("need box credentials: PRIVATE_KEY")
+	}
 	songFolder, err := strconv.Atoi(songFolderStr)
 	if err != nil {
 		panic("songFolder var should be numeric")
@@ -65,8 +65,7 @@ func main() {
 		url = psqlInfo
 	}
 
-	//token := box_lib.AuthOfBox(clientID, clientSecret, privateKey)
-	token := "sdfds"
+	token := box_lib.AuthOfBox(clientID, clientSecret, privateKey)
 	fmt.Println("token:")
 	fmt.Println(token)
 

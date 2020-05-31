@@ -4,6 +4,11 @@
 	"GodepVersion": "v80",
 	"Deps": [
 		{
+			"ImportPath": "github.com/dgrijalva/jwt-go",
+			"Comment": "v3.2.0-20-gdc14462",
+			"Rev": "dc14462fd58732591c7fa58cc8496d6824316a82"
+		},
+		{
 			"ImportPath": "github.com/dhowden/tag",
 			"Rev": "5d76b8eaae27e7721801002faaab79c908376f58"
 		},
