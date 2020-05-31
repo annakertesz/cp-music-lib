@@ -112,6 +112,30 @@ func GetSongByArtist(id int, db *sqlx.DB) ([]Song, error) {
 	return songs, nil
 }
 
+func GetAllSongs(db *sqlx.DB) ([]Song, error) {
+	rows, err := db.Queryx(
+		`SELECT song.id, song.instrumental_hq_url, song.instrumental_lq_url, song.song_album, song.song_hq_url, song.song_lq_url, song.song_name, song.song_tag from song join album on song.song_album = album.id`,
+	)
+	if err != nil {
+		fmt.Println("error in query")
+		fmt.Println(err.Error())
+		return nil, err
+	}
+	defer rows.Close()
+	songs := make([]Song, 0)
+	for rows.Next() {
+		var song Song
+		err := rows.StructScan(&song)
+		if err != nil {
+			fmt.Println("error in scan songs")
+			fmt.Println(err.Error())
+			return nil, err
+		}
+		songs = append(songs, song)
+	}
+	return songs, nil
+}
+
 func GetSongByAlbum(id int, db *sqlx.DB) ([]Song, error) {
 	fmt.Println("getSongByAlbum()")
 	rows, err := db.Queryx(

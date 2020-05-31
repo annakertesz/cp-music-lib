@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 var db *sqlx.DB
@@ -18,11 +19,32 @@ const (
 	user     = "anna"
 	password = "anna"
 	dbname   = "centralp"
-	developerToken = "no"
+	developerToken = "3luIrU57KaYyTb1eD3kP0iL3yjU90zwr"
+	testFolder = "110382122639"
+	cpFolder = "11056063660"
 )
 
 func main() {
-	var err error
+	songFolderStr, ok := os.LookupEnv("SONG_FOLDER")
+	if !ok {
+		songFolderStr = cpFolder
+	}
+	songFolder, err := strconv.Atoi(songFolderStr)
+	if err != nil {
+		panic("songFolder var should be numeric")
+	}
+	coverFolderStr, ok := os.LookupEnv("COVER_FOLDER")
+	if !ok {
+		coverFolderStr=testFolder
+	}
+	coverFolder, err := strconv.Atoi(coverFolderStr)
+	if err != nil {
+		panic("coverFolder var should be numeric")
+	}
+	token, ok := os.LookupEnv("TOKEN")
+	if !ok {
+		token = developerToken
+	}
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
@@ -31,10 +53,7 @@ func main() {
 	if !ok {
 		url = psqlInfo
 	}
-	token, ok := os.LookupEnv("TOKEN")
-	if !ok {
-		token = developerToken
-	}
+
 	fmt.Println("token:")
 	fmt.Println(token)
 
@@ -45,12 +64,15 @@ func main() {
 	}
 
 	port, ok := os.LookupEnv("PORT")
-
+	//updater.Update(songFolder, coverFolder, token, db)
 	if !ok {
 		port = "8080"
 	}
-	server := controller.NewServer(db, token)
-
+	server := controller.NewServer(db, token, songFolder, coverFolder)
+	//updater := func() {
+	//	updater.Update(songFolder, coverFolder, token, db)
+	//}
+	//scheduler.Every(1).Day().Run(updater)
 	log.Println("Started")
 	if err := http.ListenAndServe(":"+port, server.Routes()); err != nil {
 		log.Fatal("Could not start HTTP server", err.Error())
@@ -130,6 +152,25 @@ CREATE TABLE IF NOT EXISTS tag_song
     map_song INTEGER REFERENCES song (id),
     PRIMARY KEY (id)
 );
+CREATE TABLE IF NOT EXISTS cp_update
+(
+    id           SERIAL NOT NULL,
+    ud_date         DATE,
+    found_songs   INTEGER,
+    created_songs INTEGER,
+    failed_songs  INTEGER,
+    deleted_songs INTEGER,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS failed_song
+(
+    id           SERIAL NOT NULL,
+    box_id        varchar(500),
+    error_message varchar(500),
+    cp_update       INTEGER REFERENCES cp_update (id),
+    PRIMARY KEY (id)
+)
   `)
 
 	if err != nil {

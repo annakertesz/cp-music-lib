@@ -11,12 +11,14 @@ import (
 type Server struct {
 	db *sqlx.DB
 	token string
+	musicFolder int
+	coverFolder int
 }
 
 type e map[string]string
 
-func NewServer(db *sqlx.DB, token string) *Server {
-	return &Server{db:db, token:token}
+func NewServer(db *sqlx.DB, token string, musicFolder, coverFolder int) *Server {
+	return &Server{db:db, token:token, musicFolder:musicFolder, coverFolder:coverFolder}
 }
 
 func (server *Server) Routes() chi.Router {
@@ -37,6 +39,9 @@ func (server *Server) Routes() chi.Router {
 	})
 
 	//Songs
+	r.Get("/song/", func(w http.ResponseWriter, r *http.Request) {
+		getAllSongs(server.db, w, r)
+	})
 	r.Get("/song/{songID}", func(w http.ResponseWriter, r *http.Request) {
 		getSongByID(server.db, w, r)
 	})
@@ -49,6 +54,7 @@ func (server *Server) Routes() chi.Router {
 	r.Get("/song/findByTag", func(w http.ResponseWriter, r *http.Request) {
 		getSongByTag(server.db, w, r)
 	})
+	//TODO
 	r.Get("/song/findByFreeSearch", func(w http.ResponseWriter, r *http.Request) {
 		searchSong(server.db, w, r)
 	})
@@ -79,7 +85,7 @@ func (server *Server) Routes() chi.Router {
 	})
 
 	r.Get("/update", func(w http.ResponseWriter, r *http.Request) {
-		update(server.db, w, r)
+		update(server.db, w, r, server.token, server.coverFolder, server.musicFolder)
 	})
 
 	r.Get("/download/{boxID}", func(w http.ResponseWriter, r *http.Request) {
@@ -88,9 +94,11 @@ func (server *Server) Routes() chi.Router {
 
 
 	//Playlist
+	//TODO
 	r.Get("/playlist/findByUser", func(w http.ResponseWriter, r *http.Request) {
 		getPlaylistByUser(server.db, w, r)
 	})
+	//TODO
 	r.Get("/playlist/{playlistID}", func(w http.ResponseWriter, r *http.Request) {
 		getPlaylistById(server.db, w, r)
 	})

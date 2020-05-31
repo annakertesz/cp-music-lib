@@ -44,7 +44,7 @@ func DownloadFile(token string, id int) (io.ReadCloser, string, error) {
 	if resp.StatusCode == http.StatusOK {
 		return resp.Body, resp.Header.Get("Content-Type"), nil
 	}
-	return nil, "",  errors.New(fmt.Sprintf("error from downloader: %v %v", resp.Status))
+	return nil, "",  errors.New(fmt.Sprintf("error from downloader: %v", resp.Status))
 }
 
 func UploadFile(token string, folderID int, filename int, file []byte) (int, error) {

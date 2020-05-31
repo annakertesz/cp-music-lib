@@ -6,7 +6,7 @@ import (
 )
 
 func TestFolder(t *testing.T) {
-	upload, err := GetFileIDsToUpload("AP8rFgRAD58dQxys4lmN8BVf8ffZUZW7", 11056063660, "2017-05-15T13:35:01-07:00")
+	upload, err := GetFileIDsToUpload("U5lXslsTv5YPAz3H2vJe6h824uS25tJi", 11056063660, "2014-02-01T00:00:00Z")
 	if err != nil {
 		fmt.Println(err)
 	}

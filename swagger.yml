@@ -1,0 +1,585 @@
+swagger: "2.0"
+info:
+  description: "Central Publishing Music Catalog API"
+  version: "1.0.0"
+  title: "CP catalog"
+  contact:
+    email: "kerteszannanak@gmail.com"
+basePath: "/"
+tags:
+  - name: "song"
+  - name: "album"
+  - name: "artist"
+  - name: "tag"
+  - name: "user"
+  - name: "playlist"
+schemes:
+  - "https"
+  - "http"
+paths:
+  /song:
+    get:
+      tags:
+        - "song"
+      summary: "get all songs"
+      description: "get all songs"
+      operationId: "getSong"
+      produces:
+        - "application/json"
+      parameters:
+        - in: header
+          name: session
+          type: string
+          format: uuid
+          required: true
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Song"
+        404:
+          description: "there are no results"
+        403:
+          description: "unauthorized"
+        500:
+          description: "internal server error"
+  /song/{songID}:
+    get:
+      tags:
+        - "song"
+      summary: "get song by id"
+      description: "get song by id"
+      operationId: "getSongByID"
+      produces:
+        - "application/json"
+      parameters:
+        - in: header
+          name: session
+          type: string
+          format: uuid
+          required: true
+        - name: "songID"
+          in: "path"
+          description: "ID of song to return"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Song"
+        403:
+          description: "unauthorized"
+        404:
+          description: "there are no results"
+        500:
+          description: "internal server error"
+  /song/findByAlbum:
+    get:
+      tags:
+        - "song"
+      summary: "get songs by album"
+      description: "get songs filtered by album"
+      operationId: "getSongByAlbum"
+      produces:
+        - "application/json"
+      parameters:
+        - in: header
+          name: session
+          type: string
+          format: uuid
+          required: true
+        - name: "album"
+          in: "query"
+          description: "id of the album you want to filter for"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Song"
+        403:
+          description: "unauthorized"
+        404:
+          description: "there are no songs from the album"
+        500:
+          description: "internal server error"
+  /song/findByArtist:
+    get:
+      tags:
+        - "song"
+      summary: "get songs by artist"
+      description: "get songs filtered by artist"
+      operationId: "getSongByArtist"
+      produces:
+        - "application/json"
+      parameters:
+        - in: header
+          name: session
+          type: string
+          format: uuid
+          required: true
+        - name: "artist"
+          in: "query"
+          description: "id of the artist you want to filter for"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Song"
+        403:
+          description: "unauthorized"
+        404:
+          description: "there are no songs from the artist"
+        500:
+          description: "internal server error"
+  /song/findByTag:
+    get:
+      tags:
+        - "song"
+      summary: "get songs by tag"
+      description: "get songs filtered by tag"
+      operationId: "getSongByTag"
+      produces:
+        - "application/json"
+      parameters:
+        - in: header
+          name: session
+          type: string
+          format: uuid
+          required: true
+        - name: "tag"
+          in: "query"
+          description: "id of the tag you want to filter for"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Song"
+        403:
+          description: "unauthorized"
+        404:
+          description: "there are no songs from the tag"
+        500:
+          description: "internal server error"
+  /song/findByFreeSearch:
+    get:
+      tags:
+        - "song"
+      summary: "search in songs by keyword"
+      description: "search in albums, artists, tags and titles"
+      operationId: "searchSong"
+      produces:
+        - "application/json"
+      parameters:
+        - in: header
+          name: session
+          type: string
+          format: uuid
+          required: true
+        - name: "keyword"
+          in: "query"
+          description: "the keyword you want to search for"
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Song"
+        403:
+          description: "unauthorized"
+        404:
+          description: "there are no results"
+        500:
+          description: "internal server error"
+  /album:
+    get:
+      tags:
+        - "album"
+      summary: "get all albums from the database"
+      operationId: "getAllAlbum"
+      produces:
+        - "application/json"
+      parameters:
+        - in: header
+          name: session
+          type: string
+          format: uuid
+          required: true
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Album"
+        403:
+          description: "unauthorized"
+        500:
+          description: "internal server error"
+  /album/{albumID}:
+    get:
+      tags:
+        - "album"
+      summary: "get album by ID"
+      operationId: "getAlbumByID"
+      produces:
+        - "application/json"
+      parameters:
+        - in: header
+          name: session
+          type: string
+          format: uuid
+          required: true
+        - name: "albumID"
+          in: "path"
+          description: "ID of album to return"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Album"
+        403:
+          description: "unauthorized"
+        500:
+          description: "internal server error"
+  /album/findByArtist:
+    get:
+      tags:
+        - "album"
+      summary: "get albums by artist"
+      description: "get albums filtered by artist"
+      operationId: "getAlbumByArtist"
+      produces:
+        - "application/json"
+      parameters:
+        - in: header
+          name: session
+          type: string
+          format: uuid
+          required: true
+        - name: "artist"
+          in: "query"
+          description: "id of the artist you want to filter for"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        200:
+          description: "succesful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Album"
+        403:
+          description: "unauthorized"
+        404:
+          description: "there are no albums from the artist"
+        500:
+          description: "internal server error"
+  /artist:
+    get:
+      tags:
+        - "artist"
+      summary: "get all artist from the database"
+      operationId: "getAllArtist"
+      produces:
+        - "application/json"
+      parameters:
+        - in: header
+          name: session
+          type: string
+          format: uuid
+          required: true
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Artist"
+        403:
+          description: "unauthorized"
+        500:
+          description: "internal server error"
+  /artist/{artistID}:
+    get:
+      tags:
+        - "artist"
+      summary: "get artist by ID"
+      operationId: "getArtistByID"
+      produces:
+        - "application/json"
+      parameters:
+        - in: header
+          name: session
+          type: string
+          format: uuid
+          required: true
+        - name: "artistID"
+          in: "path"
+          description: "ID of artist to return"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Artist"
+        403:
+          description: "unauthorized"
+        500:
+          description: "internal server error"
+  /tag:
+    get:
+      tags:
+        - "tag"
+      summary: "get all tag from the database"
+      operationId: "getAllTag"
+      produces:
+        - "application/json"
+      parameters:
+        - in: header
+          name: session
+          type: string
+          format: uuid
+          required: true
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Tag"
+        403:
+          description: "unauthorized"
+        500:
+          description: "internal server error"
+  /playlist/findByUser:
+    get:
+      tags:
+        - "playlist"
+      summary: "get playlist of a user"
+      operationId: "getPlaylistByUser"
+      produces:
+        - "application/json"
+      parameters:
+        - in: header
+          name: session
+          type: string
+          format: uuid
+          required: true
+        - name: "user"
+          in: "query"
+          description: "id of the user you want to filter for"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        200:
+          description: "succesful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Playlist"
+        403:
+          description: "unauthorized"
+        404:
+          description: "there are no playlists of the user"
+        500:
+          description: "internal server error"
+  /playlist/{playlistID}:
+    get:
+      tags:
+        - "playlist"
+      summary: "get playlist by ID"
+      operationId: "getPlaylistByID"
+      produces:
+        - "application/json"
+      parameters:
+        - in: header
+          name: session
+          type: string
+          format: uuid
+          required: true
+        - name: "playlistID"
+          in: "path"
+          description: "ID of playlist to return"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Playlist"
+        403:
+          description: "unauthorized"
+        500:
+          description: "internal server error"
+  /user:
+    post:
+      tags:
+        - "user"
+      summary: "Create user"
+      description: "For user registration"
+      operationId: "createUser"
+      produces:
+        - "application/xml"
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "user"
+          description: "Created user object"
+          required: true
+          schema:
+            $ref: "#/definitions/User"
+      responses:
+        default:
+          description: "successful operation"
+  /user/login:
+    post:
+      tags:
+        - "user"
+      summary: "authenticate user"
+      description: "authentication for login"
+      operationId: "login"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "username"
+          description: "username"
+          required: true
+          schema:
+            $ref: "#/definitions/UserLogin"
+      responses:
+        200:
+          description: "session id"
+          schema:
+            type: string
+            format: uuid
+        403:
+          description: "unauthorized"
+definitions:
+  Tag:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+        description: "name of the tag"
+  Song:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      title:
+        type: "string"
+        description: "title of the song"
+      album:
+        $ref: "#/definitions/Album"
+      lq_song:
+        type: "string"
+        description: "url of the low-quality mp3 file for the player"
+      hq_song:
+        type: "string"
+        description: "url of the high-quality waw (?) file for download"
+      lq_instr:
+        type: "string"
+        description: "url of the low-quality instrumental mp3 file for the player"
+      hq_instr:
+        type: "string"
+        description: "url of the high-quality instrumental waw (?) file for download"
+  Album:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      title:
+        type: "string"
+        description: "title of the album"
+      artist:
+        $ref: "#/definitions/Artist"
+      thumbnail:
+        type: "string"
+        description: "url of the thumbnail image"
+  Artist:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+        description: "name of the artist"
+  Playlist:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      title:
+        type: "string"
+        description: "title of the playlist"
+      songs:
+        type: "array"
+        items:
+          $ref: "#/definitions/Song"
+  UserLogin:
+    type: "object"
+    properties:
+      username:
+        type: "string"
+      password:
+        type: "string"
+  User:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      username:
+        type: "string"
+      firstName:
+        type: "string"
+      lastName:
+        type: "string"
+      email:
+        type: "string"
+      password_hash:
+        type: "string"
+      phone:
+        type: "string"
+      userStatus:
+        type: "integer"
+        format: "int32"
+        description: "User Status"
+    xml:
+      name: "User"

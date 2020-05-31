@@ -10,6 +10,29 @@ import (
 	"strconv"
 )
 
+func getAllSongs(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
+	songs, err := models.GetAllSongs(db)
+	if err != nil {
+		fmt.Printf("error in getAllSongs: %v", err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	SongROs, err := songROListFromSongs(songs, db)
+	if err != nil {
+		fmt.Printf("error in getAllSongs: %v", err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	songsJSON, err := json.Marshal(SongROs)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(songsJSON)
+	w.WriteHeader(http.StatusOK)
+}
+
 func getSongByID(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	param:= chi.URLParam(r, "songID")
 	id, err := strconv.Atoi(param)

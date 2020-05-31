@@ -14,10 +14,10 @@ CREATE TABLE IF NOT EXISTS tag
 
 CREATE TABLE IF NOT EXISTS album
 (
-    id                  SERIAL NOT NULL,
-    album_name          varchar(150),
-    album_artist        SERIAL REFERENCES artist (id),
-    album_cover INT,
+    id           SERIAL NOT NULL,
+    album_name   varchar(150),
+    album_artist SERIAL REFERENCES artist (id),
+    album_cover  INT,
     PRIMARY KEY (id)
 );
 
@@ -43,4 +43,25 @@ CREATE TABLE IF NOT EXISTS tag_song
     map_song INTEGER REFERENCES song (id),
     PRIMARY KEY (id)
 );
+CREATE TABLE IF NOT EXISTS cp_update
+(
+    id           SERIAL NOT NULL,
+    ud_date         DATE,
+    found_songs   INTEGER,
+    created_songs INTEGER,
+    failed_songs  INTEGER,
+    deleted_songs INTEGER,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS failed_song
+(
+    id           SERIAL NOT NULL,
+    box_id        varchar(500),
+    error_message varchar(500),
+    cp_update       INTEGER REFERENCES cp_update (id),
+    PRIMARY KEY (id)
+)
+
+
 
