@@ -504,6 +504,10 @@ definitions:
         description: "title of the song"
       album:
         $ref: "#/definitions/Album"
+      tags:
+        type: "array"
+        items:
+          $ref: "#/definitions/Tag"
       lq_song:
         type: "string"
         description: "url of the low-quality mp3 file for the player"
