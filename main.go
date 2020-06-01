@@ -196,6 +196,18 @@ CREATE TABLE IF NOT EXISTS failed_song
     PRIMARY KEY (id)
 );
 
+CREATE TABLE IF NOT EXISTS cp_user
+(
+    id            SERIAL NOT NULL,
+    username      varchar(150),
+    first_name    varchar(150),
+    last_name     varchar(150),
+    email         varchar(150),
+    password_hash varchar(150),
+    phone         varchar(500),
+    user_status   int,
+    PRIMARY KEY (id)
+);
 
 CREATE TABLE IF NOT EXISTS sessions
 (
@@ -219,19 +231,6 @@ CREATE TABLE IF NOT EXISTS playlist_song
     id       SERIAL NOT NULL,
     map_playlist  INTEGER REFERENCES playlist (id),
     map_song INTEGER REFERENCES song (id),
-    PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS cp_user
-(
-    id            SERIAL NOT NULL,
-    username      varchar(150),
-    first_name    varchar(150),
-    last_name     varchar(150),
-    email         varchar(150),
-    password_hash varchar(150),
-    phone         varchar(500),
-    user_status   int,
     PRIMARY KEY (id)
 );
   `)
