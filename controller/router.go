@@ -52,7 +52,6 @@ func (server *Server) Routes() chi.Router {
 	r.Get("/song", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("getAllSong")
 		getAllSongs(server.db, w, r)
-		w.Header().Add("Access-Control-Allow-Origin", "*")
 	})
 	r.Get("/song/{songID}", func(w http.ResponseWriter, r *http.Request) {
 		getSongByID(server.db, w, r)
@@ -75,7 +74,7 @@ func (server *Server) Routes() chi.Router {
 	r.Get("/album", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("album request")
 		getAllAlbum(server.db, w, r)
-		w.Header().Add("Access-Control-Allow-Origin", "*")
+
 	})
 	r.Get("/album/findByArtist", func(w http.ResponseWriter, r *http.Request) {
 		getAlbumsByArtist(server.db, w, r)
@@ -115,9 +114,9 @@ func (server *Server) Routes() chi.Router {
 
 	//Playlist
 	//TODO
-	//r.Post("/playlist", func(w http.ResponseWriter, r *http.Request) {
-	//	createPLaylist(server.db, w, r)
-	//})
+	r.Post("/playlist", func(w http.ResponseWriter, r *http.Request) {
+		createPlaylist(server.db, w, r)
+	})
 	//TODO
 	r.Get("/playlist/{playlistID}", func(w http.ResponseWriter, r *http.Request) {
 		getPlaylistById(server.db, w, r)
@@ -126,7 +125,6 @@ func (server *Server) Routes() chi.Router {
 	//User
 	r.Post("/user", func(w http.ResponseWriter, r *http.Request) {
 		createUser(server.db, w, r)
-		w.Header().Add("Access-Control-Allow-Origin", "*")
 	})
 	r.Post("/user/{userID}/validate", func(w http.ResponseWriter, r *http.Request) {
 		validateUser(server.db, w, r)
