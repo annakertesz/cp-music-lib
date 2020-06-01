@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	box_lib "github.com/annakertesz/cp-music-lib/box-lib"
 	"github.com/go-chi/chi"
 "github.com/go-chi/cors"
 	"github.com/jmoiron/sqlx"
@@ -9,16 +10,24 @@ import (
 )
 
 type Server struct {
-	db *sqlx.DB
-	token string
+	db          *sqlx.DB
+	Token       string
 	musicFolder int
 	coverFolder int
+	clientID string
+	clientSecret string
+	privateKey string
 }
 
 type e map[string]string
 
-func NewServer(db *sqlx.DB, token string, musicFolder, coverFolder int) *Server {
-	return &Server{db:db, token:token, musicFolder:musicFolder, coverFolder:coverFolder}
+func NewServer(db *sqlx.DB, clientID string, clientSecret string, privateKey string, musicFolder, coverFolder int) *Server {
+	token := box_lib.AuthOfBox(clientID, clientSecret, privateKey)
+	return &Server{db:db, Token:token, musicFolder:musicFolder, coverFolder:coverFolder, clientID:clientID, clientSecret:clientSecret, privateKey:privateKey}
+}
+
+func (s *Server) GetBoxToken() {
+	s.Token = box_lib.AuthOfBox(s.clientID, s.clientSecret, s.privateKey)
 }
 
 func (server *Server) Routes() chi.Router {
@@ -87,19 +96,26 @@ func (server *Server) Routes() chi.Router {
 	})
 
 	r.Get("/update", func(w http.ResponseWriter, r *http.Request) {
-		update(server.db, w, r, server.token, server.coverFolder, server.musicFolder)
+		update(server.db, w, r, server.Token, server.coverFolder, server.musicFolder)
 	})
 
 	r.Get("/download/{boxID}", func(w http.ResponseWriter, r *http.Request) {
-		download(server.db, server.token, w, r)
+		err := download(server.db, server.Token, w, r)
+		if err != nil {
+			server.GetBoxToken()
+			err := download(server.db, server.Token, w, r)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+			}
+		}
 	})
 
 
 	//Playlist
 	//TODO
-	r.Get("/playlist/findByUser", func(w http.ResponseWriter, r *http.Request) {
-		getPlaylistByUser(server.db, w, r)
-	})
+	//r.Post("/playlist", func(w http.ResponseWriter, r *http.Request) {
+	//	createPLaylist(server.db, w, r)
+	//})
 	//TODO
 	r.Get("/playlist/{playlistID}", func(w http.ResponseWriter, r *http.Request) {
 		getPlaylistById(server.db, w, r)

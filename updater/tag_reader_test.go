@@ -6,16 +6,33 @@ import (
 	"github.com/dhowden/tag"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
+	"golang.org/x/crypto/bcrypt"
 	"io/ioutil"
+	"log"
 	"testing"
 )
+
+func TestTimestamp(t *testing.T){
+	fmt.Println(hash("blablabla"))
+	fmt.Println(hash("blablabla"))
+	fmt.Println(hash("blablabla"))
+}
+
+func hash(pwd string) string {
+	hash, err := bcrypt.GenerateFromPassword([]byte(pwd), bcrypt.MinCost)
+	if err != nil {
+		log.Println(err)
+	}
+	return string(hash)
+}
+
 
 func TestUpdate(t *testing.T) {
 	db, err := connectToDB()
 	if err!=nil {
 		panic("couldnt connect to db")
 	}
-	Update(11056063660, "2017-05-15T13:35:01-07:00", "NBHZNGZKqsIIQnNQOQhlUsOMqa1msDId", db )
+	Update(11056063660, 345345, "NBHZNGZKqsIIQnNQOQhlUsOMqa1msDId", db )
 }
 
 func TestTagReader(t *testing.T){
@@ -31,14 +48,14 @@ func TestTagReader(t *testing.T){
 	fmt.Println(from)
 }
 
-func TestUploadSong(t *testing.T) {
-	db, err := connectToDB()
-	if err!=nil {
-		panic("couldnt connect to db")
-	}
-	readFile, err := ioutil.ReadFile("../sources/instr.mp3")
-	UploadSong(readFile, 124324, db)
-}
+//func TestUploadSong(t *testing.T) {
+//	db, err := connectToDB()
+//	if err!=nil {
+//		panic("couldnt connect to db")
+//	}
+//	readFile, err := ioutil.ReadFile("../sources/instr.mp3")
+//	UploadSong(readFile, 124324, db)
+//}
 
 func connectToDB()(*sqlx.DB, error) {
 	url := "host=localhost port=5432 user=anna password=gfd dbname=centralp sslmode=disable"

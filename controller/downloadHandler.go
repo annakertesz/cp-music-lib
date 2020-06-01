@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-func download(db *sqlx.DB, token string, w http.ResponseWriter, r *http.Request){
+func download(db *sqlx.DB, token string, w http.ResponseWriter, r *http.Request) error{
 	param:= chi.URLParam(r, "boxID")
 	fmt.Println("download")
 	fmt.Println(param)
@@ -17,17 +17,17 @@ func download(db *sqlx.DB, token string, w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		fmt.Println("couldnt convert string to int")
 		w.WriteHeader(http.StatusBadRequest)
-		return
+		return nil
 	}
 	resp, contentType, err := box_lib.DownloadFileBytes(token, id)
 	if err != nil {
 		fmt.Println("Couldnt download song")
 		fmt.Println(err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+		return err
 	}
 	w.Header().Set("Content-Type", contentType)
 	w.Write(resp)
+	return nil
 }
 
 

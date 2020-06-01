@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	box_lib "github.com/annakertesz/cp-music-lib/box-lib"
 	"github.com/annakertesz/cp-music-lib/controller"
 	"github.com/annakertesz/cp-music-lib/updater"
+	"github.com/carlescere/scheduler"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	"io/ioutil"
@@ -72,9 +72,6 @@ func main() {
 		url = psqlInfo
 	}
 
-	token := box_lib.AuthOfBox(clientID, clientSecret, privateKey)
-	fmt.Println("token:")
-	fmt.Println(token)
 
 	db, err = connect(url)
 
@@ -83,15 +80,22 @@ func main() {
 	}
 
 	port, ok := os.LookupEnv("PORT")
-	updater.Update(songFolder, coverFolder, token, db)
+	server := controller.NewServer(db, clientID, clientSecret, privateKey, songFolder, coverFolder)
+	updater.Update(songFolder, coverFolder, server.Token, db)
 	if !ok {
 		port = "8080"
 	}
-	server := controller.NewServer(db, token, songFolder, coverFolder)
-	//updater := func() {
-	//	updater.Update(songFolder, coverFolder, token, db)
-	//}
-	//scheduler.Every(1).Day().Run(updater)
+	updater := func() {
+		err = updater.Update(songFolder, coverFolder, server.Token, db)
+		if err != nil {
+			server.GetBoxToken()
+			err = updater.Update(songFolder, coverFolder, server.Token, db)
+			if err != nil {
+				fmt.Printf("couldnt update %v", err.Error())
+			}
+		}
+	}
+	scheduler.Every(1).Day().Run(updater)
 	log.Println("Started")
 	if err := http.ListenAndServe(":"+port, server.Routes()); err != nil {
 		log.Fatal("Could not start HTTP server", err.Error())
@@ -171,6 +175,7 @@ CREATE TABLE IF NOT EXISTS tag_song
     map_song INTEGER REFERENCES song (id),
     PRIMARY KEY (id)
 );
+
 CREATE TABLE IF NOT EXISTS cp_update
 (
     id           SERIAL NOT NULL,
@@ -201,6 +206,21 @@ CREATE TABLE IF NOT EXISTS sessions
     PRIMARY KEY (id)
 );
 
+CREATE TABLE IF NOT EXISTS playlist
+(
+    id           SERIAL NOT NULL,
+    title        varchar(500),
+    cp_user INTEGER REFERENCES cp_user (id),
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS playlist_song
+(
+    id       SERIAL NOT NULL,
+    map_playlist  INTEGER REFERENCES playlist (id),
+    map_song INTEGER REFERENCES song (id),
+    PRIMARY KEY (id)
+);
 
 CREATE TABLE IF NOT EXISTS cp_user
 (
