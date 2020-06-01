@@ -17,8 +17,9 @@ func getAllAlbum(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 		fmt.Println(err.Error())
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, X-Auth-Token")
 		w.Header().Set("Access-Control-Allow-Headers", "X-PINGOTHER, Content-Type")
-		w.Header().Set("Access-Control-Max-Age", "86400")
+		w.Header().Set("Access-Control-Max-Age", "86400");
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -28,7 +29,7 @@ func getAllAlbum(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 		fmt.Println(err.Error())
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "X-PINGOTHER, Content-Type")
+		w.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, X-Auth-Token")
 		w.Header().Set("Access-Control-Max-Age", "86400")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -38,7 +39,7 @@ func getAllAlbum(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 		fmt.Println(err.Error())
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "X-PINGOTHER, Content-Type")
+		w.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, X-Auth-Token")
 		w.Header().Set("Access-Control-Max-Age", "86400")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -46,7 +47,7 @@ func getAllAlbum(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "X-PINGOTHER, Content-Type")
+	w.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, X-Auth-Token")
 	w.Header().Set("Access-Control-Max-Age", "86400")
 	w.Write(albumsJSON)
 	//w.WriteHeader(http.StatusOK)
