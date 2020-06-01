@@ -24,7 +24,6 @@ func getUsers(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	w.Write(b)
 }
 
-//TODO
 func createUser(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	user, err := models.UnmarshalUser(r)
 	if err != nil {

@@ -52,6 +52,7 @@ func (server *Server) Routes() chi.Router {
 	r.Get("/song", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("getAllSong")
 		getAllSongs(server.db, w, r)
+		w.Header().Add("Access-Control-Allow-Origin", "*")
 	})
 	r.Get("/song/{songID}", func(w http.ResponseWriter, r *http.Request) {
 		getSongByID(server.db, w, r)
@@ -124,6 +125,7 @@ func (server *Server) Routes() chi.Router {
 	//User
 	r.Post("/user", func(w http.ResponseWriter, r *http.Request) {
 		createUser(server.db, w, r)
+		w.Header().Add("Access-Control-Allow-Origin", "*")
 	})
 	r.Post("/user/{userID}/validate", func(w http.ResponseWriter, r *http.Request) {
 		validateUser(server.db, w, r)
