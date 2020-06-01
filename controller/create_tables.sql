@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS failed_song
 );
 
 
-CREATE TABLE IF NOT EXISTS user
+CREATE TABLE IF NOT EXISTS cp_user
 (
     id            SERIAL NOT NULL,
     username      varchar(150),

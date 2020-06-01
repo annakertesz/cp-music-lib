@@ -23,6 +23,11 @@
 			"Rev": "dd9be7a7d47fd8abdfdddeca8d0df40734fd190d"
 		},
 		{
+			"ImportPath": "github.com/google/uuid",
+			"Comment": "v1.1.1-9-g7c63a14",
+			"Rev": "7c63a14153262497940ad1c2237accc855f47684"
+		},
+		{
 			"ImportPath": "github.com/jmoiron/sqlx",
 			"Comment": "v1.2.0-28-gee51494",
 			"Rev": "ee514944af4b0d1b90212831674e03df1b850998"
@@ -46,6 +51,14 @@
 			"ImportPath": "github.com/lib/pq/scram",
 			"Comment": "v1.3.0-6-g356e267",
 			"Rev": "356e267cd3f45ee1303b7d8765e3583cb949950e"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/bcrypt",
+			"Rev": "06a226fb4e3765ef3f48aa2852b401bc7b98e981"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/blowfish",
+			"Rev": "06a226fb4e3765ef3f48aa2852b401bc7b98e981"
 		}
 	]
 }

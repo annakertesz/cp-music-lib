@@ -104,6 +104,17 @@ func (server *Server) Routes() chi.Router {
 	r.Get("/playlist/{playlistID}", func(w http.ResponseWriter, r *http.Request) {
 		getPlaylistById(server.db, w, r)
 	})
+
+	//User
+	r.Post("/user", func(w http.ResponseWriter, r *http.Request) {
+		createUser(server.db, w, r)
+	})
+	r.Post("/user/{userID}/validate", func(w http.ResponseWriter, r *http.Request) {
+		validateUser(server.db, w, r)
+	})
+	r.Post("/user/login", func(w http.ResponseWriter, r *http.Request) {
+		loginUser(server.db, w, r)
+	})
 	return r
 }
 

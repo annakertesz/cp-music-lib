@@ -2,9 +2,13 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/annakertesz/cp-music-lib/models"
+	"github.com/go-chi/chi"
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"net/http"
+	"strconv"
 )
 
 func getUsers(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
@@ -20,18 +24,53 @@ func getUsers(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	w.Write(b)
 }
 
+//TODO
 func createUser(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	user, err := models.UnmarshalUser(r)
 	if err != nil {
-		http.Error(w, err.Error(), 422)
+		http.Error(w, err.Error(), 404)
 		return
 	}
-	created, err := models.CreateUser(db, user.Username)
+	_, err = models.CreateUser(db, user)
 	if err != nil {
 		http.Error(w, err.Error(), 422)
 		return
 	}
-	b, err := json.Marshal(created)
 	w.WriteHeader(http.StatusOK)
-	w.Write(b)
 }
+
+func validateUser(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
+	param:= chi.URLParam(r, "userID")
+	id, err := strconv.Atoi(param)
+	if err != nil {
+		fmt.Printf("\nuser id %v isnt a number")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	err = models.UpdateUserStatus(db, id)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+}
+
+func loginUser(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
+	user, err := models.UnmarshalUserValidation(r)
+	if err != nil {
+		http.Error(w, err.Error(), 404)
+		return
+	}
+	userID := models.CheckUserCredentials(db, user.Username, user.Password)
+	if (userID >0){
+		uuid := uuid.New()
+		err := models.CreateSession(db, userID, uuid.String())
+		if err == nil {
+			fmt.Fprint(w, uuid)
+			w.WriteHeader(http.StatusOK)
+		}
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+	w.WriteHeader(http.StatusUnauthorized)
+}
+

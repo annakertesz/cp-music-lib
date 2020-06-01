@@ -7,6 +7,7 @@ import (
 	"github.com/annakertesz/cp-music-lib/updater"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -42,7 +43,13 @@ func main() {
 	}
 	privateKey, ok := os.LookupEnv("PRIVATE_KEY")
 	if !ok {
-		panic("need box credentials: PRIVATE_KEY")
+		privateKeyData, err := ioutil.ReadFile("private.key")
+		if err != nil {
+			fmt.Println(err)
+			panic("need box credentials: PRIVATE_KEY")
+		}
+		privateKey = string(privateKeyData)
+
 	}
 	songFolder, err := strconv.Atoi(songFolderStr)
 	if err != nil {
@@ -182,7 +189,31 @@ CREATE TABLE IF NOT EXISTS failed_song
     error_message varchar(500),
     cp_update       INTEGER REFERENCES cp_update (id),
     PRIMARY KEY (id)
-)
+);
+
+
+CREATE TABLE IF NOT EXISTS sessions
+(
+    id           SERIAL NOT NULL,
+    session_id        varchar(500),
+    cp_user INTEGER REFERENCES cp_user (id),
+    expiration       timestamp,
+    PRIMARY KEY (id)
+);
+
+
+CREATE TABLE IF NOT EXISTS cp_user
+(
+    id            SERIAL NOT NULL,
+    username      varchar(150),
+    first_name    varchar(150),
+    last_name     varchar(150),
+    email         varchar(150),
+    password_hash varchar(150),
+    phone         varchar(500),
+    user_status   int,
+    PRIMARY KEY (id)
+);
   `)
 
 	if err != nil {
