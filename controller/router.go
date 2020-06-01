@@ -4,26 +4,26 @@ import (
 	"fmt"
 	box_lib "github.com/annakertesz/cp-music-lib/box-lib"
 	"github.com/go-chi/chi"
-"github.com/go-chi/cors"
+	"github.com/go-chi/cors"
 	"github.com/jmoiron/sqlx"
 	"net/http"
 )
 
 type Server struct {
-	db          *sqlx.DB
-	Token       string
-	musicFolder int
-	coverFolder int
-	clientID string
+	db           *sqlx.DB
+	Token        string
+	musicFolder  int
+	coverFolder  int
+	clientID     string
 	clientSecret string
-	privateKey string
+	privateKey   string
 }
 
 type e map[string]string
 
 func NewServer(db *sqlx.DB, clientID string, clientSecret string, privateKey string, musicFolder, coverFolder int) *Server {
 	token := box_lib.AuthOfBox(clientID, clientSecret, privateKey)
-	return &Server{db:db, Token:token, musicFolder:musicFolder, coverFolder:coverFolder, clientID:clientID, clientSecret:clientSecret, privateKey:privateKey}
+	return &Server{db: db, Token: token, musicFolder: musicFolder, coverFolder: coverFolder, clientID: clientID, clientSecret: clientSecret, privateKey: privateKey}
 }
 
 func (s *Server) GetBoxToken() {
@@ -34,7 +34,7 @@ func (server *Server) Routes() chi.Router {
 	r := chi.NewRouter()
 	cors := cors.New(cors.Options{
 		// AllowedOrigins: []string{"https://foo.com"}, // Use this to allow specific origin hosts
-		AllowedOrigins:   []string{"*"},
+		AllowedOrigins: []string{"*"},
 		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
 		AllowedMethods:   []string{"GET"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
@@ -90,7 +90,7 @@ func (server *Server) Routes() chi.Router {
 	r.Get("/artist/{artistID}", func(w http.ResponseWriter, r *http.Request) {
 		getArtistById(server.db, w, r)
 	})
-	
+
 	//Tags
 	r.Get("/tag", func(w http.ResponseWriter, r *http.Request) {
 		getAllTag(server.db, w, r)
@@ -111,7 +111,6 @@ func (server *Server) Routes() chi.Router {
 		}
 	})
 
-
 	//Playlist
 	//TODO
 	r.Post("/playlist", func(w http.ResponseWriter, r *http.Request) {
@@ -126,6 +125,13 @@ func (server *Server) Routes() chi.Router {
 	r.Post("/user", func(w http.ResponseWriter, r *http.Request) {
 		createUser(server.db, w, r)
 	})
+	r.Options("/user", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, X-Auth-Token, Accept, Content-Length")
+		w.Header().Set("Access-Control-Max-Age", "86400")
+		w.WriteHeader(http.StatusOK)
+	})
 	r.Post("/user/{userID}/validate", func(w http.ResponseWriter, r *http.Request) {
 		validateUser(server.db, w, r)
 	})
@@ -134,4 +140,3 @@ func (server *Server) Routes() chi.Router {
 	})
 	return r
 }
-
