@@ -75,6 +75,7 @@ func (server *Server) Routes() chi.Router {
 	r.Get("/album", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("album request")
 		getAllAlbum(server.db, w, r)
+		w.Header().Add("Access-Control-Allow-Origin", "*")
 	})
 	r.Get("/album/findByArtist", func(w http.ResponseWriter, r *http.Request) {
 		getAlbumsByArtist(server.db, w, r)
