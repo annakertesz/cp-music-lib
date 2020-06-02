@@ -36,11 +36,13 @@ func (server *Server) Routes() chi.Router {
 		// AllowedOrigins: []string{"https://foo.com"}, // Use this to allow specific origin hosts
 		AllowedOrigins: []string{"*"},
 		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
-		AllowedMethods:   []string{"GET"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		AllowedMethods:   []string{"GET", "POST", "OPTIONS", "HEAD"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "Referer"},
 		ExposedHeaders:   []string{"Link"},
-		AllowCredentials: false,
+		AllowCredentials: true,
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
+		OptionsPassthrough: false,
+		Debug: true,
 	})
 	r.Use(cors.Handler)
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
@@ -124,13 +126,6 @@ func (server *Server) Routes() chi.Router {
 	//User
 	r.Post("/user", func(w http.ResponseWriter, r *http.Request) {
 		createUser(server.db, w, r)
-	})
-	r.Options("/user", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		w.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, X-Auth-Token, Accept, Content-Length, Accept-Encoding, X-CSRF-TOKEN, Authorization")
-		w.Header().Set("Access-Control-Max-Age", "86400")
-		w.WriteHeader(http.StatusOK)
 	})
 	r.Post("/user/{userID}/validate", func(w http.ResponseWriter, r *http.Request) {
 		validateUser(server.db, w, r)

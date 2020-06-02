@@ -15,11 +15,6 @@ func getAllAlbum(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	albums, err := models.GetAlbum(db)
 	if err != nil {
 		fmt.Println(err.Error())
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, X-Auth-Token")
-		w.Header().Set("Access-Control-Allow-Headers", "X-PINGOTHER, Content-Type")
-		w.Header().Set("Access-Control-Max-Age", "86400");
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -27,28 +22,15 @@ func getAllAlbum(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	AlbumROs, err := albumROListFromAlbums(albums, db)
 	if err != nil {
 		fmt.Println(err.Error())
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, X-Auth-Token")
-		w.Header().Set("Access-Control-Max-Age", "86400")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	albumsJSON, err := json.Marshal(AlbumROs)
 	if err != nil {
 		fmt.Println(err.Error())
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, X-Auth-Token")
-		w.Header().Set("Access-Control-Max-Age", "86400")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, X-Auth-Token")
-	w.Header().Set("Access-Control-Max-Age", "86400")
 	w.Write(albumsJSON)
 	//w.WriteHeader(http.StatusOK)
 

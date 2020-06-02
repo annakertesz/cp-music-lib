@@ -27,26 +27,14 @@ func getUsers(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 func createUser(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	user, err := models.UnmarshalUser(r)
 	if err != nil {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, X-Auth-Token")
-		w.Header().Set("Access-Control-Max-Age", "86400")
 		http.Error(w, err.Error(), 404)
 		return
 	}
 	_, err = models.CreateUser(db, user)
 	if err != nil {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, X-Auth-Token")
-		w.Header().Set("Access-Control-Max-Age", "86400")
 		http.Error(w, err.Error(), 422)
 		return
 	}
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, X-Auth-Token")
-	w.Header().Set("Access-Control-Max-Age", "86400")
 	w.WriteHeader(http.StatusOK)
 }
 
