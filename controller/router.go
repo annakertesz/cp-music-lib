@@ -77,9 +77,9 @@ func (server *Server) Routes() chi.Router {
 			getSongByTag(server.db, w, r)
 		}
 	})
-	r.Post("/song/{playlisyID}", func(w http.ResponseWriter, r *http.Request) {
+	r.Post("/song/{songID}", func(w http.ResponseWriter, r *http.Request) {
 		if authenticated(server.db, w, r) {
-			//addSongToPlaylist(server.db, w, r)
+			addSongToPlaylist(server.db, w, r)
 		}
 	})
 	r.Delete("/song/{playlisyID}", func(w http.ResponseWriter, r *http.Request) {

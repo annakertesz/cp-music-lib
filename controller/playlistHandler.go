@@ -33,7 +33,7 @@ func deletePlaylistByID(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	param:= chi.URLParam(r, "playlistID")
 	id, err := strconv.Atoi(param)
 	if err != nil {
-		fmt.Printf("\nsong id %v isnt a number")
+		fmt.Printf("\nplaylist id %v isnt a number")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -41,6 +41,27 @@ func deletePlaylistByID(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
+	}
+}
+
+func addSongToPlaylist(db *sqlx.DB, w http.ResponseWriter, r *http.Request) {
+	param:= chi.URLParam(r, "songID")
+	songID, err := strconv.Atoi(param)
+	if err != nil {
+		fmt.Printf("\nsong id %v isnt a number")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	plID := r.URL.Query().Get("playlistID")
+	playlistID, err := strconv.Atoi(plID)
+	if err != nil {
+		fmt.Printf("playlist id %v isnt a number")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	err = models.AddSongToPlalist(db, songID, playlistID)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 }
 

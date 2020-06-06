@@ -35,6 +35,15 @@ func DeletePlaylist(db *sqlx.DB, playlistID int) error {
 	return nil
 }
 
+func AddSongToPlalist(db *sqlx.DB, songID int, playlistID int) error{
+	sqlStatement := `INSERT INTO playlist_song (map_playlist, map_song) VALUES ($1, $2)`
+	_, err := db.Exec(sqlStatement, playlistID, songID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func GetPlaylistByID(db *sqlx.DB, playlistID int) (Playlist, error){
 	var playlist Playlist
 	err := db.QueryRowx(
