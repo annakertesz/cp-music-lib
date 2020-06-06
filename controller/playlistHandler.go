@@ -1,19 +1,23 @@
 package controller
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/annakertesz/cp-music-lib/models"
+	"github.com/go-chi/chi"
 	"github.com/jmoiron/sqlx"
 	"net/http"
+	"strconv"
 )
 
-func createPlaylist(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
+func createPlaylist(db *sqlx.DB, w http.ResponseWriter, r *http.Request) {
 	title := r.URL.Query().Get("title")
-	if len(title)<1 {
+	if len(title) < 1 {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	userID, err := models.ValidateSessionID(db, r.Header.Get("session"))
-	if err!= nil {
+	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
@@ -24,30 +28,79 @@ func createPlaylist(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	}
 	w.WriteHeader(http.StatusOK)
 }
-//
-//func getAllPlaylist(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
-//	userID, err := models.ValidateSessionID(db, r.Header.Get("session"))
-//	if err!= nil {
-//		http.Error(w, err.Error(), 500)
-//		return
-//	}
-//
-//}
-//
-//func getPlaylistById(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
-//	w.WriteHeader(http.StatusOK)
-//}
 
-//func playlistROFromPlaylist(playlist models.Playlist,  db *sqlx.DB) PlaylistRO{
-//	//user, err := models.GetUserByID(db, playlist.User)
-//	//songROList, err := songROListFromSongs(songs, db)
-//	//return PlaylistRO{
-//	//	Title: playlist.Title,
-//	//	User:  models.UserROFromUser(user),
-//	//	Songs: nil,
-//	//}
-//}
-//
-//func playlistROListFromPlaylists(songs []models.Song, db *sqlx.DB) ([]SongRO, error) {
-//
-//}error
+func getAllPlaylist(db *sqlx.DB, w http.ResponseWriter, r *http.Request) {
+	userID, err := models.ValidateSessionID(db, r.Header.Get("session"))
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	playlists, err := models.GetAllPLaylist(db, userID)
+	playlistROs, err := playlistROListFromPlaylists(playlists, db)
+	playlistJSON, err := json.Marshal(playlistROs)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(playlistJSON)
+	w.WriteHeader(http.StatusOK)
+}
+
+func getPlaylistById(db *sqlx.DB, w http.ResponseWriter, r *http.Request) {
+	param:= chi.URLParam(r, "playlistID")
+	id, err := strconv.Atoi(param)
+	if err != nil {
+		fmt.Printf("\nsong id %v isnt a number")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	playlist, err := models.GetPlaylistByID(db, id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+	playlistRO, err := playlistROFromPlaylist(playlist, db)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+	playlistJSON, err := json.Marshal(playlistRO)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(playlistJSON)
+	w.WriteHeader(http.StatusOK)
+}
+
+func playlistROFromPlaylist(playlist models.Playlist, db *sqlx.DB) (*PlaylistRO, error) {
+	user, err := models.GetUserByID(db, playlist.User)
+	if err != nil {
+		return nil, err
+	}
+	songs, err := models.GetSongsByPlaylist(db, playlist.ID)
+	if err != nil {
+		return nil, err
+	}
+	songROList, err := songROListFromSongs(songs, db)
+	if err != nil {
+		return nil, err
+	}
+	return &PlaylistRO{
+		Title: playlist.Title,
+		User:  UserROFromUser(user),
+		Songs: songROList,
+	}, nil
+}
+
+func playlistROListFromPlaylists(playlists []models.Playlist, db *sqlx.DB) ([]PlaylistRO, error) {
+	playlistROs := make([]PlaylistRO, 0)
+	for _, playlist := range playlists {
+		pl, err := playlistROFromPlaylist(playlist, db)
+		if err != nil {
+			return nil, err
+		}
+		playlistROs = append(playlistROs, *pl)
+	}
+	return playlistROs, nil
+}

@@ -78,3 +78,14 @@ func loginUser(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	w.WriteHeader(http.StatusUnauthorized)
 }
 
+
+func UserROFromUser(user models.User) UserRO {
+	return UserRO{
+		ID:        user.ID,
+		UserName:  user.Username,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Email:     user.Email,
+		Phone:     user.Phone,
+	}
+}

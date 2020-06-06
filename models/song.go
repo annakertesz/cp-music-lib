@@ -137,7 +137,7 @@ func GetAllSongs(db *sqlx.DB) ([]Song, error) {
 	return songs, nil
 }
 
-func GetSongsByPlaylist(db *sqlx.DB, playlistID string) ([]Song, error) {
+func GetSongsByPlaylist(db *sqlx.DB, playlistID int) ([]Song, error) {
 	rows, err := db.Queryx(
 		`SELECT 
 				song.id, 

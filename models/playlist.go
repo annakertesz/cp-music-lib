@@ -6,6 +6,7 @@ import (
 )
 
 type Playlist struct {
+	ID int `json:"id" db:"id"`
 	Title string `json:"title" db:"title"`
 	User  int    `json:"user" db:"cp_user"`
 }

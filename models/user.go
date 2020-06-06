@@ -13,7 +13,7 @@ import (
 )
 
 type User struct {
-	ID       int64  `json:"id" db:"id"`
+	ID       int  `json:"id" db:"id"`
 	Username string `json:"username" db:"username"`
 	FirstName string `json:"first_name" db:"first_name"`
 	LastName string `json:"last_name" db:"last_name"`
@@ -198,14 +198,3 @@ func ValidateSessionID(db *sqlx.DB, sessionID string) (int, error) {
 	}
 	return id, nil
 }
-
-//func UserROFromUser(user User) UserRO {
-//	return modelUserRO{
-//		ID:        user.ID,
-//		Username:  user.Username,
-//		FirstName: user.FirstName,
-//		LastName:  user.LastName,
-//		Email:     user.Email,
-//		Phone:     user.Phone,
-//	}
-//}
