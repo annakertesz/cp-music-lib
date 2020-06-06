@@ -38,7 +38,7 @@ func (server *Server) Routes() chi.Router {
 		AllowedOrigins: []string{"*"},
 		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
 		AllowedMethods:     []string{"GET", "POST", "OPTIONS", "HEAD"},
-		AllowedHeaders:     []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "Referer"},
+		AllowedHeaders:     []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "Referer", "session"},
 		ExposedHeaders:     []string{"Link"},
 		AllowCredentials:   true,
 		MaxAge:             300, // Maximum value not ignored by any of major browsers
@@ -75,6 +75,16 @@ func (server *Server) Routes() chi.Router {
 	r.Get("/song/findByTag", func(w http.ResponseWriter, r *http.Request) {
 		if authenticated(server.db, w, r) {
 			getSongByTag(server.db, w, r)
+		}
+	})
+	r.Post("/song/{playlisyID}", func(w http.ResponseWriter, r *http.Request) {
+		if authenticated(server.db, w, r) {
+			//addSongToPlaylist(server.db, w, r)
+		}
+	})
+	r.Delete("/song/{playlisyID}", func(w http.ResponseWriter, r *http.Request) {
+		if authenticated(server.db, w, r) {
+			//removeSongToPlaylist(server.db, w, r)
 		}
 	})
 	//TODO
@@ -142,10 +152,14 @@ func (server *Server) Routes() chi.Router {
 	})
 
 	//Playlist
-	//TODO
 	r.Post("/playlist", func(w http.ResponseWriter, r *http.Request) {
 		if authenticated(server.db, w, r) {
 			createPlaylist(server.db, w, r)
+		}
+	})
+	r.Get("/playlist", func(w http.ResponseWriter, r *http.Request) {
+		if authenticated(server.db, w, r) {
+			getAllPlaylist(server.db, w, r)
 		}
 	})
 	//TODO
@@ -154,6 +168,17 @@ func (server *Server) Routes() chi.Router {
 			getPlaylistById(server.db, w, r)
 		}
 	})
+	r.Get("/playlist/{playlistID}/download", func(w http.ResponseWriter, r *http.Request) {
+		if authenticated(server.db, w, r) {
+			getPlaylistById(server.db, w, r)
+		}
+	})
+	r.Delete("/playlist/{playlistID}", func(w http.ResponseWriter, r *http.Request) {
+		if authenticated(server.db, w, r) {
+			//deletePlaylistById(server.db, w, r)
+		}
+	})
+
 
 	//User
 	r.Post("/user", func(w http.ResponseWriter, r *http.Request) {
