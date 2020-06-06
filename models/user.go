@@ -175,3 +175,16 @@ func hash(pwd string) string {
 	}
 	return string(hash)
 }
+
+func ValidateSessionID(db *sqlx.DB, sessionID string) (int, error) {
+	var id int
+	var expiration time.Time
+	err := db.QueryRow(
+		`SELECT cp_user, expiration from sessions where session_id = $1 and expiration >= $2`, sessionID, time.Now().Format("2006-01-02 15:04:05"),
+	).Scan(&id, &expiration)
+	fmt.Println(expiration.Format("2006-01-02 15:04:05"))
+	if err != nil {
+		return -1, err
+	}
+	return id, nil
+}

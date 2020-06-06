@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	box_lib "github.com/annakertesz/cp-music-lib/box-lib"
+	"github.com/annakertesz/cp-music-lib/models"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/jmoiron/sqlx"
@@ -36,13 +37,13 @@ func (server *Server) Routes() chi.Router {
 		// AllowedOrigins: []string{"https://foo.com"}, // Use this to allow specific origin hosts
 		AllowedOrigins: []string{"*"},
 		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
-		AllowedMethods:   []string{"GET", "POST", "OPTIONS", "HEAD"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "Referer"},
-		ExposedHeaders:   []string{"Link"},
-		AllowCredentials: true,
-		MaxAge:           300, // Maximum value not ignored by any of major browsers
+		AllowedMethods:     []string{"GET", "POST", "OPTIONS", "HEAD"},
+		AllowedHeaders:     []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "Referer"},
+		ExposedHeaders:     []string{"Link"},
+		AllowCredentials:   true,
+		MaxAge:             300, // Maximum value not ignored by any of major browsers
 		OptionsPassthrough: false,
-		Debug: true,
+		Debug:              true,
 	})
 	r.Use(cors.Handler)
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
@@ -52,63 +53,90 @@ func (server *Server) Routes() chi.Router {
 
 	//Songs
 	r.Get("/song", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("getAllSong")
-		getAllSongs(server.db, w, r)
+		if authenticated(server.db, w, r) {
+			getAllSongs(server.db, w, r)
+		}
 	})
 	r.Get("/song/{songID}", func(w http.ResponseWriter, r *http.Request) {
-		getSongByID(server.db, w, r)
+		if authenticated(server.db, w, r) {
+			getSongByID(server.db, w, r)
+		}
 	})
 	r.Get("/song/findByAlbum", func(w http.ResponseWriter, r *http.Request) {
-		getSongByAlbum(server.db, w, r)
+		if authenticated(server.db, w, r) {
+			getSongByAlbum(server.db, w, r)
+		}
 	})
 	r.Get("/song/findByArtist", func(w http.ResponseWriter, r *http.Request) {
-		getSongByArtist(server.db, w, r)
+		if authenticated(server.db, w, r) {
+			getSongByArtist(server.db, w, r)
+		}
 	})
 	r.Get("/song/findByTag", func(w http.ResponseWriter, r *http.Request) {
-		getSongByTag(server.db, w, r)
+		if authenticated(server.db, w, r) {
+			getSongByTag(server.db, w, r)
+		}
 	})
 	//TODO
 	r.Get("/song/findByFreeSearch", func(w http.ResponseWriter, r *http.Request) {
-		searchSong(server.db, w, r)
+		if authenticated(server.db, w, r) {
+			searchSong(server.db, w, r)
+		}
 	})
 
 	//Albums
 	r.Get("/album", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("album request")
-		getAllAlbum(server.db, w, r)
+		if authenticated(server.db, w, r) {
+			getAllAlbum(server.db, w, r)
+		}
 
 	})
 	r.Get("/album/findByArtist", func(w http.ResponseWriter, r *http.Request) {
-		getAlbumsByArtist(server.db, w, r)
+		if authenticated(server.db, w, r) {
+			getAlbumsByArtist(server.db, w, r)
+		}
 	})
 	r.Get("/album/{albumID}", func(w http.ResponseWriter, r *http.Request) {
-		getAlbumsById(server.db, w, r)
+		if authenticated(server.db, w, r) {
+			getAlbumsById(server.db, w, r)
+		}
 	})
 
 	//Artists
 	r.Get("/artist", func(w http.ResponseWriter, r *http.Request) {
-		getAllArtist(server.db, w, r)
+		if authenticated(server.db, w, r) {
+			getAllArtist(server.db, w, r)
+		}
 	})
 	r.Get("/artist/{artistID}", func(w http.ResponseWriter, r *http.Request) {
-		getArtistById(server.db, w, r)
+		if authenticated(server.db, w, r) {
+			getArtistById(server.db, w, r)
+		}
 	})
 
 	//Tags
 	r.Get("/tag", func(w http.ResponseWriter, r *http.Request) {
-		getAllTag(server.db, w, r)
+		if authenticated(server.db, w, r) {
+			getAllTag(server.db, w, r)
+		}
 	})
 
 	r.Get("/update", func(w http.ResponseWriter, r *http.Request) {
-		update(server.db, w, r, server.Token, server.coverFolder, server.musicFolder)
+		if authenticated(server.db, w, r) {
+			update(server.db, w, r, server.Token, server.coverFolder, server.musicFolder)
+		}
 	})
 
 	r.Get("/download/{boxID}", func(w http.ResponseWriter, r *http.Request) {
-		err := download(server.db, server.Token, w, r)
-		if err != nil {
-			server.GetBoxToken()
+		if authenticated(server.db, w, r) {
 			err := download(server.db, server.Token, w, r)
 			if err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
+				server.GetBoxToken()
+				err := download(server.db, server.Token, w, r)
+				if err != nil {
+					w.WriteHeader(http.StatusInternalServerError)
+				}
 			}
 		}
 	})
@@ -116,11 +144,15 @@ func (server *Server) Routes() chi.Router {
 	//Playlist
 	//TODO
 	r.Post("/playlist", func(w http.ResponseWriter, r *http.Request) {
-		createPlaylist(server.db, w, r)
+		if authenticated(server.db, w, r) {
+			createPlaylist(server.db, w, r)
+		}
 	})
 	//TODO
 	r.Get("/playlist/{playlistID}", func(w http.ResponseWriter, r *http.Request) {
-		getPlaylistById(server.db, w, r)
+		if authenticated(server.db, w, r) {
+			getPlaylistById(server.db, w, r)
+		}
 	})
 
 	//User
@@ -134,4 +166,14 @@ func (server *Server) Routes() chi.Router {
 		loginUser(server.db, w, r)
 	})
 	return r
+}
+
+func authenticated(db *sqlx.DB, w http.ResponseWriter, r *http.Request) bool {
+	sessionID := r.Header.Get("session")
+	userID, _ := models.ValidateSessionID(db, sessionID)
+	if userID <= 0 {
+		w.WriteHeader(http.StatusUnauthorized)
+		return false
+	}
+	return true
 }

@@ -11,6 +11,7 @@ import (
 )
 
 func getAllSongs(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
+
 	songs, err := models.GetAllSongs(db)
 	if err != nil {
 		fmt.Printf("error in getAllSongs: %v", err.Error())
