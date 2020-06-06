@@ -129,6 +129,13 @@ func CreateUser(db *sqlx.DB, user *UserReqObj) (int, error) {
 	return id, nil
 }
 
+func GetUserByID(db *sqlx.DB, id int) (User, error){
+	var user User
+	err := db.QueryRowx(`SELECT * FROM cp_user WHERE id = $1`, id,
+	).StructScan(&user)
+	return user, err
+}
+
 func UpdateUserStatus(db *sqlx.DB, id int) error {
 	rows, err := db.Query(`UPDATE cp_user SET user_status = 2 WHERE id=$1`, id)
 
@@ -191,3 +198,14 @@ func ValidateSessionID(db *sqlx.DB, sessionID string) (int, error) {
 	}
 	return id, nil
 }
+
+//func UserROFromUser(user User) UserRO {
+//	return modelUserRO{
+//		ID:        user.ID,
+//		Username:  user.Username,
+//		FirstName: user.FirstName,
+//		LastName:  user.LastName,
+//		Email:     user.Email,
+//		Phone:     user.Phone,
+//	}
+//}

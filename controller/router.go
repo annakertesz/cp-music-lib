@@ -156,27 +156,27 @@ func (server *Server) Routes() chi.Router {
 		if authenticated(server.db, w, r) {
 			createPlaylist(server.db, w, r)
 		}
-	})
-	r.Get("/playlist", func(w http.ResponseWriter, r *http.Request) {
-		if authenticated(server.db, w, r) {
-			getAllPlaylist(server.db, w, r)
-		}
-	})
-	//TODO
-	r.Get("/playlist/{playlistID}", func(w http.ResponseWriter, r *http.Request) {
-		if authenticated(server.db, w, r) {
-			getPlaylistById(server.db, w, r)
-		}
-	})
-	r.Get("/playlist/{playlistID}/download", func(w http.ResponseWriter, r *http.Request) {
-		if authenticated(server.db, w, r) {
-			getPlaylistById(server.db, w, r)
-		}
-	})
-	r.Delete("/playlist/{playlistID}", func(w http.ResponseWriter, r *http.Request) {
-		if authenticated(server.db, w, r) {
-			//deletePlaylistById(server.db, w, r)
-		}
+	//})
+	//r.Get("/playlist", func(w http.ResponseWriter, r *http.Request) {
+	//	if authenticated(server.db, w, r) {
+	//		getAllPlaylist(server.db, w, r)
+	//	}
+	//})
+	////TODO
+	//r.Get("/playlist/{playlistID}", func(w http.ResponseWriter, r *http.Request) {
+	//	if authenticated(server.db, w, r) {
+	//		getPlaylistById(server.db, w, r)
+	//	}
+	//})
+	//r.Get("/playlist/{playlistID}/download", func(w http.ResponseWriter, r *http.Request) {
+	//	if authenticated(server.db, w, r) {
+	//		getPlaylistById(server.db, w, r)
+	//	}
+	//})
+	//r.Delete("/playlist/{playlistID}", func(w http.ResponseWriter, r *http.Request) {
+	//	if authenticated(server.db, w, r) {
+	//		//deletePlaylistById(server.db, w, r)
+	//	}
 	})
 
 

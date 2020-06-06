@@ -16,6 +16,12 @@ type SongRO struct {
 	Tags []TagRO
 }
 
+type PlaylistRO struct {
+	Title string `json:"title" db:"title"`
+	User  UserRO `json:"user" db:"cp_user"`
+	Songs []SongRO
+}
+
 type AlbumRO struct {
 	ID int `json:"id"`
 	Title string `json:"title"`
@@ -28,13 +34,7 @@ type ArtistRO struct {
 	Name string `json:"name"`
 }
 
-type PlaylistRO struct {
-	ID int `json:"id"`
-	Title string `json:"title"`
-	Songs []SongRO `json:"songs"`
-}
-
-type UserRo struct {
+type UserRO struct {
 	ID int `json:"id"`
 	UserName string `json:"user_name"`
 	FirstName string `json:"first_name"`
