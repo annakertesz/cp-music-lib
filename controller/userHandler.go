@@ -60,7 +60,10 @@ func loginUser(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 		http.Error(w, err.Error(), 404)
 		return
 	}
+	fmt.Println(user.Username)
+	fmt.Println(user.Password)
 	userID := models.CheckUserCredentials(db, user.Username, user.Password)
+	fmt.Println(userID)
 	if (userID >0){
 		uuid := uuid.New()
 		err := models.CreateSession(db, userID, uuid.String())
