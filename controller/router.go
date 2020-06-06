@@ -82,9 +82,9 @@ func (server *Server) Routes() chi.Router {
 			addSongToPlaylist(server.db, w, r)
 		}
 	})
-	r.Delete("/song/{playlisyID}", func(w http.ResponseWriter, r *http.Request) {
+	r.Delete("/song/{songID}", func(w http.ResponseWriter, r *http.Request) {
 		if authenticated(server.db, w, r) {
-			//removeSongToPlaylist(server.db, w, r)
+			removeSongFromPlaylist(server.db, w, r)
 		}
 	})
 	//TODO

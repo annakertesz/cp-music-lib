@@ -35,9 +35,18 @@ func DeletePlaylist(db *sqlx.DB, playlistID int) error {
 	return nil
 }
 
-func AddSongToPlalist(db *sqlx.DB, songID int, playlistID int) error{
+func AddSongToPlayist(db *sqlx.DB, songID int, playlistID int) error{
 	sqlStatement := `INSERT INTO playlist_song (map_playlist, map_song) VALUES ($1, $2)`
 	_, err := db.Exec(sqlStatement, playlistID, songID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func RemoveSongFromPlayist(db *sqlx.DB, songID int, playlistID int) error{
+	sqlStatement := `DELETE from playlist_song WHERE map_song =$1 AND map_playlist = $2`
+	_, err := db.Exec(sqlStatement, songID, playlistID)
 	if err != nil {
 		return err
 	}
