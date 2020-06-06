@@ -37,7 +37,7 @@ func (server *Server) Routes() chi.Router {
 		// AllowedOrigins: []string{"https://foo.com"}, // Use this to allow specific origin hosts
 		AllowedOrigins: []string{"*"},
 		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
-		AllowedMethods:     []string{"GET", "POST", "OPTIONS", "HEAD"},
+		AllowedMethods:     []string{"GET", "POST", "DELETE", "OPTIONS", "HEAD"},
 		AllowedHeaders:     []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "Referer", "session", "Session"},
 		ExposedHeaders:     []string{"Link"},
 		AllowCredentials:   true,
@@ -171,11 +171,11 @@ func (server *Server) Routes() chi.Router {
 	//		getPlaylistById(server.db, w, r)
 	//	}
 	//})
-	//r.Delete("/playlist/{playlistID}", func(w http.ResponseWriter, r *http.Request) {
-	//	if authenticated(server.db, w, r) {
-	//		//deletePlaylistById(server.db, w, r)
-	//	}
-	//})
+	r.Delete("/playlist/{playlistID}", func(w http.ResponseWriter, r *http.Request) {
+		if authenticated(server.db, w, r) {
+			deletePlaylistByID(server.db, w, r)
+		}
+	})
 
 	//User
 	r.Post("/user", func(w http.ResponseWriter, r *http.Request) {

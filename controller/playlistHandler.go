@@ -29,6 +29,21 @@ func createPlaylist(db *sqlx.DB, w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+func deletePlaylistByID(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
+	param:= chi.URLParam(r, "playlistID")
+	id, err := strconv.Atoi(param)
+	if err != nil {
+		fmt.Printf("\nsong id %v isnt a number")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	err = models.DeletePlaylist(db, id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
+
 func getAllPlaylist(db *sqlx.DB, w http.ResponseWriter, r *http.Request) {
 	userID, err := models.ValidateSessionID(db, r.Header.Get("session"))
 	if err != nil {

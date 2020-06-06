@@ -21,6 +21,20 @@ func CreatePlaylist(db *sqlx.DB, userID int, title string) (int, error) {
 	return id, err
 }
 
+func DeletePlaylist(db *sqlx.DB, playlistID int) error {
+	sqlStatement := `DELETE from playlist_song WHERE map_playlist =$1`
+	_, err := db.Exec(sqlStatement, playlistID)
+	if err != nil {
+		return err
+	}
+	sqlStatement = `DELETE from playlist WHERE id = $1`
+	_, err = db.Exec(sqlStatement, playlistID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func GetPlaylistByID(db *sqlx.DB, playlistID int) (Playlist, error){
 	var playlist Playlist
 	err := db.QueryRowx(
