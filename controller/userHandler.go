@@ -67,8 +67,10 @@ func loginUser(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 		if err == nil {
 			fmt.Fprint(w, uuid)
 			w.WriteHeader(http.StatusOK)
+			return
 		}
 		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 	w.WriteHeader(http.StatusUnauthorized)
 }
