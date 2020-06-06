@@ -139,14 +139,12 @@ func (server *Server) Routes() chi.Router {
 	})
 
 	r.Get("/download/{boxID}", func(w http.ResponseWriter, r *http.Request) {
-		if authenticated(server.db, w, r) {
+		err := download(server.db, server.Token, w, r)
+		if err != nil {
+			server.GetBoxToken()
 			err := download(server.db, server.Token, w, r)
 			if err != nil {
-				server.GetBoxToken()
-				err := download(server.db, server.Token, w, r)
-				if err != nil {
-					w.WriteHeader(http.StatusInternalServerError)
-				}
+				w.WriteHeader(http.StatusInternalServerError)
 			}
 		}
 	})
@@ -156,29 +154,28 @@ func (server *Server) Routes() chi.Router {
 		if authenticated(server.db, w, r) {
 			createPlaylist(server.db, w, r)
 		}
-	//})
-	//r.Get("/playlist", func(w http.ResponseWriter, r *http.Request) {
-	//	if authenticated(server.db, w, r) {
-	//		getAllPlaylist(server.db, w, r)
-	//	}
-	//})
-	////TODO
-	//r.Get("/playlist/{playlistID}", func(w http.ResponseWriter, r *http.Request) {
-	//	if authenticated(server.db, w, r) {
-	//		getPlaylistById(server.db, w, r)
-	//	}
-	//})
-	//r.Get("/playlist/{playlistID}/download", func(w http.ResponseWriter, r *http.Request) {
-	//	if authenticated(server.db, w, r) {
-	//		getPlaylistById(server.db, w, r)
-	//	}
-	//})
-	//r.Delete("/playlist/{playlistID}", func(w http.ResponseWriter, r *http.Request) {
-	//	if authenticated(server.db, w, r) {
-	//		//deletePlaylistById(server.db, w, r)
-	//	}
+		//})
+		//r.Get("/playlist", func(w http.ResponseWriter, r *http.Request) {
+		//	if authenticated(server.db, w, r) {
+		//		getAllPlaylist(server.db, w, r)
+		//	}
+		//})
+		////TODO
+		//r.Get("/playlist/{playlistID}", func(w http.ResponseWriter, r *http.Request) {
+		//	if authenticated(server.db, w, r) {
+		//		getPlaylistById(server.db, w, r)
+		//	}
+		//})
+		//r.Get("/playlist/{playlistID}/download", func(w http.ResponseWriter, r *http.Request) {
+		//	if authenticated(server.db, w, r) {
+		//		getPlaylistById(server.db, w, r)
+		//	}
+		//})
+		//r.Delete("/playlist/{playlistID}", func(w http.ResponseWriter, r *http.Request) {
+		//	if authenticated(server.db, w, r) {
+		//		//deletePlaylistById(server.db, w, r)
+		//	}
 	})
-
 
 	//User
 	r.Post("/user", func(w http.ResponseWriter, r *http.Request) {
