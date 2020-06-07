@@ -27,7 +27,7 @@ func (tag *Tag) CreateTag(db *sqlx.DB) (int, bool) {
 
 func GetTag(db *sqlx.DB) ( []Tag, error){
 	rows, err := db.Queryx(
-		`SELECT * FROM tag`,
+		`SELECT * FROM tag ORDER BY tag_name`,
 	)
 	if err != nil {
 		return nil, err
