@@ -181,7 +181,7 @@ func (server *Server) Routes() chi.Router {
 	r.Post("/user", func(w http.ResponseWriter, r *http.Request) {
 		createUser(server.db, w, r)
 	})
-	r.Post("/user/{userID}/validate", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/user/{userID}/validate/{token}", func(w http.ResponseWriter, r *http.Request) {
 		validateUser(server.db, w, r)
 	})
 	r.Post("/user/login", func(w http.ResponseWriter, r *http.Request) {

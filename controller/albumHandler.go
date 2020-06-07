@@ -92,8 +92,8 @@ func getAlbumsByArtist(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	w.WriteHeader(http.StatusOK)
 }
 
-func albumROFromAlbum(album models.Album, artist models.Artist) AlbumRO {
-	return AlbumRO{
+func albumROFromAlbum(album models.Album, artist models.Artist) models.AlbumRO {
+	return models.AlbumRO{
 		ID:        album.AlbumID,
 		Title:     album.AlbumName,
 		Artist:    artistROFromArtist(artist),
@@ -101,8 +101,8 @@ func albumROFromAlbum(album models.Album, artist models.Artist) AlbumRO {
 	}
 }
 
-func albumROListFromAlbums(albums []models.Album, db *sqlx.DB) ([]AlbumRO, error) {
-	albumROs := make([]AlbumRO, 0)
+func albumROListFromAlbums(albums []models.Album, db *sqlx.DB) ([]models.AlbumRO, error) {
+	albumROs := make([]models.AlbumRO, 0)
 	for _, album := range albums {
 		fmt.Printf("\nALBUM: %v, %v, %v", album.AlbumID, album.AlbumName, album.AlbumArtist)
 		artist, err := models.GetArtistByID(album.AlbumArtist, db)

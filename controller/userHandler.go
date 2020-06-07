@@ -30,11 +30,18 @@ func createUser(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 		http.Error(w, err.Error(), 404)
 		return
 	}
-	_, err = models.CreateUser(db, user)
+	id, err := models.CreateUser(db, user)
 	if err != nil {
 		http.Error(w, err.Error(), 422)
 		return
 	}
+	token, err := models.CreateToken(db)
+	if err != nil{
+		http.Error(w, err.Error(), 422)
+		return
+	}
+	verifyURL := fmt.Sprintf("%v/user/%v/validate/%v", r.Host, id, token)
+	sendVerifyEmail(*user, verifyURL)
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -42,13 +49,24 @@ func validateUser(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	param:= chi.URLParam(r, "userID")
 	id, err := strconv.Atoi(param)
 	if err != nil {
-		fmt.Printf("\nuser id %v isnt a number")
+		fmt.Printf("\nuser id %v isnt a number", param)
 		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	token:= chi.URLParam(r, "token")
+	getToken, err := models.GetToken(db, token)
+	if err != nil || getToken<1 {
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	err = models.UpdateUserStatus(db, id)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
+		return
+	}
+	err = models.DeleteToken(db, getToken)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
@@ -79,10 +97,10 @@ func loginUser(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 }
 
 
-func UserROFromUser(user models.User) UserRO {
-	return UserRO{
+func UserROFromUser(user models.User) models.UserRO {
+	return models.UserRO{
 		ID:        user.ID,
-		UserName:  user.Username,
+		Username:  user.Username,
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
 		Email:     user.Email,

@@ -38,7 +38,7 @@ func getSongByID(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	param:= chi.URLParam(r, "songID")
 	id, err := strconv.Atoi(param)
 	if err != nil {
-		fmt.Printf("\nsong id %v isnt a number")
+		fmt.Printf("\nsong id %v isnt a number", param)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -181,8 +181,8 @@ func searchSong(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	w.WriteHeader(http.StatusOK)
 }
 
-func songROFromSong(song models.Song, album models.Album, artist models.Artist, tags []models.Tag) SongRO{
-	return SongRO{
+func songROFromSong(song models.Song, album models.Album, artist models.Artist, tags []models.Tag) models.SongRO {
+	return models.SongRO{
 		ID:      song.SongID,
 		Title:   song.SongName,
 		Album:   albumROFromAlbum(album, artist),
@@ -194,8 +194,8 @@ func songROFromSong(song models.Song, album models.Album, artist models.Artist, 
 	}
 }
 
-func songROListFromSongs(songs []models.Song, db *sqlx.DB) ([]SongRO, error) {
-	songROs := make([]SongRO, 0)
+func songROListFromSongs(songs []models.Song, db *sqlx.DB) ([]models.SongRO, error) {
+	songROs := make([]models.SongRO, 0)
 	for _, song := range songs {
 		album, err := models.GetAlbumByID(song.SongAlbum, db)
 		if album == nil {

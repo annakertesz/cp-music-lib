@@ -33,7 +33,7 @@ func deletePlaylistByID(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	param:= chi.URLParam(r, "playlistID")
 	id, err := strconv.Atoi(param)
 	if err != nil {
-		fmt.Printf("\nplaylist id %v isnt a number")
+		fmt.Printf("\nplaylist id %v isnt a number", param)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -48,14 +48,14 @@ func addSongToPlaylist(db *sqlx.DB, w http.ResponseWriter, r *http.Request) {
 	param:= chi.URLParam(r, "songID")
 	songID, err := strconv.Atoi(param)
 	if err != nil {
-		fmt.Printf("\nsong id %v isnt a number")
+		fmt.Printf("\nsong id %v isnt a number", param)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	plID := r.URL.Query().Get("playlistID")
 	playlistID, err := strconv.Atoi(plID)
 	if err != nil {
-		fmt.Printf("playlist id %v isnt a number")
+		fmt.Printf("playlist id %v isnt a number", plID)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -69,14 +69,14 @@ func removeSongFromPlaylist(db *sqlx.DB, w http.ResponseWriter, r *http.Request)
 	param:= chi.URLParam(r, "songID")
 	songID, err := strconv.Atoi(param)
 	if err != nil {
-		fmt.Printf("\nsong id %v isnt a number")
+		fmt.Printf("\nsong id %v isnt a number", param)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	plID := r.URL.Query().Get("playlistID")
 	playlistID, err := strconv.Atoi(plID)
 	if err != nil {
-		fmt.Printf("playlist id %v isnt a number")
+		fmt.Printf("playlist id %v isnt a number", plID)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -108,7 +108,7 @@ func getPlaylistById(db *sqlx.DB, w http.ResponseWriter, r *http.Request) {
 	param:= chi.URLParam(r, "playlistID")
 	id, err := strconv.Atoi(param)
 	if err != nil {
-		fmt.Printf("\nsong id %v isnt a number")
+		fmt.Printf("\nsong id %v isnt a number", param)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -130,7 +130,7 @@ func getPlaylistById(db *sqlx.DB, w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func playlistROFromPlaylist(playlist models.Playlist, db *sqlx.DB) (*PlaylistRO, error) {
+func playlistROFromPlaylist(playlist models.Playlist, db *sqlx.DB) (*models.PlaylistRO, error) {
 	user, err := models.GetUserByID(db, playlist.User)
 	if err != nil {
 		return nil, err
@@ -143,15 +143,15 @@ func playlistROFromPlaylist(playlist models.Playlist, db *sqlx.DB) (*PlaylistRO,
 	if err != nil {
 		return nil, err
 	}
-	return &PlaylistRO{
+	return &models.PlaylistRO{
 		Title: playlist.Title,
 		User:  UserROFromUser(user),
 		Songs: songROList,
 	}, nil
 }
 
-func playlistROListFromPlaylists(playlists []models.Playlist, db *sqlx.DB) ([]PlaylistRO, error) {
-	playlistROs := make([]PlaylistRO, 0)
+func playlistROListFromPlaylists(playlists []models.Playlist, db *sqlx.DB) ([]models.PlaylistRO, error) {
+	playlistROs := make([]models.PlaylistRO, 0)
 	for _, playlist := range playlists {
 		pl, err := playlistROFromPlaylist(playlist, db)
 		if err != nil {

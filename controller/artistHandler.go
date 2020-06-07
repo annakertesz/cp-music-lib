@@ -47,15 +47,15 @@ func getArtistById(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	w.WriteHeader(http.StatusOK)
 }
 
-func artistROFromArtist(artist models.Artist) ArtistRO {
-	return ArtistRO{
+func artistROFromArtist(artist models.Artist) models.ArtistRO {
+	return models.ArtistRO{
 		ID:artist.ArtistID,
 		Name:artist.ArtistName,
 	}
 }
 
-func artistROListFromArtists(artists []models.Artist) []ArtistRO {
-	var artistROs []ArtistRO
+func artistROListFromArtists(artists []models.Artist) []models.ArtistRO {
+	var artistROs []models.ArtistRO
 	for _, artist := range artists {
 		artistROs = append(artistROs, artistROFromArtist(artist))
 	}

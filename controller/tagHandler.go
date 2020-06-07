@@ -23,10 +23,10 @@ func getAllTag(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	w.WriteHeader(http.StatusOK)
 }
 
-func tagROListFromTag(tags []models.Tag) []TagRO {
-	tagROs := make([]TagRO, 0)
+func tagROListFromTag(tags []models.Tag) []models.TagRO {
+	tagROs := make([]models.TagRO, 0)
 	for _, tag := range tags {
-		tagROs = append(tagROs, TagRO{
+		tagROs = append(tagROs, models.TagRO{
 			ID:   tag.TagID,
 			Name: tag.TagName,
 		})
