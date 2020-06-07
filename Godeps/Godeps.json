@@ -58,6 +58,21 @@
 			"Rev": "356e267cd3f45ee1303b7d8765e3583cb949950e"
 		},
 		{
+			"ImportPath": "github.com/sendgrid/rest",
+			"Comment": "2.6.0-5-ged76a03",
+			"Rev": "ed76a03e9bda9296cdf0710097f628167e3fa411"
+		},
+		{
+			"ImportPath": "github.com/sendgrid/sendgrid-go",
+			"Comment": "3.6.0-2-g2ffd387",
+			"Rev": "2ffd387a6f379fbf36c9753925c73d42b2537eb5"
+		},
+		{
+			"ImportPath": "github.com/sendgrid/sendgrid-go/helpers/mail",
+			"Comment": "3.6.0-2-g2ffd387",
+			"Rev": "2ffd387a6f379fbf36c9753925c73d42b2537eb5"
+		},
+		{
 			"ImportPath": "golang.org/x/crypto/bcrypt",
 			"Rev": "06a226fb4e3765ef3f48aa2852b401bc7b98e981"
 		},
