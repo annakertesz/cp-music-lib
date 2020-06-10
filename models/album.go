@@ -46,7 +46,7 @@ func (album *Album) SaveAlbumImageID(db *sqlx.DB, id int){
 func GetAlbum(db *sqlx.DB) ([]Album, error) {
 
 	rows, err := db.Queryx(
-		`SELECT * FROM album`,
+		`SELECT * FROM album order by album_name`,
 	)
 	if err != nil {
 		return nil, err

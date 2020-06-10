@@ -39,7 +39,7 @@ func GetArtistByID(id int, db *sqlx.DB) (*Artist, error){
 
 func GetArtist(db *sqlx.DB) ([]Artist, error){
 	rows, err := db.Queryx(
-		`SELECT * FROM artist`,
+		`SELECT * FROM artist order by artist_name`,
 	)
 	if err != nil {
 		return nil, err
