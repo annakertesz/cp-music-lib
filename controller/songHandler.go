@@ -178,7 +178,7 @@ func getSongByTag(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 }
 
 func searchSong(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
-	w.WriteHeader(http.StatusOK)
+	getSongByTag(db, w, r)
 }
 
 func songROFromSong(song models.Song, album models.Album, artist models.Artist, tags []models.Tag) models.SongRO {
