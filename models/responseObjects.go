@@ -43,6 +43,10 @@ type UserReqObj struct {
 	Phone string `json:"phone" db:"phone"`
 }
 
+type PlaylistReqObj struct {
+	Title string `json:"title"`
+}
+
 type UserRO struct {
 	ID       int  `json:"id" db:"id"`
 	Username string `json:"username" db:"username"`

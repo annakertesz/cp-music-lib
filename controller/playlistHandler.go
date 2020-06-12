@@ -11,21 +11,22 @@ import (
 )
 
 func createPlaylist(db *sqlx.DB, w http.ResponseWriter, r *http.Request) {
-	title := r.URL.Query().Get("title")
-	if len(title) < 1 {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
 	userID, err := models.ValidateSessionID(db, r.Header.Get("session"))
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-	id, err := models.CreatePlaylist(db, userID, title)
+	playlist, err := models.UnmarshalPlaylist(r)
+	if err != nil {
+		http.Error(w, err.Error(), 404)
+		return
+	}
+	id, err := models.CreatePlaylist(db, userID, playlist.Title)
 	if err != nil || id == 0 {
 		http.Error(w, err.Error(), 422)
 		return
 	}
+	fmt.Fprint(w, id)
 	w.WriteHeader(http.StatusOK)
 }
 

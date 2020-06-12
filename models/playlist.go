@@ -1,14 +1,37 @@
 package models
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	"io/ioutil"
+	"net/http"
 )
 
 type Playlist struct {
 	ID int `json:"id" db:"id"`
 	Title string `json:"title" db:"title"`
 	User  int    `json:"user" db:"cp_user"`
+}
+
+func UnmarshalPlaylist(r *http.Request) (*PlaylistReqObj, error) {
+	defer r.Body.Close()
+
+	var playlist PlaylistReqObj
+
+	bytes, err := ioutil.ReadAll(r.Body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(bytes, &playlist)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &playlist, nil
 }
 
 func CreatePlaylist(db *sqlx.DB, userID int, title string) (int, error) {
