@@ -18,13 +18,14 @@ type Server struct {
 	clientID     string
 	clientSecret string
 	privateKey   string
+	EmailSender EmailSender
 }
 
 type e map[string]string
 
-func NewServer(db *sqlx.DB, clientID string, clientSecret string, privateKey string, musicFolder, coverFolder int) *Server {
+func NewServer(db *sqlx.DB, clientID string, clientSecret string, privateKey string, musicFolder, coverFolder int, emailSender EmailSender) *Server {
 	token := box_lib.AuthOfBox(clientID, clientSecret, privateKey)
-	return &Server{db: db, Token: token, musicFolder: musicFolder, coverFolder: coverFolder, clientID: clientID, clientSecret: clientSecret, privateKey: privateKey}
+	return &Server{db: db, Token: token, musicFolder: musicFolder, coverFolder: coverFolder, clientID: clientID, clientSecret: clientSecret, privateKey: privateKey, EmailSender:emailSender}
 }
 
 func (s *Server) GetBoxToken() {
@@ -179,7 +180,7 @@ func (server *Server) Routes() chi.Router {
 
 	//User
 	r.Post("/user", func(w http.ResponseWriter, r *http.Request) {
-		createUser(server.db, w, r)
+		createUser(server.db, server.EmailSender, w, r)
 	})
 	r.Get("/user/{userID}/validate/{token}", func(w http.ResponseWriter, r *http.Request) {
 		validateUser(server.db, w, r)

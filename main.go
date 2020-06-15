@@ -22,7 +22,6 @@ const (
 	user     = "anna"
 	password = "anna"
 	dbname   = "centralp"
-	developerToken = "3luIrU57KaYyTb1eD3kP0iL3yjU90zwr"
 	testFolder = "114476926207"
 	cpFolder = "11059102688"
 	)
@@ -51,6 +50,26 @@ func main() {
 		privateKey = string(privateKeyData)
 
 	}
+	sengridAPIKey, ok := os.LookupEnv("SENGRID_API_KEY")
+	if !ok {
+		panic("need box credentials: SENGRID_API_KEY")
+	}
+	senderName, ok := os.LookupEnv("SENDER_NAME")
+	if !ok {
+		panic("need box credentials: SENDER_NAME")
+	}
+	senderEmail, ok := os.LookupEnv("SENDER_EMAIL")
+	if !ok {
+		panic("need box credentials: SENDER_EMAIL")
+	}
+	adminEmail, ok := os.LookupEnv("ADMIN_EMAIL")
+	if !ok {
+		panic("need box credentials: ADMIN_EMAIL")
+	}
+	developerEmail, ok := os.LookupEnv("DEVELOPER_EMAIL")
+	if !ok {
+		panic("need box credentials: DEVELOPER_EMAIL")
+	}
 	songFolder, err := strconv.Atoi(songFolderStr)
 	if err != nil {
 		panic("songFolder var should be numeric")
@@ -78,9 +97,9 @@ func main() {
 	if err != nil {
 		log.Fatalf("Connection error: %s", err.Error())
 	}
-
+	emailSender := controller.NewEmailSender(sengridAPIKey, senderName, senderEmail, adminEmail, developerEmail)
 	port, ok := os.LookupEnv("PORT")
-	server := controller.NewServer(db, clientID, clientSecret, privateKey, songFolder, coverFolder)
+	server := controller.NewServer(db, clientID, clientSecret, privateKey, songFolder, coverFolder, emailSender)
 	updater.Update(songFolder, coverFolder, server.Token, db)
 	if !ok {
 		port = "8080"
@@ -115,23 +134,6 @@ func connect(dbURL string) (*sqlx.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-//
-//	_, err = db.Exec(`
-//drop table if exists users;
-//
-//drop table if exists tag_song;
-//
-//drop table if exists song;
-//
-//drop table if exists tag;
-//
-//drop table if exists album;
-//
-//drop table if exists artist;
-//`)
-//	if err != nil {
-//		return nil, err
-//	}
 	_, err = db.Exec(`
    CREATE TABLE IF NOT EXISTS artist
 (

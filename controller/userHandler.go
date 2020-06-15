@@ -24,7 +24,7 @@ func getUsers(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	w.Write(b)
 }
 
-func createUser(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
+func createUser(db *sqlx.DB, emailSender EmailSender, w http.ResponseWriter, r *http.Request){
 	user, err := models.UnmarshalUser(r)
 	if err != nil {
 		http.Error(w, err.Error(), 404)
@@ -41,7 +41,7 @@ func createUser(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 		return
 	}
 	verifyURL := fmt.Sprintf("%v/user/%v/validate/%v", r.Host, id, token)
-	sendVerifyEmail(*user, verifyURL)
+	emailSender.sendVerifyEmail(*user, verifyURL)
 	w.WriteHeader(http.StatusOK)
 }
 
