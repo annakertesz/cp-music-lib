@@ -17,6 +17,7 @@ type SongRO struct {
 }
 
 type PlaylistRO struct {
+	ID int `json:"id"`
 	Title string `json:"title" db:"title"`
 	User  UserRO `json:"user" db:"cp_user"`
 	Songs []SongRO

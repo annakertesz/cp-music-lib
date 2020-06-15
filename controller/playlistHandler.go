@@ -30,8 +30,8 @@ func createPlaylist(db *sqlx.DB, w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func deletePlaylistByID(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
-	param:= chi.URLParam(r, "playlistID")
+func deletePlaylistByID(db *sqlx.DB, w http.ResponseWriter, r *http.Request) {
+	param := chi.URLParam(r, "playlistID")
 	id, err := strconv.Atoi(param)
 	if err != nil {
 		fmt.Printf("\nplaylist id %v isnt a number", param)
@@ -46,7 +46,7 @@ func deletePlaylistByID(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 }
 
 func addSongToPlaylist(db *sqlx.DB, w http.ResponseWriter, r *http.Request) {
-	param:= chi.URLParam(r, "songID")
+	param := chi.URLParam(r, "songID")
 	songID, err := strconv.Atoi(param)
 	if err != nil {
 		fmt.Printf("\nsong id %v isnt a number", param)
@@ -67,7 +67,7 @@ func addSongToPlaylist(db *sqlx.DB, w http.ResponseWriter, r *http.Request) {
 }
 
 func removeSongFromPlaylist(db *sqlx.DB, w http.ResponseWriter, r *http.Request) {
-	param:= chi.URLParam(r, "songID")
+	param := chi.URLParam(r, "songID")
 	songID, err := strconv.Atoi(param)
 	if err != nil {
 		fmt.Printf("\nsong id %v isnt a number", param)
@@ -106,7 +106,7 @@ func getAllPlaylist(db *sqlx.DB, w http.ResponseWriter, r *http.Request) {
 }
 
 func getPlaylistById(db *sqlx.DB, w http.ResponseWriter, r *http.Request) {
-	param:= chi.URLParam(r, "playlistID")
+	param := chi.URLParam(r, "playlistID")
 	id, err := strconv.Atoi(param)
 	if err != nil {
 		fmt.Printf("\nsong id %v isnt a number", param)
@@ -145,6 +145,7 @@ func playlistROFromPlaylist(playlist models.Playlist, db *sqlx.DB) (*models.Play
 		return nil, err
 	}
 	return &models.PlaylistRO{
+		ID:    playlist.ID,
 		Title: playlist.Title,
 		User:  UserROFromUser(user),
 		Songs: songROList,
