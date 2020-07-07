@@ -26,6 +26,7 @@ func download(db *sqlx.DB, token string, w http.ResponseWriter, r *http.Request)
 		return err
 	}
 	w.Header().Set("Content-Type", contentType)
+	w.Header().Set("Content-Disposition", "attachment")
 	w.Write(resp)
 	return nil
 }
