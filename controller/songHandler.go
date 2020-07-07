@@ -178,8 +178,35 @@ func getSongByTag(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 }
 
 func searchSong(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
-	getSongByTag(db, w, r)
+	keyword:= r.URL.Query().Get("keyword")
+	fmt.Sprint(keyword)
+	if keyword == "" {
+		fmt.Printf("\nneed keyword")
+		w.WriteHeader(http.StatusBadRequest)  //TODO: bad request to swagger
+		return
+	}
+	songs, err := models.GetSongByEverything(keyword, db)
+	if err != nil {
+		fmt.Printf("error in getSongByEverything: %v", err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	SongROs, err := songROListFromSongs(songs, db)
+	if err != nil {
+		fmt.Printf("error in createSongRO: %v", err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	songsJSON, err := json.Marshal(SongROs)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(songsJSON)
+	w.WriteHeader(http.StatusOK)
 }
+
 
 func songROFromSong(song models.Song, album models.Album, artist models.Artist, tags []models.Tag) models.SongRO {
 	return models.SongRO{
