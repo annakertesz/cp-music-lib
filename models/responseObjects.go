@@ -44,6 +44,19 @@ type UserReqObj struct {
 	Phone string `json:"phone" db:"phone"`
 }
 
+type BuySongReqObj struct {
+	SongID int `json:"song_id"`
+	Message string `json:"message"`
+}
+
+type BuySongObj struct {
+	Title string
+	Artist string
+	Album string
+	User UserRO
+	Message string
+}
+
 type PlaylistReqObj struct {
 	Title string `json:"title"`
 }

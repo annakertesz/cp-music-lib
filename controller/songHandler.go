@@ -6,6 +6,7 @@ import (
 	"github.com/annakertesz/cp-music-lib/models"
 	"github.com/go-chi/chi"
 	"github.com/jmoiron/sqlx"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 )
@@ -31,6 +32,58 @@ func getAllSongs(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(songsJSON)
+	w.WriteHeader(http.StatusOK)
+}
+
+func buySong(db *sqlx.DB, emailSender EmailSender, w http.ResponseWriter, r *http.Request){
+	b, err := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	var msg models.BuySongReqObj
+	err = json.Unmarshal(b, &msg)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	id := msg.SongID
+	fmt.Sprintf("id=%v ", id)
+	song, err := models.GetSongByID(id, db)
+	if err != nil {
+		fmt.Println(err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+	if song == nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	album, err := models.GetAlbumByID(song.SongAlbum, db)
+	if album == nil {
+		fmt.Sprintf("\n couldnt find album %v for song %v", song.SongAlbum, song.SongID)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	artist, err := models.GetArtistByID(album.AlbumArtist, db)
+	if err != nil {
+		fmt.Sprintf("\n couldnt find artist %v for album %v, for song %v", album.AlbumArtist, album.AlbumID, song.SongID)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	emailData :=  models.BuySongObj{
+		Title:   song.SongName,
+		Artist:  album.AlbumName,
+		Album:   artist.ArtistName,
+		User:    models.UserRO{},
+		Message: msg.Message,
+	}
+	err = emailSender.sendSongBuyEmail(emailData)
+	if err != nil {
+		fmt.Fprint(w, err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+	fmt.Fprint(w, "done")
 	w.WriteHeader(http.StatusOK)
 }
 

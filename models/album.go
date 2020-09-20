@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+const default_id  = 712601893142
+
 type Album struct {
 	AlbumID     int    `json:"album_id" db:"id"`
 	AlbumName   string `json:"album_name" db:"album_name"`
@@ -38,7 +40,7 @@ func (album *Album) CreateAlbum(db *sqlx.DB) (int, bool, error) {
 func (album *Album) SaveAlbumImageID(db *sqlx.DB, id int){
 	rows, err := db.Queryx(`UPDATE album SET album_cover = $1 WHERE id=$2`, id, album.AlbumID)
 	if err != nil {
-		fmt.Println(err.Error())
+		rows, err = db.Queryx(`UPDATE album SET album_cover = $1 WHERE id=$2`, default_id, album.AlbumID)
 	}
 	defer rows.Close()
 }

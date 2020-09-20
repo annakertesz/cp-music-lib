@@ -50,6 +50,27 @@ func (sender *EmailSender) sendVerifyEmail(user models.UserReqObj, verifyEndpoin
 	return sendEmail(message, sender.apiKey)
 }
 
+func (sender *EmailSender) sendSongBuyEmail(msg models.BuySongObj) error{
+	from := mail.NewEmail(sender.senderName, sender.senderMail)
+	subject := fmt.Sprintf("%v %v would like to buy a song", msg.User.FirstName, msg.User.LastName)
+	to := mail.NewEmail("Central admin", sender.adminEmail)
+	plainTextContent := "."
+	htmlContent := fmt.Sprintf(
+		"<h2 style=\"color: #2e6c80;\">New song request:</h2>" +
+			"<p>Dear admin</p>" +
+			"<p>%v %v would like to buy a song:</p>" +
+			"<p>%v</p>" +
+			"<ul>" +
+			"<li>Title: %v</li>" +
+			"<li>Album: %v</li>" +
+			"<li>Artist: %v</li>" +
+			"</ul>" +
+			"<p>You can contact him/her via email (%v) or phone (%v)</p>",
+		msg.User.FirstName, msg.User.LastName, msg.Message, msg.Title, msg.Album, msg.Artist, msg.User.Email, msg.User.Phone)
+	message := mail.NewSingleEmail(from, subject, to, plainTextContent, htmlContent)
+	return sendEmail(message, sender.apiKey)
+}
+
 func sendEmail(message *mail.SGMailV3, apiKey string) error {
 	client := sendgrid.NewSendClient(apiKey)
 	_, err := client.Send(message)
