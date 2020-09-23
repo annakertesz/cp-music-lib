@@ -142,6 +142,14 @@ func CheckUserCredentials(db *sqlx.DB, username string, password string) int{
 	return -1
 }
 
+func DeleteSessions(db *sqlx.DB, userID int) error{
+	sqlStatement := `DELETE from sessions WHERE cp_user =$1 AND expiration < NOW()`
+	_, err := db.Exec(sqlStatement, userID)
+	if err != nil {
+		return err
+	}
+}
+
 func CreateSession(db *sqlx.DB, userID int, uuid string) error{
 	var id int
 	expiration := time.Now().AddDate(0,0,7).Format("2006-01-02 15:04:05")
