@@ -148,6 +148,7 @@ func DeleteSessions(db *sqlx.DB, userID int) error{
 	if err != nil {
 		return err
 	}
+	return nil
 }
 
 func CreateSession(db *sqlx.DB, userID int, uuid string) error{
