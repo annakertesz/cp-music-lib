@@ -136,8 +136,8 @@ func clearDB(do bool, db *sqlx.DB) error {
 		if err != nil {
 			return err
 		}
-
 	}
+	return nil
 }
 
 func connect(dbURL string) (*sqlx.DB, error) {
