@@ -13,7 +13,7 @@ type Artist struct {
 func (artist *Artist) CreateArtist(db *sqlx.DB) (int, error) {
 	var id int
 	err := db.QueryRow(
-		`SELECT id FROM artist where artist_name = $1`, artist.ArtistName,
+		`SELECT id FROM artist where UPPER(artist_name) = UPPER($1)`, artist.ArtistName,
 	).Scan(&id)
 	if id==0{
 		err = db.QueryRow(
@@ -53,4 +53,13 @@ func GetArtist(db *sqlx.DB) ([]Artist, error){
 		artists = append(artists, artist)
 	}
 	return artists, nil
+}
+
+func ClearArtist(db *sqlx.DB) error {
+	sqlStatement := `DELETE from artist`
+	_, err := db.Exec(sqlStatement)
+	if err != nil {
+		return err
+	}
+	return nil
 }

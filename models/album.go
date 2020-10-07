@@ -24,7 +24,7 @@ func (album *Album) CreateAlbum(db *sqlx.DB) (int, bool, error) {
 	var id int
 	createdNew := false
 	err := db.QueryRow(
-		`SELECT id from album where album_name = $1`, album.AlbumName,
+		`SELECT id from album where UPPER(album_name) = UPPER($1)`, album.AlbumName,
 	).Scan(&id)
 	if id == 0 {
 		err = db.QueryRow(
@@ -93,4 +93,13 @@ func GetAlbumByArtist(artistID int, db *sqlx.DB) ([]Album, error) {
 		albums = append(albums, album)
 	}
 	return albums, nil
+}
+
+func ClearAlbum(db *sqlx.DB) error {
+	sqlStatement := `DELETE from album`
+	_, err := db.Exec(sqlStatement)
+	if err != nil {
+		return err
+	}
+	return nil
 }

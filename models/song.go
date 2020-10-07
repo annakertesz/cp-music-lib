@@ -253,3 +253,12 @@ func GetSongByEverything(keyword string, db *sqlx.DB)([]Song, error) {
 	}
 	return songs, nil
 }
+
+func ClearSong(db *sqlx.DB) error {
+	sqlStatement := `DELETE from song`
+	_, err := db.Exec(sqlStatement)
+	if err != nil {
+		return err
+	}
+	return nil
+}

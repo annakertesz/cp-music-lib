@@ -109,3 +109,18 @@ func GetAllPLaylist(db *sqlx.DB, userID int) ([]Playlist, error){
 	return playlists, nil
 }
 
+func ClearPlaylist(db *sqlx.DB) error {
+	sqlStatement := `DELETE from playlist_song`
+	_, err := db.Exec(sqlStatement)
+	if err != nil {
+		return err
+	}
+	sqlStatement = `DELETE from playlist WHERE id = $1`
+	_, err = db.Exec(sqlStatement)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+

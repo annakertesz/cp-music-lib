@@ -21,3 +21,13 @@ func (tagSong *TagSong) CreateTagSong(db *sqlx.DB) int {
 	}
 	return id
 }
+
+func ClearTagSong(db *sqlx.DB) error {
+	sqlStatement := `DELETE from tag_song`
+	_, err := db.Exec(sqlStatement)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+

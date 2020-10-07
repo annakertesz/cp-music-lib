@@ -58,3 +58,12 @@ func SaveUpdateNumbers(db *sqlx.DB, id int, found int, created int, failed int, 
 	defer rows.Close()
 	return nil
 }
+
+func ClearUpdates(db *sqlx.DB) error {
+	sqlStatement := `DELETE from cp_update`
+	_, err := db.Exec(sqlStatement)
+	if err != nil {
+		return err
+	}
+	return nil
+}

@@ -60,3 +60,13 @@ func GetTagsOfSong(db *sqlx.DB, songID int) ( []Tag, error){
 	}
 	return tags, nil
 }
+
+func ClearTag(db *sqlx.DB) error {
+	sqlStatement := `DELETE from tag`
+	_, err := db.Exec(sqlStatement)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
