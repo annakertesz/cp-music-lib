@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/annakertesz/cp-music-lib/controller"
+	"github.com/annakertesz/cp-music-lib/models"
 	"github.com/annakertesz/cp-music-lib/updater"
 	"github.com/carlescere/scheduler"
 	"github.com/jmoiron/sqlx"
@@ -104,7 +105,8 @@ func main() {
 	if !ok {
 		port = "8080"
 	}
-	updater := func() {
+	clearDB(true, db)
+	updaterfunc := func() {
 		err = updater.Update(songFolder, coverFolder, server.Token, db)
 		if err != nil {
 			server.GetBoxToken()
@@ -114,10 +116,27 @@ func main() {
 			}
 		}
 	}
-	scheduler.Every(1).Day().Run(updater)
+	updater.Update(songFolder, coverFolder, server.Token, db)
+	scheduler.Every(1).Day().Run(updaterfunc)
 	log.Println("Started")
 	if err := http.ListenAndServe(":"+port, server.Routes()); err != nil {
 		log.Fatal("Could not start HTTP server", err.Error())
+	}
+}
+
+func clearDB(do bool, db *sqlx.DB) error {
+	if do{
+		err := models.ClearUpdates(db)
+		err = models.ClearSong(db)
+		err = models.ClearPlaylist(db)
+		err = models.ClearTagSong(db)
+		err = models.ClearTag(db)
+		err = models.ClearAlbum(db)
+		err = models.ClearArtist(db)
+		if err != nil {
+			return err
+		}
+
 	}
 }
 
