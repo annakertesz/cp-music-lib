@@ -1,7 +1,8 @@
-package controller
+package services
 
 import (
 	"fmt"
+	"github.com/annakertesz/cp-music-lib/config"
 	"github.com/annakertesz/cp-music-lib/models"
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
@@ -15,24 +16,17 @@ type EmailSender struct {
 	developerEmail string
 }
 
-func NewEmailSender(apiKey string, sendername string, senderMail string, adminMail string, developerMail string) EmailSender {
+func NewEmailSender(config config.SengridConfig) EmailSender {
 	return EmailSender{
-		apiKey:apiKey,
-		senderName:sendername,
-		senderMail:senderMail,
-		adminEmail:adminMail,
-		developerEmail:developerMail,
+		apiKey:	config.SengridAPIKey,
+		senderName:	config.SenderName,
+		senderMail: config.SenderEmail,
+		adminEmail: config.AdminEmail,
+		developerEmail: config.DeveloperEmail,
 	}
 }
-//
-//const (
-//	SENDGRID_API_KEY = "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"
-//	SENDER_NAME = "Central Publishing"
-//	SENDER_EMAIL = "kerteszannanak@gmail.com"
-//	CENTRAL_ADMIN_ADRESS = "centralpublishingtest@gmail.com"
-//	)
 
-func (sender *EmailSender) sendVerifyEmail(user models.UserReqObj, verifyEndpoint string) error{
+func (sender *EmailSender) SendVerifyEmail(user models.UserReqObj, verifyEndpoint string) error{
 	from := mail.NewEmail(sender.senderName, sender.senderMail)
 	subject := fmt.Sprintf("%v %v would like have access", user.FirstName, user.LastName)
 	to := mail.NewEmail("Central admin", sender.adminEmail)
@@ -50,7 +44,7 @@ func (sender *EmailSender) sendVerifyEmail(user models.UserReqObj, verifyEndpoin
 	return sendEmail(message, sender.apiKey)
 }
 
-func (sender *EmailSender) sendSongBuyEmail(msg models.BuySongObj) error{
+func (sender *EmailSender) SendSongBuyEmail(msg models.BuySongObj) error{
 	from := mail.NewEmail(sender.senderName, sender.senderMail)
 	subject := fmt.Sprintf("%v %v would like to buy a song", msg.User.FirstName, msg.User.LastName)
 	to := mail.NewEmail("Central admin", sender.adminEmail)

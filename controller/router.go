@@ -2,8 +2,10 @@ package controller
 
 import (
 	"fmt"
-	box_lib "github.com/annakertesz/cp-music-lib/box-lib"
+	"github.com/annakertesz/cp-music-lib/config"
 	"github.com/annakertesz/cp-music-lib/models"
+	"github.com/annakertesz/cp-music-lib/services"
+	box_lib "github.com/annakertesz/cp-music-lib/services/box-lib"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/jmoiron/sqlx"
@@ -12,24 +14,30 @@ import (
 
 type Server struct {
 	db           *sqlx.DB
-	Token        string
 	musicFolder  int
 	coverFolder  int
-	clientID     string
-	clientSecret string
-	privateKey   string
-	EmailSender EmailSender
+	BoxConfig    config.BoxConfig
+	EmailSender  services.EmailSender
 }
 
 type e map[string]string
 
-func NewServer(db *sqlx.DB, clientID string, clientSecret string, privateKey string, musicFolder, coverFolder int, emailSender EmailSender) *Server {
-	token := box_lib.AuthOfBox(clientID, clientSecret, privateKey)
-	return &Server{db: db, Token: token, musicFolder: musicFolder, coverFolder: coverFolder, clientID: clientID, clientSecret: clientSecret, privateKey: privateKey, EmailSender:emailSender}
+func NewServer(db *sqlx.DB, cfg config.Config) *Server {
+	token := box_lib.AuthOfBox(cfg.BoxConfig.ClientID, cfg.BoxConfig.ClientSecret, cfg.BoxConfig.PrivateKey)
+	boxCfg := cfg.BoxConfig
+	boxCfg.Token = token
+	emailSender := services.NewEmailSender(cfg.SengridConfig)
+	return &Server{
+		db:           db,
+		musicFolder:  cfg.SongFolder,
+		coverFolder:  cfg.CoverFolder,
+		EmailSender:  emailSender,
+		BoxConfig:    boxCfg,
+	}
 }
 
 func (s *Server) GetBoxToken() {
-	s.Token = box_lib.AuthOfBox(s.clientID, s.clientSecret, s.privateKey)
+	s.BoxConfig.Token = box_lib.AuthOfBox(s.BoxConfig.ClientID, s.BoxConfig.ClientSecret, s.BoxConfig.PrivateKey)
 }
 
 func (server *Server) Routes() chi.Router {
@@ -140,15 +148,15 @@ func (server *Server) Routes() chi.Router {
 
 	r.Get("/update", func(w http.ResponseWriter, r *http.Request) {
 		if authenticated(server.db, w, r) {
-			update(server.db, w, r, server.Token, server.coverFolder, server.musicFolder)
+			update(server.db, w, r, server.BoxConfig.Token, server.coverFolder, server.musicFolder)
 		}
 	})
 
 	r.Get("/download/{boxID}", func(w http.ResponseWriter, r *http.Request) {
-		err := download(server.db, server.Token, w, r)
+		err := download(server.db, server.BoxConfig.Token, w, r)
 		if err != nil {
 			server.GetBoxToken()
-			err := download(server.db, server.Token, w, r)
+			err := download(server.db, server.BoxConfig.Token, w, r)
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 			}

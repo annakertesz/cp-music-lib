@@ -2,7 +2,7 @@ package controller
 
 import (
 	"fmt"
-	box_lib "github.com/annakertesz/cp-music-lib/box-lib"
+	box_lib "github.com/annakertesz/cp-music-lib/services/box-lib"
 	"github.com/go-chi/chi"
 	"github.com/jmoiron/sqlx"
 	"net/http"

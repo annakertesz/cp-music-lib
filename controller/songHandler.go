@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/annakertesz/cp-music-lib/models"
+	"github.com/annakertesz/cp-music-lib/services"
 	"github.com/go-chi/chi"
 	"github.com/jmoiron/sqlx"
 	"io/ioutil"
@@ -35,7 +36,7 @@ func getAllSongs(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	w.WriteHeader(http.StatusOK)
 }
 
-func buySong(db *sqlx.DB, emailSender EmailSender, w http.ResponseWriter, r *http.Request){
+func buySong(db *sqlx.DB, emailSender services.EmailSender, w http.ResponseWriter, r *http.Request){
 	b, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 	if err != nil {
@@ -78,7 +79,7 @@ func buySong(db *sqlx.DB, emailSender EmailSender, w http.ResponseWriter, r *htt
 		User:    models.UserRO{},
 		Message: msg.Message,
 	}
-	err = emailSender.sendSongBuyEmail(emailData)
+	err = emailSender.SendSongBuyEmail(emailData)
 	if err != nil {
 		fmt.Fprint(w, err.Error())
 		w.WriteHeader(http.StatusInternalServerError)

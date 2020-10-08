@@ -4,10 +4,13 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	box_lib "github.com/annakertesz/cp-music-lib/box-lib"
 	"github.com/annakertesz/cp-music-lib/models"
+	box_lib "github.com/annakertesz/cp-music-lib/services/box-lib"
 	"github.com/dhowden/tag"
 	"github.com/jmoiron/sqlx"
+	"github.com/nfnt/resize"
+	"image"
+	"image/jpeg"
 	"strings"
 )
 
@@ -45,7 +48,14 @@ func UploadSong(token string, coverFolder int, fileBytes []byte, songBoxID int, 
 		if metadata.Picture() == nil {
 			fmt.Printf("couldn't find image for the album %v", album.AlbumName)
 		} else {
-			boxID, err := box_lib.UploadFile(token, coverFolder, albumID, metadata.Picture().Data)
+			image, _, err := image.Decode(bytes.NewReader(metadata.Picture().Data))
+			newImage := resize.Resize(160, 160, image, resize.Lanczos3)
+			b := make([]byte, 0, 1024)
+			buf := bytes.NewBuffer(b)
+
+			err = jpeg.Encode(buf, newImage, nil)
+			boxID, err := box_lib.UploadFile(token, coverFolder, albumID, b)
+
 			if err != nil {
 				fmt.Println("couldnt upload cover to box")
 			}

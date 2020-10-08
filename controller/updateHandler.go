@@ -2,7 +2,7 @@ package controller
 
 import (
 	"fmt"
-	"github.com/annakertesz/cp-music-lib/updater"
+	"github.com/annakertesz/cp-music-lib/services/updater"
 	"github.com/jmoiron/sqlx"
 	"net/http"
 )

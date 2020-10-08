@@ -2,14 +2,16 @@ package updater
 
 import (
 	"fmt"
-	box_lib "github.com/annakertesz/cp-music-lib/box-lib"
 	"github.com/annakertesz/cp-music-lib/models"
+	"github.com/annakertesz/cp-music-lib/services"
+	box_lib "github.com/annakertesz/cp-music-lib/services/box-lib"
 	"github.com/jmoiron/sqlx"
 )
 
 func Update(songFolder int, coverFolder int, token string, db *sqlx.DB) error {
 	latestUpdate, err := models.GetLatestUpdate(db)
 	if err != nil {
+		services.HandleError(db, "updater", err, "message", 2)
 		return err
 	}
 	updateID, err := models.NewUpdate(db)
