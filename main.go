@@ -182,6 +182,20 @@ func connect(dbURL string) (*sqlx.DB, error) {
 		return nil, err
 	}
 	_, err = db.Exec(`
+		DROP TABLE IF EXISTS failed_song;
+		DROP TABLE IF EXISTS tag_song;
+		DROP TABLE IF EXISTS playlist_song;
+		DROP TABLE IF EXISTS playlist;
+		DROP TABLE IF EXISTS logs;
+		DROP TABLE IF EXISTS cp_update;
+		DROP TABLE IF EXISTS sessions;
+		DROP TABLE IF EXISTS token;
+		DROP TABLE IF EXISTS song;
+		DROP TABLE IF EXISTS artist;
+		DROP TABLE IF EXISTS tag;
+		DROP TABLE IF EXISTS album;
+`)
+	_, err = db.Exec(`
    CREATE TABLE IF NOT EXISTS artist
 (
    id          SERIAL NOT NULL,
@@ -236,6 +250,16 @@ CREATE TABLE IF NOT EXISTS cp_update
    PRIMARY KEY (id)
 );
 
+CREATE TABLE IF NOT EXISTS logs
+(
+	id       SERIAL NOT NULL,
+   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
+   service varchar(255),
+   error varchar(500),
+   message varchar(500)
+   PRIMARY KEY (id)
+);
+
 CREATE TABLE IF NOT EXISTS failed_song
 (
    id           SERIAL NOT NULL,
@@ -286,16 +310,6 @@ CREATE TABLE IF NOT EXISTS playlist_song
    id       SERIAL NOT NULL,
    map_playlist  INTEGER REFERENCES playlist (id),
    map_song INTEGER REFERENCES song (id),
-   PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS logs
-(
-	id       SERIAL NOT NULL,
-   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
-   service varchar(255),
-   error varchar(500),
-   message varchar(500)
    PRIMARY KEY (id)
 );
  `)
