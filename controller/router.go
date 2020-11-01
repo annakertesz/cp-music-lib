@@ -146,11 +146,11 @@ func (server *Server) Routes() chi.Router {
 		}
 	})
 
-	//r.Get("/update", func(w http.ResponseWriter, r *http.Request) {
-	//	if authenticated(server.db, w, r) {
-	//		update(server.db, w, r, server.BoxConfig.Token, server.coverFolder, server.musicFolder)
-	//	}
-	//})
+	r.Get("/update", func(w http.ResponseWriter, r *http.Request) {
+		if authenticated(server.db, w, r) {
+			update(server.db, w, r, server.BoxConfig.Token, server.coverFolder, server.musicFolder)
+		}
+	})
 
 	r.Get("/download/{boxID}", func(w http.ResponseWriter, r *http.Request) {
 		err := download(server.db, server.BoxConfig.Token, w, r)

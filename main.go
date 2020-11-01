@@ -25,7 +25,7 @@ const (
 	password = "anna"
 	dbname   = "centralp"
 	testFolder = "110166546915"
-	cpFolder = "11060259445"
+	cpFolder = "11056063660"
 	)
 
 
@@ -45,8 +45,7 @@ func main() {
 
 	//First update
 
-	clearDB(true, db)
-	updater.Update(config.SongFolder, config.CoverFolder, server.BoxConfig.Token, db)
+	clearDB(false, db)
 
 	// schedule update for every day
 	updaterfunc := func() {
@@ -59,7 +58,6 @@ func main() {
 			}
 		}
 	}
-	updater.Update(config.SongFolder, config.CoverFolder, server.BoxConfig.Token, db)
 	scheduler.Every(1).Day().Run(updaterfunc)
 
 	//start server
@@ -182,21 +180,21 @@ func connect(dbURL string) (*sqlx.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	_, err = db.Exec(`
-		DROP TABLE IF EXISTS failed_song;
-		DROP TABLE IF EXISTS tag_song;
-		DROP TABLE IF EXISTS playlist_song;
-		DROP TABLE IF EXISTS playlist;
-		DROP TABLE IF EXISTS logs;
-		DROP TABLE IF EXISTS cp_update;
-		DROP TABLE IF EXISTS sessions;
-		DROP TABLE IF EXISTS token;
-		DROP TABLE IF EXISTS song;
-		DROP TABLE IF EXISTS album;
-		DROP TABLE IF EXISTS artist;
-		DROP TABLE IF EXISTS tag;
-		
-`)
+//	_, err = db.Exec(`
+//		DROP TABLE IF EXISTS failed_song;
+//		DROP TABLE IF EXISTS tag_song;
+//		DROP TABLE IF EXISTS playlist_song;
+//		DROP TABLE IF EXISTS playlist;
+//		DROP TABLE IF EXISTS logs;
+//		DROP TABLE IF EXISTS cp_update;
+//		DROP TABLE IF EXISTS sessions;
+//		DROP TABLE IF EXISTS token;
+//		DROP TABLE IF EXISTS song;
+//		DROP TABLE IF EXISTS album;
+//		DROP TABLE IF EXISTS artist;
+//		DROP TABLE IF EXISTS tag;
+//
+//`)
 	_, err = db.Exec(`
    CREATE TABLE IF NOT EXISTS artist
 (
