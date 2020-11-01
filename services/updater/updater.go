@@ -5,9 +5,12 @@ import (
 	"github.com/annakertesz/cp-music-lib/services"
 	box_lib "github.com/annakertesz/cp-music-lib/services/box-lib"
 	"github.com/jmoiron/sqlx"
+	"log"
+	"time"
 )
 
 func Update(songFolder int, coverFolder int, token string, db *sqlx.DB){
+	log.Printf("start update at %v", time.Now())
 	latestUpdate, err := models.GetLatestUpdate(db)
 	if err != nil {
 		services.HandleError(db, *err)

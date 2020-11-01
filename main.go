@@ -150,6 +150,7 @@ func getConfig() config.Config {
 }
 
 func clearDB(do bool, db *sqlx.DB) error {
+	log.Printf("clear db")
 	if do{
 		err := models.ClearUpdates(db)
 		err = models.ClearSong(db)
