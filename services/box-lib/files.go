@@ -9,7 +9,6 @@ import (
 	"io"
 	"io/ioutil"
 	"mime/multipart"
-	"strconv"
 
 	"net/http"
 )
@@ -52,7 +51,7 @@ func DownloadFile(token string, id int) (io.ReadCloser, string, *models.ErrorMod
 	if resp.StatusCode == http.StatusOK {
 		return resp.Body, resp.Header.Get("Content-Type"), nil
 	}
-	return nil, "",   &models.ErrorModel{
+	return nil, "", &models.ErrorModel{
 		Service: "BoxLibService",
 		Err:     errors.New(fmt.Sprintf("error from downloader: %v", resp.Status)),
 		Message: fmt.Sprintf("Error while download item: id = %v", id),
@@ -60,7 +59,7 @@ func DownloadFile(token string, id int) (io.ReadCloser, string, *models.ErrorMod
 	}
 }
 
-func UploadFile(token string, folderID int, filename int, file []byte) (int, error) {
+func UploadFile(token string, folderID int, filename int, file []byte) (string, error) {
 	fmt.Println("upload cover photo")
 	client := &http.Client{}
 	body := new(bytes.Buffer)
@@ -69,14 +68,14 @@ func UploadFile(token string, folderID int, filename int, file []byte) (int, err
 	writer.WriteField("attributes", fmt.Sprintf("{\"name\":\"%v.jpg\", \"parent\":{\"id\":\"%v\"}}", filename, folderID))
 	part, err := writer.CreateFormFile("file", "file.jpg")
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 
 	part.Write(file)
 
 	err = writer.Close()
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 	req, err := http.NewRequest("POST", fmt.Sprintf("https://upload.box.com/api/2.0/files/content"), body)
 	if err != nil {
@@ -88,28 +87,27 @@ func UploadFile(token string, folderID int, filename int, file []byte) (int, err
 	resp, err := client.Do(req)
 	fmt.Println(resp.Status)
 	if resp.StatusCode == 201 {
+		all, _ := ioutil.ReadAll(resp.Body)
+		var result Result
+		err = json.Unmarshal(all, &result)
+		if err != nil {
+			fmt.Println(err.Error())
+			return "", err
+		}
+		if len(result.Entries) < 1 {
+			return "", errors.New("box doesnt return file id")
+		}
+		return result.Entries[0].Id, nil
+	}
 	all, _ := ioutil.ReadAll(resp.Body)
-	var result Result
-	err = json.Unmarshal(all, &result)
-	if err != nil {
-		fmt.Println(err.Error())
-		return 0, err
-	}
-	if len(result.Entries)<1 {
-		return 0, errors.New("box doesnt return file id")
-	}
-	id, err := strconv.Atoi(result.Entries[0].Id)
-	if err != nil {
-		return 0, err
-	}
-	return id,nil}
-	return 0, errors.New("file already exists")
+	fmt.Println("!!!!!!!!!!!!!")
+	fmt.Println(resp.StatusCode)
+	fmt.Println(string(all))
+	return "", errors.New("file already exists")
 }
 
 type Result struct {
-	Entries []struct{
+	Entries []struct {
 		Id string `json:"id"`
 	} `json:"entries"`
 }
-
-

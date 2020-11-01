@@ -37,7 +37,7 @@ func (album *Album) CreateAlbum(db *sqlx.DB) (int, bool, error) {
 	return id, createdNew, err
 }
 
-func (album *Album) SaveAlbumImageID(db *sqlx.DB, id int){
+func (album *Album) SaveAlbumImageID(db *sqlx.DB, id string){
 	rows, err := db.Queryx(`UPDATE album SET album_cover = $1 WHERE id=$2`, id, album.AlbumID)
 	if err != nil {
 		rows, err = db.Queryx(`UPDATE album SET album_cover = $1 WHERE id=$2`, default_id, album.AlbumID)

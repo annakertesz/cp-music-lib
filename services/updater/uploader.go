@@ -101,7 +101,12 @@ func UploadSong(token string, coverFolder int, fileBytes []byte, songBoxID int, 
 					boxID, err := box_lib.UploadFile(token, coverFolder, albumID, buf.Bytes())
 
 					if err != nil {
-						fmt.Println("couldnt upload cover to box")
+						services.HandleError(db, models.ErrorModel{
+							Service: "Uploader",
+							Err:     err,
+							Message: fmt.Sprintf("Couldnt upload image to box (boxID = %v", songBoxID),
+							Sev:     3,
+						})
 					}
 					album.SaveAlbumImageID(db, boxID)
 				}

@@ -24,7 +24,7 @@ const (
 	user     = "anna"
 	password = "anna"
 	dbname   = "centralp"
-	testFolder = "114476926207"
+	testFolder = "110166546915"
 	cpFolder = "11059102688"
 	)
 
@@ -192,9 +192,10 @@ func connect(dbURL string) (*sqlx.DB, error) {
 		DROP TABLE IF EXISTS sessions;
 		DROP TABLE IF EXISTS token;
 		DROP TABLE IF EXISTS song;
+		DROP TABLE IF EXISTS album;
 		DROP TABLE IF EXISTS artist;
 		DROP TABLE IF EXISTS tag;
-		DROP TABLE IF EXISTS album;
+		
 `)
 	_, err = db.Exec(`
    CREATE TABLE IF NOT EXISTS artist
