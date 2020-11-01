@@ -256,7 +256,7 @@ CREATE TABLE IF NOT EXISTS logs
    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
    service varchar(255),
    error varchar(500),
-   message varchar(500)
+   message varchar(500),
    PRIMARY KEY (id)
 );
 
