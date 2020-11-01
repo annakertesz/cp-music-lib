@@ -58,6 +58,10 @@
 			"Rev": "356e267cd3f45ee1303b7d8765e3583cb949950e"
 		},
 		{
+			"ImportPath": "github.com/nfnt/resize",
+			"Rev": "83c6a9932646f83e3267f353373d47347b6036b2"
+		},
+		{
 			"ImportPath": "github.com/sendgrid/rest",
 			"Comment": "2.6.0-5-ged76a03",
 			"Rev": "ed76a03e9bda9296cdf0710097f628167e3fa411"
