@@ -44,6 +44,7 @@ func main() {
 	server := controller.NewServer(db, config)
 
 	//First update
+
 	clearDB(true, db)
 	updater.Update(config.SongFolder, config.CoverFolder, server.BoxConfig.Token, db)
 

@@ -54,12 +54,14 @@ func NewUpdate(db *sqlx.DB)(int, *ErrorModel){
 		`INSERT INTO cp_update (ud_date) VALUES ($1) RETURNING id`,
 		time.Now(),
 	).Scan(&id)
+	if err != nil {
 	return id, &ErrorModel{
 		Service: "UpdateLogWriter",
 		Err:     err,
 		Message: "There was a problem while insert new Update log (cp_update table)",
 		Sev:     3,
-	}
+	}}
+	return id, nil
 }
 
 func SaveUpdateNumbers(db *sqlx.DB, id int, found int, created int, failed int, deleted int) error{
