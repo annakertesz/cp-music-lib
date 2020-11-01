@@ -6,11 +6,11 @@ import (
 )
 
 type Logs struct {
-	ID int `db:"id"`
+	ID        int       `db:"id"`
 	CreatedAt time.Time `db:"created_at`
-	Service string `db:"service"`
-	Error string `db:"error"`
-	Message string `db:"message"`
+	Service   string    `db:"service"`
+	Err       string    `db:"error"`
+	Message   string    `db:"message"`
 }
 
 func CreateLog(db *sqlx.DB, service, error, message string)(int, error){

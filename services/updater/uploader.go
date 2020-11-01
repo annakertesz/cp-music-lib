@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/annakertesz/cp-music-lib/models"
+	"github.com/annakertesz/cp-music-lib/services"
 	box_lib "github.com/annakertesz/cp-music-lib/services/box-lib"
 	"github.com/dhowden/tag"
 	"github.com/jmoiron/sqlx"
@@ -14,23 +15,36 @@ import (
 	"strings"
 )
 
-func UploadSong(token string, coverFolder int, fileBytes []byte, songBoxID int, db *sqlx.DB) error {
+func UploadSong(token string, coverFolder int, fileBytes []byte, songBoxID int, db *sqlx.DB) *models.ErrorModel {
 	reader := bytes.NewReader(fileBytes)
 	metadata, err := tag.ReadFrom(reader)
 	if err != nil {
-		fmt.Println(err.Error())
-		return err
+		return &models.ErrorModel{
+			Service: "Updater",
+			Err:     err,
+			Message: fmt.Sprintf("error while trying to read metadata from item (boxID = %v)", songBoxID),
+			Sev:     3,
+		}
 	}
 	artist := models.Artist{
 		ArtistName: metadata.Artist(),
 	}
 	artistID, err := artist.CreateArtist(db)
 	if artistID == 0 || err != nil {
-		fmt.Println("Couldnt create artist")
 		if err != nil {
-			return err
+			return &models.ErrorModel{
+				Service: "Updater",
+				Err:     err,
+				Message: fmt.Sprintf("error while trying to create new artist (boxID = %v, artist = %v)", songBoxID, metadata.Artist()),
+				Sev:     3,
+			}
 		}
-		return errors.New("unexpected error while creating artist")
+		return &models.ErrorModel{
+			Service: "Updater",
+			Err:     errors.New("unexpected error while creating album"),
+			Message: fmt.Sprintf("error while trying to create new album (boxID = %v, album = %v)", songBoxID, metadata.Album()),
+			Sev:     3,
+		}
 	}
 	album := models.Album{
 		AlbumName:   metadata.Album(),
@@ -38,39 +52,80 @@ func UploadSong(token string, coverFolder int, fileBytes []byte, songBoxID int, 
 	}
 	albumID, createdNewAlbum, err := album.CreateAlbum(db)
 	if albumID == 0 || err != nil {
-		fmt.Println("Couldnt create album")
 		if err != nil {
-			return err
+			return &models.ErrorModel{
+				Service: "Uploader",
+				Err:     err,
+				Message: fmt.Sprintf("error while trying to create new album (boxID = %v, album = %v)", songBoxID, metadata.Album()),
+				Sev:     3,
+			}
 		}
-		return errors.New("unexpected error while creating album")
+		return &models.ErrorModel{
+			Service: "Uloader",
+			Err:     errors.New("unexpected error while creating album"),
+			Message: fmt.Sprintf("error while trying to create new album (boxID = %v, album = %v)", songBoxID, metadata.Album()),
+			Sev:     3,
+		}
 	}
 	if createdNewAlbum {
 		if metadata.Picture() == nil {
-			fmt.Printf("couldn't find image for the album %v", album.AlbumName)
+			services.HandleError(db, models.ErrorModel{
+				Service: "Uploader",
+				Err:     errors.New("missing picture from metadata"),
+				Message: fmt.Sprintf("there is no picture for item (boxID = %v", songBoxID),
+				Sev:     3,
+			})
 		} else {
 			image, _, err := image.Decode(bytes.NewReader(metadata.Picture().Data))
-			newImage := resize.Resize(160, 160, image, resize.Lanczos3)
-			b := make([]byte, 0, 1024)
-			buf := bytes.NewBuffer(b)
-
-			err = jpeg.Encode(buf, newImage, nil)
-			boxID, err := box_lib.UploadFile(token, coverFolder, albumID, b)
-
 			if err != nil {
-				fmt.Println("couldnt upload cover to box")
+				services.HandleError(db, models.ErrorModel{
+					Service: "Uploader",
+					Err:     err,
+					Message: fmt.Sprintf("error while decode image from metadata for item (boxID = %v", songBoxID),
+					Sev:     3,
+				})
+			} else {
+				newImage := resize.Resize(160, 160, image, resize.Lanczos3)
+				b := make([]byte, 0, 1024)
+				buf := bytes.NewBuffer(b)
+
+				err = jpeg.Encode(buf, newImage, nil)
+				if err != nil {
+					services.HandleError(db, models.ErrorModel{
+						Service: "Uploader",
+						Err:     err,
+						Message: fmt.Sprintf("error while encode resized image for item (boxID = %v", songBoxID),
+						Sev:     3,
+					})
+				} else {
+					boxID, err := box_lib.UploadFile(token, coverFolder, albumID, b)
+
+					if err != nil {
+						fmt.Println("couldnt upload cover to box")
+					}
+					album.SaveAlbumImageID(db, boxID)
+				}
 			}
-			album.SaveAlbumImageID(db, boxID)
 		}
 	}
 	song := models.NewSong(metadata.Title(), albumID, songBoxID)
 
 	songID, _, err := song.CreateSong(db)
 	if songID == 0 || err != nil {
-		fmt.Println("Couldnt create song")
 		if err != nil {
-			return err
+			return &models.ErrorModel{
+				Service: "Uploader",
+				Err:     err,
+				Message: fmt.Sprintf("error while trying to create new song (boxID = %v, title = %v)", songBoxID, metadata.Title()),
+				Sev:     3,
+			}
 		}
-		return errors.New("unexpected error while creating song")
+		return &models.ErrorModel{
+			Service: "Uloader",
+			Err:     errors.New("unexpected error while creating song"),
+			Message: fmt.Sprintf("error while trying to create new song (boxID = %v, title = %v)", songBoxID, metadata.Title()),
+			Sev:     3,
+		}
 	}
 	tags := strings.Split(metadata.Genre(), "/")
 	for _, tag := range tags {

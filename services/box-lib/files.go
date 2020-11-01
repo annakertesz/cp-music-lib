@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/annakertesz/cp-music-lib/models"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
@@ -13,29 +14,36 @@ import (
 	"net/http"
 )
 
-func DownloadFileBytes(token string, id int) ([]byte, string, error) {
-	responseBody, contentType, err := DownloadFile(token, id)
-	if err != nil {
-		return nil, "",  err
+func DownloadFileBytes(token string, id int) ([]byte, string, *models.ErrorModel) {
+	responseBody, contentType, errModel := DownloadFile(token, id)
+	if errModel != nil {
+		return nil, "", errModel
 	}
 	defer responseBody.Close()
 	bytes, err := ioutil.ReadAll(responseBody)
 	if err != nil {
-		fmt.Println("couldnt read bytes from response body")
-		errors.New("couldnt read bytes from response body")
+		return nil, "", &models.ErrorModel{
+			Service: "BoxLibService",
+			Err:     err,
+			Message: fmt.Sprintf("error while read download response"),
+			Sev:     3,
+		}
 	}
 	return bytes, contentType, nil
 
 }
 
-func DownloadFile(token string, id int) (io.ReadCloser, string, error) {
-	fmt.Println(token)
-	fmt.Println(id)
+func DownloadFile(token string, id int) (io.ReadCloser, string, *models.ErrorModel) {
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", fmt.Sprintf("https://api.box.com/2.0/files/%v/content", id), nil)
 	if err != nil {
 		fmt.Println("error in download request")
-		return nil, "", err
+		return nil, "", &models.ErrorModel{
+			Service: "BoxLibService",
+			Err:     err,
+			Message: fmt.Sprintf("Error while creating request to download item: id = %v", id),
+			Sev:     3,
+		}
 	}
 	fmt.Println(req.URL)
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %v", token))
@@ -44,7 +52,12 @@ func DownloadFile(token string, id int) (io.ReadCloser, string, error) {
 	if resp.StatusCode == http.StatusOK {
 		return resp.Body, resp.Header.Get("Content-Type"), nil
 	}
-	return nil, "",  errors.New(fmt.Sprintf("error from downloader: %v", resp.Status))
+	return nil, "",   &models.ErrorModel{
+		Service: "BoxLibService",
+		Err:     errors.New(fmt.Sprintf("error from downloader: %v", resp.Status)),
+		Message: fmt.Sprintf("Error while download item: id = %v", id),
+		Sev:     3,
+	}
 }
 
 func UploadFile(token string, folderID int, filename int, file []byte) (int, error) {

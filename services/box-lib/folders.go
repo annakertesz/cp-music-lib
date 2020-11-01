@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/annakertesz/cp-music-lib/models"
 	"net/http"
 	"strconv"
 )
@@ -20,7 +21,7 @@ type Entry struct {
 }
 
 //11056063660
-func GetFileIDsToUpload(token string, folderID int, date string) ([]int, error) {
+func GetFileIDsToUpload(token string, folderID int, date string) ([]int, *models.ErrorModel) {
 	idList := make([]int, 0)
 	limit := 200
 	offset := 0
@@ -28,12 +29,22 @@ func GetFileIDsToUpload(token string, folderID int, date string) ([]int, error) 
 	for inProgress {
 		resp, err := getPageOfIds(token, folderID, date, limit, offset)
 		if err != nil {
-			return nil, err
+			return nil, &models.ErrorModel{
+				Service: "BoxLibService",
+				Err:     err,
+				Message: "Error while getting IDs of new box items",
+				Sev:     3,
+			}
 		}
 		for _, item := range resp.Entries {
 			id, err := strconv.Atoi(item.ID)
 			if err != nil {
-				return nil, err
+				return nil, &models.ErrorModel{
+					Service: "BoxLibService",
+					Err:     err,
+					Message: fmt.Sprintf("Error while converting ID of item (%v, %v)", item.EntryType, item.ID),
+					Sev:     3,
+				}
 			}
 			idList = append(idList, id)
 		}

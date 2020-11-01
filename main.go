@@ -237,7 +237,7 @@ CREATE TABLE IF NOT EXISTS failed_song
 (
    id           SERIAL NOT NULL,
    box_id        varchar(500),
-   error_message varchar(500),
+   error_log_id INTEGER REFERENCES logs (id),
    cp_update       INTEGER REFERENCES cp_update (id),
    PRIMARY KEY (id)
 );
@@ -293,6 +293,7 @@ CREATE TABLE IF NOT EXISTS logs
    service varchar(255),
    error varchar(500),
    message varchar(500)
+   PRIMARY KEY (id)
 );
  `)
 

@@ -6,10 +6,12 @@ import (
 	"log"
 )
 
-func HandleError(db *sqlx.DB, service string, err error, message string, sev int){
-	log.Printf("ERROR from %v:  %v %v", service, err, message)
-	if sev>1 {
-		models.CreateLog(db, service, err.Error(), message)
+func HandleError(db *sqlx.DB, err models.ErrorModel) int{
+	log.Printf("ERROR from %v:  %v %v", err.Service, err.Err, err.Message)
+	if err.Sev>1 {
+		id, _ := models.CreateLog(db, err.Service, err.Err.Error(), err.Message)
+		return id
 	}
+	return 0
 }
 

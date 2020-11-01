@@ -12,7 +12,7 @@ func TestGetLatestUpdate(t *testing.T) {
 	}
 	//location, err := time.LoadLocation("Europe/Budapest")
 	//if err != nil {
-	//	panic(err.Error())
+	//	panic(err.Err())
 	//}
 	//var id int
 	//err = db.QueryRow(
@@ -20,28 +20,28 @@ func TestGetLatestUpdate(t *testing.T) {
 	//	time.Date(2017, 02, 01, 00,00,00,00, location),
 	//).Scan(&id)
 	//if err != nil {
-	//	panic(err.Error())
+	//	panic(err.Err())
 	//}
 	//err = db.QueryRow(
 	//	`INSERT INTO update (ud_date,found_songs,created_songs, failed_songs, deleted_songs) VALUES ($1, 1, 2, 3, 4) RETURNING id`,
 	//	time.Date(2017, 02, 01, 00,00,00,00, location),
 	//).Scan(&id)
 	//if err != nil {
-	//	panic(err.Error())
+	//	panic(err.Err())
 	//}
 	//err = db.QueryRow(
 	//	`INSERT INTO update (ud_date,found_songs,created_songs, failed_songs, deleted_songs) VALUES ($1, 16, 25, 36, 43) RETURNING id`,
 	//	time.Date(2018, 02, 01, 00,00,00,00, location),
 	//).Scan(&id)
 	//if err != nil {
-	//	panic(err.Error())
+	//	panic(err.Err())
 	//}
 	//err = db.QueryRow(
 	//	`INSERT INTO update (ud_date,found_songs,created_songs, failed_songs, deleted_songs) VALUES ($1, 15, 24, 37, 43) RETURNING id`,
 	//	time.Date(2019, 02, 01, 00,00,00,00, location),
 	//).Scan(&id)
 	//if err != nil {
-	//	panic(err.Error())
+	//	panic(err.Err())
 	//}
 	update, err := GetLatestUpdate(db)
 	if err != nil {
