@@ -43,10 +43,6 @@ func main() {
 	}
 	server := controller.NewServer(db, config)
 
-	//First update
-
-	clearDB(false, db)
-
 	// schedule update for every day
 	updaterfunc := func() {
 		updater.Update(config.SongFolder, config.CoverFolder, server.BoxConfig.Token, db)

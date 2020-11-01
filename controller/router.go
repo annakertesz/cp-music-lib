@@ -148,7 +148,10 @@ func (server *Server) Routes() chi.Router {
 
 	r.Get("/update", func(w http.ResponseWriter, r *http.Request) {
 			update(server.db, w, r, server.BoxConfig.Token, server.coverFolder, server.musicFolder)
+	})
 
+	r.Get("/cleardb", func(w http.ResponseWriter, r *http.Request) {
+		cleardb(server.db, w, r)
 	})
 
 	r.Get("/download/{boxID}", func(w http.ResponseWriter, r *http.Request) {
