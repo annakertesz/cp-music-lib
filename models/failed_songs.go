@@ -15,7 +15,7 @@ type FailedSong struct {
 func SaveFailedSong(db *sqlx.DB, boxID string, logId int, update int) (int, error){
 	var id int
 	err := db.QueryRow(
-		`INSERT INTO failed_song (box_id, ErrorLogID, update) VALUES ($1, $2, $3) RETURNING id`,
+		`INSERT INTO failed_song (box_id, error_log_id, update) VALUES ($1, $2, $3) RETURNING id`,
 		boxID,  logId, update,
 	).Scan(&id)
 	if err != nil {
