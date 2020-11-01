@@ -98,7 +98,7 @@ func UploadSong(token string, coverFolder int, fileBytes []byte, songBoxID int, 
 						Sev:     3,
 					})
 				} else {
-					boxID, err := box_lib.UploadFile(token, coverFolder, albumID, b)
+					boxID, err := box_lib.UploadFile(token, coverFolder, albumID, buf.Bytes())
 
 					if err != nil {
 						fmt.Println("couldnt upload cover to box")
