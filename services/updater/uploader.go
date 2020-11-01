@@ -151,6 +151,3 @@ func UploadSong(token string, coverFolder int, fileBytes []byte, songBoxID int, 
 	return nil
 }
 
-//func checkIfSongExists(title string, album string) bool {
-//
-//}

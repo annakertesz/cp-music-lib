@@ -14,7 +14,6 @@ type Song struct {
 	SongInstrumentalLqURL *string `json:"song_instrumental_lq_url" db:"instrumental_lq_url"`
 	SongInstrumentalHqURL *string `json:"song_instrumental_hq_url" db:"instrumental_hq_url"`
 	SongAlbum             int     `json:"song_album" db:"song_album"`
-	Song_Tag              *string `db:"song_tag"` //todo:remove!
 	boxID                 int
 }
 
@@ -91,7 +90,7 @@ func GetSongByID(id int, db *sqlx.DB) (*Song, error) {
 
 func GetSongByArtist(id int, db *sqlx.DB) ([]Song, error) {
 	rows, err := db.Queryx(
-		`SELECT song.id, song.instrumental_hq_url, song.instrumental_lq_url, song.song_album, song.song_hq_url, song.song_lq_url, song.song_name, song.song_tag from song join album on song.song_album = album.id where album_artist = $1`, id,
+		`SELECT song.id, song.instrumental_hq_url, song.instrumental_lq_url, song.song_album, song.song_hq_url, song.song_lq_url, song.song_name, from song join album on song.song_album = album.id where album_artist = $1`, id,
 	)
 	if err != nil {
 		fmt.Println("error in query")
@@ -115,7 +114,7 @@ func GetSongByArtist(id int, db *sqlx.DB) ([]Song, error) {
 
 func GetAllSongs(db *sqlx.DB) ([]Song, error) {
 	rows, err := db.Queryx(
-		`SELECT song.id, song.instrumental_hq_url, song.instrumental_lq_url, song.song_album, song.song_hq_url, song.song_lq_url, song.song_name, song.song_tag from song join album on song.song_album = album.id`,
+		`SELECT song.id, song.instrumental_hq_url, song.instrumental_lq_url, song.song_album, song.song_hq_url, song.song_lq_url, song.song_name, from song join album on song.song_album = album.id`,
 	)
 	if err != nil {
 		fmt.Println("error in query")
@@ -147,7 +146,6 @@ func GetSongsByPlaylist(db *sqlx.DB, playlistID int) ([]Song, error) {
 				song.song_hq_url, 
 				song.song_lq_url, 
 				song.song_name, 
-				song.song_tag 
 			FROM song JOIN playlist_song ON song.id = playlist_song.map_song 
 			WHERE playlist_song.map_playlist = $1`, playlistID,
 	)
@@ -197,7 +195,7 @@ func GetSongByAlbum(id int, db *sqlx.DB) ([]Song, error) {
 
 func GetSongByTag(id int, db *sqlx.DB) ([]Song, error) {
 	rows, err := db.Queryx(
-		`select song.id, song.instrumental_hq_url, song.instrumental_lq_url, song.song_album, song.song_hq_url, song.song_lq_url, song.song_name, song.song_tag from tag_song join tag on tag.id = tag_song.map_tag join song on song.id = tag_song.map_song where tag.id = $1`, id,
+		`select song.id, song.instrumental_hq_url, song.instrumental_lq_url, song.song_album, song.song_hq_url, song.song_lq_url, song.song_name from tag_song join tag on tag.id = tag_song.map_tag join song on song.id = tag_song.map_song where tag.id = $1`, id,
 	)
 	if err != nil {
 		fmt.Println("error in query")
@@ -228,8 +226,7 @@ func GetSongByEverything(keyword string, db *sqlx.DB)([]Song, error) {
 					song.song_album, 
 					song.song_hq_url, 
 					song.song_lq_url, 
-					song.song_name, 
-					song.song_tag 
+					song.song_name,
 				from tag_song 
 				join tag on tag.id = tag_song.map_tag join song on song.id = tag_song.map_song 
 				join album on song.song_album = album.id
