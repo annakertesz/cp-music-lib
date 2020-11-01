@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"github.com/annakertesz/cp-music-lib/services"
 	box_lib "github.com/annakertesz/cp-music-lib/services/box-lib"
 	"github.com/go-chi/chi"
 	"github.com/jmoiron/sqlx"
@@ -19,10 +20,10 @@ func download(db *sqlx.DB, token string, w http.ResponseWriter, r *http.Request)
 		w.WriteHeader(http.StatusBadRequest)
 		return nil
 	}
-	resp, contentType, err := box_lib.DownloadFileBytes(token, id)
-	if err != nil {
-		fmt.Println("Couldnt download song")
-		fmt.Println(err.Error())
+	resp, contentType, errModel := box_lib.DownloadFileBytes(token, id)
+	if errModel != nil {
+		services.HandleError(db, *errModel )
+		w.WriteHeader(http.StatusInternalServerError)
 		return err
 	}
 	w.Header().Set("Content-Type", contentType)
