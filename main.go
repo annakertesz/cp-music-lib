@@ -49,10 +49,10 @@ func main() {
 
 	// schedule update for every day
 	updaterfunc := func() {
-		err = updater.Update(config.SongFolder, config.CoverFolder, server.BoxConfig.Token, db)
+		updater.Update(config.SongFolder, config.CoverFolder, server.BoxConfig.Token, db)
 		if err != nil {
 			server.GetBoxToken()
-			err = updater.Update(config.SongFolder, config.CoverFolder, server.BoxConfig.Token, db)
+			updater.Update(config.SongFolder, config.CoverFolder, server.BoxConfig.Token, db)
 			if err != nil {
 				fmt.Printf("couldnt update %v", err.Error())
 			}
@@ -158,6 +158,8 @@ func clearDB(do bool, db *sqlx.DB) error {
 		err = models.ClearTag(db)
 		err = models.ClearAlbum(db)
 		err = models.ClearArtist(db)
+		err = models.ClearFailedSongs(db)
+		err = models.ClearLogs(db)
 		if err != nil {
 			return err
 		}

@@ -21,3 +21,12 @@ func CreateLog(db *sqlx.DB, service, error, message string)(int, error){
 	).Scan(&id)
 	return id, err
 }
+
+func ClearLogs(db *sqlx.DB) error {
+	sqlStatement := `DELETE from logs`
+	_, err := db.Exec(sqlStatement)
+	if err != nil {
+		return err
+	}
+	return nil
+}

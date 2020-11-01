@@ -23,3 +23,12 @@ func SaveFailedSong(db *sqlx.DB, boxID string, logId int, update int) (int, erro
 	}
 	return id, err
 }
+
+func ClearFailedSongs(db *sqlx.DB) error {
+	sqlStatement := `DELETE from failed_song`
+	_, err := db.Exec(sqlStatement)
+	if err != nil {
+		return err
+	}
+	return nil
+}
