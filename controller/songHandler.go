@@ -235,8 +235,7 @@ func searchSong(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	keyword:= r.URL.Query().Get("keyword")
 	fmt.Sprint(keyword)
 	if keyword == "" {
-		fmt.Printf("\nneed keyword")
-		w.WriteHeader(http.StatusBadRequest)  //TODO: bad request to swagger
+		getAllSongs(db, w, r)
 		return
 	}
 	songs, err := models.GetSongByEverything(keyword, db)
