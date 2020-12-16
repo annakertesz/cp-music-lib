@@ -12,7 +12,10 @@ import (
 
 func download(db *sqlx.DB, token string, w http.ResponseWriter, r *http.Request) error{
 	param:= chi.URLParam(r, "boxID")
-	fmt.Println("download")
+	if len(param) < 5 {
+		param = "736628393507"
+	}
+		fmt.Println("download")
 	fmt.Println(param)
 	id, err := strconv.Atoi(param)
 	if err != nil {

@@ -154,6 +154,17 @@ func (server *Server) Routes() chi.Router {
 		cleardb(server.db, w, r)
 	})
 
+	r.Get("/download/", func(w http.ResponseWriter, r *http.Request) {
+		err := download(server.db, server.BoxConfig.Token, w, r)
+		if err != nil {
+			server.GetBoxToken()
+			err := download(server.db, server.BoxConfig.Token, w, r)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+			}
+		}
+	})
+
 	r.Get("/download/{boxID}", func(w http.ResponseWriter, r *http.Request) {
 		err := download(server.db, server.BoxConfig.Token, w, r)
 		if err != nil {
