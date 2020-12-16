@@ -160,7 +160,7 @@ func (server *Server) Routes() chi.Router {
 		err := download(server.db, server.BoxConfig.Token, server.defaultPicture, w, r)
 		if err != nil {
 			server.GetBoxToken()
-			err := download(server.db, server.BoxConfig.Token, w, r)
+			err := download(server.db, server.BoxConfig.Token,server.defaultPicture, w, r)
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 			}
@@ -171,7 +171,7 @@ func (server *Server) Routes() chi.Router {
 		err := download(server.db, server.BoxConfig.Token, server.defaultPicture, w, r)
 		if err != nil {
 			server.GetBoxToken()
-			err := download(server.db, server.BoxConfig.Token, w, r)
+			err := download(server.db, server.BoxConfig.Token, server.defaultPicture, w, r)
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 			}
