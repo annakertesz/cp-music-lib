@@ -6,6 +6,7 @@ type Config struct {
 	SengridConfig SengridConfig
 	SongFolder int
 	CoverFolder int
+	DefaultPicture int
 	PsqlInfo string
 	Url string
 }

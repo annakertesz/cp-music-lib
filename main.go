@@ -113,6 +113,11 @@ func getConfig() config.Config {
 	if !ok {
 		coverFolderStr=testFolder
 	}
+	defaultPictureStr, ok := os.LookupEnv("DEFAULT_PICTURE")
+	if !ok {
+		print("NO DEFAULT PICTURE!")
+	}
+	defaultPicture, _ := strconv.Atoi(defaultPictureStr)
 	coverFolder, err := strconv.Atoi(coverFolderStr)
 	if err != nil {
 		panic("coverFolder var should be numeric")
@@ -140,6 +145,7 @@ func getConfig() config.Config {
 		SongFolder:    songFolder,
 		CoverFolder:   coverFolder,
 		PsqlInfo:      psqlInfo,
+		DefaultPicture: defaultPicture,
 		Url:		   url,
 	}
 }

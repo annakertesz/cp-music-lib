@@ -16,6 +16,7 @@ type Server struct {
 	db           *sqlx.DB
 	musicFolder  int
 	coverFolder  int
+	defaultPicture int
 	BoxConfig    config.BoxConfig
 	EmailSender  services.EmailSender
 }
@@ -31,6 +32,7 @@ func NewServer(db *sqlx.DB, cfg config.Config) *Server {
 		db:           db,
 		musicFolder:  cfg.SongFolder,
 		coverFolder:  cfg.CoverFolder,
+		defaultPicture: cfg.DefaultPicture,
 		EmailSender:  emailSender,
 		BoxConfig:    boxCfg,
 	}
@@ -155,7 +157,7 @@ func (server *Server) Routes() chi.Router {
 	})
 
 	r.Get("/download/", func(w http.ResponseWriter, r *http.Request) {
-		err := download(server.db, server.BoxConfig.Token, w, r)
+		err := download(server.db, server.BoxConfig.Token, server.defaultPicture, w, r)
 		if err != nil {
 			server.GetBoxToken()
 			err := download(server.db, server.BoxConfig.Token, w, r)
@@ -166,7 +168,7 @@ func (server *Server) Routes() chi.Router {
 	})
 
 	r.Get("/download/{boxID}", func(w http.ResponseWriter, r *http.Request) {
-		err := download(server.db, server.BoxConfig.Token, w, r)
+		err := download(server.db, server.BoxConfig.Token, server.defaultPicture, w, r)
 		if err != nil {
 			server.GetBoxToken()
 			err := download(server.db, server.BoxConfig.Token, w, r)
