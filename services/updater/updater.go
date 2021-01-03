@@ -14,14 +14,17 @@ func Update(songFolder int, coverFolder int, token string, db *sqlx.DB){
 	latestUpdate, err := models.GetLatestUpdate(db)
 	if err != nil {
 		services.HandleError(db, *err)
+		return
 	}
 	updateID, err := models.NewUpdate(db)
 	if err != nil {
 		services.HandleError(db, *err)
+		return
 	}
 	idList, err := box_lib.GetFileIDsToUpload(token, songFolder, latestUpdate)
 	if err != nil {
 		services.HandleError(db, *err)
+		return
 	}
 	foundSongs := len(idList)
 	createdSongs := 0

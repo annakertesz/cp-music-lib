@@ -59,8 +59,6 @@ func getPageOfIds(token string, folderID int, date string, limit int, offset int
 	client := &http.Client{
 	}
 	url := fmt.Sprintf("https://api.box.com/2.0/search?query=mp3&ancestor_folder_ids=%v&fields=id&offset=%v&limit=%v&created_at_range=%v,",folderID, offset, limit, date)
-	fmt.Println(url)
-	fmt.Println(token)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return idRO{}, err

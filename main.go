@@ -54,6 +54,8 @@ func main() {
 			}
 		}
 	}
+	clearDB(true, db)
+	updaterfunc()
 	scheduler.Every(1).Day().Run(updaterfunc)
 
 	//start server

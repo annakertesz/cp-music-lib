@@ -131,11 +131,6 @@ func CheckUserCredentials(db *sqlx.DB, username string, password string) int{
 	err := db.QueryRow(
 		`SELECT id, password_hash, user_status from cp_user where username = $1`, username,
 	).Scan(&id, &dbPasswordHash, &user_status)
-	fmt.Println(dbPasswordHash)
-	fmt.Println(password)
-	fmt.Println("!")
-	fmt.Println(bcrypt.CompareHashAndPassword([]byte(dbPasswordHash), []byte(password)))
-	fmt.Println("!")
 	if (err ==nil) && (bcrypt.CompareHashAndPassword([]byte(dbPasswordHash), []byte(password)) == nil) && (user_status == 2){
 		return id
 	}

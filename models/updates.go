@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"github.com/jmoiron/sqlx"
 	"time"
 )
@@ -43,8 +42,6 @@ func GetLatestUpdate(db *sqlx.DB) (string, *ErrorModel) {
 			Sev:     3,
 		}
 	}
-	date, month, day := cTime.Date()
-	fmt.Println(date, month,day)
 	return cTime.Format(time.RFC3339), nil
 }
 

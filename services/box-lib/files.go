@@ -44,9 +44,7 @@ func DownloadFile(token string, id int) (io.ReadCloser, string, *models.ErrorMod
 			Sev:     3,
 		}
 	}
-	fmt.Println(req.URL)
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %v", token))
-	fmt.Println(req.Header.Get("Authorization"))
 	resp, err := client.Do(req)
 	if resp.StatusCode == http.StatusOK {
 		return resp.Body, resp.Header.Get("Content-Type"), nil
@@ -60,7 +58,6 @@ func DownloadFile(token string, id int) (io.ReadCloser, string, *models.ErrorMod
 }
 
 func UploadFile(token string, folderID int, filename int, file []byte) (string, error) {
-	fmt.Println("upload cover photo")
 	client := &http.Client{}
 	body := new(bytes.Buffer)
 	writer := multipart.NewWriter(body)
@@ -83,9 +80,7 @@ func UploadFile(token string, folderID int, filename int, file []byte) (string, 
 	}
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %v", token))
 	req.Header.Add("Content-Type", "multipart/form-data; boundary=myBoundary")
-	fmt.Printf("%s %s %s\n", req.RemoteAddr, req.Method, req.URL)
 	resp, err := client.Do(req)
-	fmt.Println(resp.Status)
 	if resp.StatusCode == 201 {
 		all, _ := ioutil.ReadAll(resp.Body)
 		var result Result
@@ -99,8 +94,11 @@ func UploadFile(token string, folderID int, filename int, file []byte) (string, 
 		}
 		return result.Entries[0].Id, nil
 	}
+	if resp.StatusCode == 409 {
+		fmt.Println("picture already exists.")
+		return "", nil
+	}
 	all, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println("!!!!!!!!!!!!!")
 	fmt.Println(resp.StatusCode)
 	fmt.Println(string(all))
 	return "", errors.New("file already exists")
