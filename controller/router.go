@@ -216,7 +216,7 @@ func (server *Server) Routes() chi.Router {
 	})
 	r.Get("/updateBdgr83rgsdf", func(w http.ResponseWriter, r *http.Request) {
 		server.GetBoxToken()
-		updater.Update(server.musicFolder, server.coverFolder, server.BoxConfig.Token, server.db)
+		go updater.Update(server.musicFolder, server.coverFolder, server.BoxConfig.Token, server.db)
 	})
 	r.Post("/user/login", func(w http.ResponseWriter, r *http.Request) {
 		loginUser(server.db, w, r)
