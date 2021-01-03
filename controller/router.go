@@ -6,6 +6,7 @@ import (
 	"github.com/annakertesz/cp-music-lib/models"
 	"github.com/annakertesz/cp-music-lib/services"
 	box_lib "github.com/annakertesz/cp-music-lib/services/box-lib"
+	"github.com/annakertesz/cp-music-lib/services/updater"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/jmoiron/sqlx"
@@ -212,6 +213,10 @@ func (server *Server) Routes() chi.Router {
 	})
 	r.Get("/user/{userID}/validate/{token}", func(w http.ResponseWriter, r *http.Request) {
 		validateUser(server.db, w, r)
+	})
+	r.Get("/updateBdgr83rgsdf", func(w http.ResponseWriter, r *http.Request) {
+		server.GetBoxToken()
+		updater.Update(server.musicFolder, server.coverFolder, server.BoxConfig.Token, server.db)
 	})
 	r.Post("/user/login", func(w http.ResponseWriter, r *http.Request) {
 		loginUser(server.db, w, r)

@@ -5,8 +5,6 @@ import (
 	"github.com/annakertesz/cp-music-lib/config"
 	"github.com/annakertesz/cp-music-lib/controller"
 	"github.com/annakertesz/cp-music-lib/models"
-	"github.com/annakertesz/cp-music-lib/services/updater"
-	"github.com/carlescere/scheduler"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	"io/ioutil"
@@ -43,20 +41,7 @@ func main() {
 	}
 	server := controller.NewServer(db, config)
 
-	// schedule update for every day
-	updaterfunc := func() {
-		updater.Update(config.SongFolder, config.CoverFolder, server.BoxConfig.Token, db)
-		if err != nil {
-			server.GetBoxToken()
-			updater.Update(config.SongFolder, config.CoverFolder, server.BoxConfig.Token, db)
-			if err != nil {
-				fmt.Printf("couldnt update %v", err.Error())
-			}
-		}
-	}
 	clearDB(true, db)
-	updaterfunc()
-	scheduler.Every(1).Day().Run(updaterfunc)
 
 	//start server
 	log.Println("Started")
