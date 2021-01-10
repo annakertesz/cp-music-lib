@@ -31,6 +31,7 @@ func Update(songFolder int, coverFolder int, token string, db *sqlx.DB){
 	failedSongs := 0
 	deletedSongs := 0
 	for i := range idList {
+		print(foundSongs)
 		fileBytes, _, err := box_lib.DownloadFileBytes(token, idList[i])
 		if err != nil {
 			logID := services.HandleError(db, *err)
@@ -45,6 +46,7 @@ func Update(songFolder int, coverFolder int, token string, db *sqlx.DB){
 			models.SaveFailedSong(db, string(idList[i]), logID, updateID)
 			continue
 		}
+		foundSongs--
 		createdSongs++
 	}
 	models.SaveUpdateNumbers(db, updateID, foundSongs, createdSongs, failedSongs, deletedSongs)

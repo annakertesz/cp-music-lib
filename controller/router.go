@@ -144,9 +144,7 @@ func (server *Server) Routes() chi.Router {
 
 	//Tags
 	r.Get("/tag", func(w http.ResponseWriter, r *http.Request) {
-		if authenticated(server.db, w, r) {
 			getAllTag(server.db, w, r)
-		}
 	})
 
 	r.Get("/update", func(w http.ResponseWriter, r *http.Request) {
