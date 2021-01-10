@@ -22,15 +22,15 @@ type BoxToken struct {
 	TokenType    string   `json:"token_type"`
 }
 
-func AuthOfBox(clientID string, clientSecret string, privateKey string) string {
+func AuthOfBox(clientID string, clientSecret string, privateKey string) (string, error) {
 	key, err := jwt.ParseRSAPrivateKeyFromPEM([]byte(privateKey))
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
 	jti_str, err_jti := GenerateRandomString(64)
 	if err_jti != nil {
-		panic(err)
+		return "", err
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodRS512, jwt.MapClaims{
@@ -45,7 +45,7 @@ func AuthOfBox(clientID string, clientSecret string, privateKey string) string {
 
 	tokenStr, err := token.SignedString(key)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	// 4. Request access Token
 	values := url.Values{}
@@ -58,18 +58,18 @@ func AuthOfBox(clientID string, clientSecret string, privateKey string) string {
 
 	req, err := http.NewRequest(http.MethodPost, "https://api.box.com/oauth2/token", strings.NewReader(values.Encode()))
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	client := http.DefaultClient
 	resp, err := client.Do(req)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 	if resp.StatusCode != 200 {
 		log.Println("https://api.box.com/oauth2/token failed:", resp)
 		rb, err := ioutil.ReadAll(resp.Body)
 		log.Println(string(rb))
-		panic(err)
+		return "", err
 	}
 	defer resp.Body.Close()
 
@@ -81,7 +81,7 @@ func AuthOfBox(clientID string, clientSecret string, privateKey string) string {
 	if err := json.Unmarshal(responseBody, &boxToken); err != nil {
 		panic(err)
 	}
-	return boxToken.AccessToken
+	return boxToken.AccessToken, nil
 
 }
 

@@ -25,7 +25,20 @@ type Server struct {
 type e map[string]string
 
 func NewServer(db *sqlx.DB, cfg config.Config) *Server {
-	token := box_lib.AuthOfBox(cfg.BoxConfig.ClientID, cfg.BoxConfig.ClientSecret, cfg.BoxConfig.PrivateKey)
+	token := ""
+	var err error
+	for i := 0; i < 8; i++ {
+		token, err = box_lib.AuthOfBox(cfg.BoxConfig.ClientID, cfg.BoxConfig.ClientSecret, cfg.BoxConfig.PrivateKey)
+		if err != nil {
+			fmt.Printf("fokk")
+		}
+		if token != "" {
+			break
+		}
+	}
+	if token == "" {
+		panic(err)
+	}
 	boxCfg := cfg.BoxConfig
 	boxCfg.Token = token
 	emailSender := services.NewEmailSender(cfg.SengridConfig)
@@ -40,7 +53,18 @@ func NewServer(db *sqlx.DB, cfg config.Config) *Server {
 }
 
 func (s *Server) GetBoxToken() {
-	s.BoxConfig.Token = box_lib.AuthOfBox(s.BoxConfig.ClientID, s.BoxConfig.ClientSecret, s.BoxConfig.PrivateKey)
+	token := ""
+	var err error
+	for i := 0; i < 8; i++ {
+		token, err = box_lib.AuthOfBox(s.BoxConfig.ClientID, s.BoxConfig.ClientSecret, s.BoxConfig.PrivateKey)
+		if err == nil {
+			break
+		}
+	}
+	if token == "" {
+		panic(err)
+	}
+	s.BoxConfig.Token = token
 }
 
 func (server *Server) Routes() chi.Router {
