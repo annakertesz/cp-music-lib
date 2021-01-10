@@ -3,7 +3,6 @@ package models
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/jmoiron/sqlx"
 	"golang.org/x/crypto/bcrypt"
 	"io/ioutil"
@@ -117,7 +116,7 @@ func UpdateUserStatus(db *sqlx.DB, id int) error {
 	rows, err := db.Query(`UPDATE cp_user SET user_status = 2 WHERE id=$1`, id)
 
 	if err != nil {
-		fmt.Println("error set user status")
+		log.Printf("error set user status: %v", err.Error())
 		return err
 	}
 	defer rows.Close()
@@ -173,7 +172,6 @@ func ValidateSessionID(db *sqlx.DB, sessionID string) (int, error) {
 	err := db.QueryRow(
 		`SELECT cp_user, expiration from sessions where session_id = $1 and expiration >= $2`, sessionID, time.Now().Format("2006-01-02 15:04:05"),
 	).Scan(&id, &expiration)
-	fmt.Println(expiration.Format("2006-01-02 15:04:05"))
 	if err != nil {
 		return -1, err
 	}

@@ -50,7 +50,6 @@ func validateUser(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	param:= chi.URLParam(r, "userID")
 	id, err := strconv.Atoi(param)
 	if err != nil {
-		fmt.Printf("\nuser id %v isnt a number", param)
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -79,16 +78,12 @@ func loginUser(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 		http.Error(w, err.Error(), 404)
 		return
 	}
-	fmt.Println(user.Username)
-	fmt.Println(user.Password)
 	userID := models.CheckUserCredentials(db, user.Username, user.Password)
-	fmt.Println(userID)
 	if (userID >0){
 		uuid := uuid.New()
 		err := models.DeleteSessions(db, userID)
 		err = models.CreateSession(db, userID, uuid.String())
 		if err == nil {
-			fmt.Fprint(w, uuid)
 			w.WriteHeader(http.StatusOK)
 			return
 		}

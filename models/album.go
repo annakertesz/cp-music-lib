@@ -1,8 +1,8 @@
 package models
 
 import (
-	"fmt"
 	"github.com/jmoiron/sqlx"
+	"log"
 	"strings"
 )
 
@@ -59,7 +59,7 @@ func GetAlbum(db *sqlx.DB) ([]Album, error) {
 		var album Album
 		err := rows.StructScan(&album)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 		albums = append(albums, album)
 	}

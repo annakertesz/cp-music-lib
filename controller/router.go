@@ -59,7 +59,6 @@ func (server *Server) Routes() chi.Router {
 	})
 	r.Use(cors.Handler)
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("getIndex")
 		fmt.Fprint(w, "cp")
 	})
 

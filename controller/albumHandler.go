@@ -2,32 +2,30 @@ package controller
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/annakertesz/cp-music-lib/models"
 	"github.com/go-chi/chi"
 	"github.com/jmoiron/sqlx"
+	"log"
 	"net/http"
 	"strconv"
 )
 
 func getAllAlbum(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
-	fmt.Println("getAllAlbum")
 	albums, err := models.GetAlbum(db)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	fmt.Printf("found %v albums", len(albums))
 	AlbumROs, err := albumROListFromAlbums(albums, db)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	albumsJSON, err := json.Marshal(AlbumROs)
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Println(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -104,7 +102,6 @@ func albumROFromAlbum(album models.Album, artist models.Artist) models.AlbumRO {
 func albumROListFromAlbums(albums []models.Album, db *sqlx.DB) ([]models.AlbumRO, error) {
 	albumROs := make([]models.AlbumRO, 0)
 	for _, album := range albums {
-		fmt.Printf("\nALBUM: %v, %v, %v", album.AlbumID, album.AlbumName, album.AlbumArtist)
 		artist, err := models.GetArtistByID(album.AlbumArtist, db)
 		if err != nil {
 			return nil, err

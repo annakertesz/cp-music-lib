@@ -8,6 +8,7 @@ import (
 	"github.com/annakertesz/cp-music-lib/models"
 	"io"
 	"io/ioutil"
+	"log"
 	"mime/multipart"
 
 	"net/http"
@@ -36,7 +37,7 @@ func DownloadFile(token string, id int) (io.ReadCloser, string, *models.ErrorMod
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", fmt.Sprintf("https://api.box.com/2.0/files/%v/content", id), nil)
 	if err != nil {
-		fmt.Println("error in download request")
+		log.Println("error in download request")
 		return nil, "", &models.ErrorModel{
 			Service: "BoxLibService",
 			Err:     err,
@@ -76,7 +77,7 @@ func UploadFile(token string, folderID int, filename int, file []byte) (string, 
 	}
 	req, err := http.NewRequest("POST", fmt.Sprintf("https://upload.box.com/api/2.0/files/content"), body)
 	if err != nil {
-		fmt.Println("error in upload request")
+		log.Printf("error in upload request: %v", err.Error())
 	}
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %v", token))
 	req.Header.Add("Content-Type", "multipart/form-data; boundary=myBoundary")
@@ -86,7 +87,7 @@ func UploadFile(token string, folderID int, filename int, file []byte) (string, 
 		var result Result
 		err = json.Unmarshal(all, &result)
 		if err != nil {
-			fmt.Println(err.Error())
+			log.Println(err.Error())
 			return "", err
 		}
 		if len(result.Entries) < 1 {
@@ -95,13 +96,12 @@ func UploadFile(token string, folderID int, filename int, file []byte) (string, 
 		return result.Entries[0].Id, nil
 	}
 	if resp.StatusCode == 409 {
-		fmt.Println("picture already exists.")
 		return "", nil
 	}
 	all, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println(resp.StatusCode)
-	fmt.Println(string(all))
-	return "", errors.New("file already exists")
+	log.Println(resp.StatusCode)
+	log.Println(string(all))
+	return "", errors.New("Unknown error in file upload")
 }
 
 type Result struct {

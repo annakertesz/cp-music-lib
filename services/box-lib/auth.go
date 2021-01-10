@@ -3,9 +3,9 @@ package box_lib
 import (
 	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"io/ioutil"
+	"log"
 	"math/rand"
 	"net/http"
 	"net/url"
@@ -66,9 +66,9 @@ func AuthOfBox(clientID string, clientSecret string, privateKey string) string {
 		panic(err)
 	}
 	if resp.StatusCode != 200 {
-		fmt.Println("https://api.box.com/oauth2/token failed:", resp)
+		log.Println("https://api.box.com/oauth2/token failed:", resp)
 		rb, err := ioutil.ReadAll(resp.Body)
-		fmt.Println(string(rb))
+		log.Println(string(rb))
 		panic(err)
 	}
 	defer resp.Body.Close()
@@ -81,7 +81,6 @@ func AuthOfBox(clientID string, clientSecret string, privateKey string) string {
 	if err := json.Unmarshal(responseBody, &boxToken); err != nil {
 		panic(err)
 	}
-	fmt.Printf("BOX TOKEN: %v expires in %v\n", boxToken.AccessToken, boxToken.ExpiresIn)
 	return boxToken.AccessToken
 
 }

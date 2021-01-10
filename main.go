@@ -66,7 +66,6 @@ func getConfig() config.Config {
 	if !ok {
 		privateKeyData, err := ioutil.ReadFile("private.key")
 		if err != nil {
-			fmt.Println(err)
 			panic("need box credentials: PRIVATE_KEY")
 		}
 		privateKey = string(privateKeyData)
@@ -102,7 +101,7 @@ func getConfig() config.Config {
 	}
 	defaultPictureStr, ok := os.LookupEnv("DEFAULT_PICTURE")
 	if !ok {
-		print("NO DEFAULT PICTURE!")
+		fmt.Println("NO DEFAULT PICTURE!")
 	}
 	defaultPicture, _ := strconv.Atoi(defaultPictureStr)
 	coverFolder, err := strconv.Atoi(coverFolderStr)
@@ -138,8 +137,8 @@ func getConfig() config.Config {
 }
 
 func clearDB(do bool, db *sqlx.DB) error {
-	log.Printf("clear db")
 	if do{
+		log.Printf("clear db")
 		err := models.ClearUpdates(db)
 		err = models.ClearSong(db)
 		err = models.ClearPlaylist(db)

@@ -1,8 +1,8 @@
 package models
 
 import (
-	"fmt"
 	"github.com/jmoiron/sqlx"
+	"log"
 	"strings"
 )
 
@@ -43,21 +43,18 @@ func (song *Song) CreateSong(db *sqlx.DB) (int, bool, error) {
 			rows, err := db.Query(`UPDATE song SET instrumental_lq_url = $1 WHERE id=$2`, song.boxID, id)
 
 			if err != nil {
-				fmt.Println("error in update song query")
+				log.Println("error in update song query")
 				return 0, false, err
 			}
 			defer rows.Close()
-			fmt.Printf("\nfound %v and inserted instrumental version", song.SongName)
 		} else {
 			rows, err := db.Query(`UPDATE song SET song_lq_url = $1 WHERE id=$2`, song.boxID, id)
 
 			if err != nil {
-				fmt.Println("error in update song query")
+				log.Println("error in update song query")
 				return 0, false, err
 			}
 			defer rows.Close()
-			fmt.Printf("\nfound %v and inserted vocal version", song.SongName)
-
 		}
 	} else {
 		if isInstrumental {
@@ -78,7 +75,6 @@ func (song *Song) CreateSong(db *sqlx.DB) (int, bool, error) {
 }
 
 func GetSongByID(id int, db *sqlx.DB) (*Song, error) {
-	fmt.Printf("\nquery for id %v", id)
 	var song Song
 	err := db.QueryRowx(`SELECT * FROM song WHERE id = $1`, id,
 	).StructScan(&song)
@@ -93,8 +89,7 @@ func GetSongByArtist(id int, db *sqlx.DB) ([]Song, error) {
 		`SELECT song.id, song.instrumental_hq_url, song.instrumental_lq_url, song.song_album, song.song_hq_url, song.song_lq_url, song.song_name from song join album on song.song_album = album.id where album_artist = $1`, id,
 	)
 	if err != nil {
-		fmt.Println("error in query")
-		fmt.Println(err.Error())
+		log.Printf("error in query: %v", err.Error())
 		return nil, err
 	}
 	defer rows.Close()
@@ -103,8 +98,7 @@ func GetSongByArtist(id int, db *sqlx.DB) ([]Song, error) {
 		var song Song
 		err := rows.StructScan(&song)
 		if err != nil {
-			fmt.Println("error in scan songs")
-			fmt.Println(err.Error())
+			log.Printf("error in scan songs: %v", err.Error())
 			return nil, err
 		}
 		songs = append(songs, song)
@@ -117,8 +111,7 @@ func GetAllSongs(db *sqlx.DB) ([]Song, error) {
 		`SELECT song.id, song.instrumental_hq_url, song.instrumental_lq_url, song.song_album, song.song_hq_url, song.song_lq_url, song.song_name from song join album on song.song_album = album.id`,
 	)
 	if err != nil {
-		fmt.Println("error in query")
-		fmt.Println(err.Error())
+		log.Printf("error in query: %v", err.Error())
 		return nil, err
 	}
 	defer rows.Close()
@@ -127,8 +120,7 @@ func GetAllSongs(db *sqlx.DB) ([]Song, error) {
 		var song Song
 		err := rows.StructScan(&song)
 		if err != nil {
-			fmt.Println("error in scan songs")
-			fmt.Println(err.Error())
+			log.Printf("error in scan songs %v", err.Error())
 			return nil, err
 		}
 		songs = append(songs, song)
@@ -150,8 +142,7 @@ func GetSongsByPlaylist(db *sqlx.DB, playlistID int) ([]Song, error) {
 			WHERE playlist_song.map_playlist = $1`, playlistID,
 	)
 	if err != nil {
-		fmt.Println("error in query")
-		fmt.Println(err.Error())
+		log.Printf("error in query: %v", err.Error())
 		return nil, err
 	}
 	defer rows.Close()
@@ -160,8 +151,7 @@ func GetSongsByPlaylist(db *sqlx.DB, playlistID int) ([]Song, error) {
 		var song Song
 		err := rows.StructScan(&song)
 		if err != nil {
-			fmt.Println("error in scan songs")
-			fmt.Println(err.Error())
+			log.Printf("error in scan songs: %v ", err.Error())
 			return nil, err
 		}
 		songs = append(songs, song)
@@ -170,23 +160,20 @@ func GetSongsByPlaylist(db *sqlx.DB, playlistID int) ([]Song, error) {
 }
 
 func GetSongByAlbum(id int, db *sqlx.DB) ([]Song, error) {
-	fmt.Println("getSongByAlbum()")
 	rows, err := db.Queryx(
 		`SELECT * FROM song WHERE song_album = $1`, id,
 	)
 	if err != nil {
-		fmt.Println("error in query")
-		fmt.Println(err.Error())
+		log.Printf("error in query: %v", err.Error())
 		return nil, err
 	}
-	fmt.Println("got")
 	defer rows.Close()
 	songs := make([]Song, 0)
 	for rows.Next() {
 		var song Song
 		err := rows.StructScan(&song)
 		if err != nil {
-			fmt.Println("ittahiba")
+			log.Printf("error in query: %v", err.Error())
 		}
 		songs = append(songs, song)
 	}
@@ -198,8 +185,7 @@ func GetSongByTag(id int, db *sqlx.DB) ([]Song, error) {
 		`select song.id, song.instrumental_hq_url, song.instrumental_lq_url, song.song_album, song.song_hq_url, song.song_lq_url, song.song_name from tag_song join tag on tag.id = tag_song.map_tag join song on song.id = tag_song.map_song where tag.id = $1`, id,
 	)
 	if err != nil {
-		fmt.Println("error in query")
-		fmt.Println(err.Error())
+		log.Printf("error in query: %v", err.Error())
 		return nil, err
 	}
 	defer rows.Close()
@@ -208,7 +194,7 @@ func GetSongByTag(id int, db *sqlx.DB) ([]Song, error) {
 		var song Song
 		err := rows.StructScan(&song)
 		if err != nil {
-			fmt.Println("ittahiba")
+			log.Printf("error in query: %v", err.Error())
 		}
 		songs = append(songs, song)
 	}
@@ -217,7 +203,6 @@ func GetSongByTag(id int, db *sqlx.DB) ([]Song, error) {
 
 func GetSongByEverything(keyword string, db *sqlx.DB)([]Song, error) {
 	wildchart := "%" + keyword + "%"
-	fmt.Sprint(wildchart)
 	rows, err := db.Queryx(
 		`select 
 					song.id, 
@@ -234,8 +219,7 @@ func GetSongByEverything(keyword string, db *sqlx.DB)([]Song, error) {
 				where tag.tag_name ilike $1 or artist.artist_name ilike $1 or album.album_name ilike $1 or song.song_name ilike $1`, wildchart,
 	)
 	if err != nil {
-		fmt.Println("error in query")
-		fmt.Println(err.Error())
+		log.Printf("error in query: %v", err.Error())
 		return nil, err
 	}
 	defer rows.Close()
@@ -244,7 +228,7 @@ func GetSongByEverything(keyword string, db *sqlx.DB)([]Song, error) {
 		var song Song
 		err := rows.StructScan(&song)
 		if err != nil {
-			fmt.Println("ittahiba")
+			log.Printf("error in query: %v", err.Error())
 		}
 		songs = append(songs, song)
 	}
