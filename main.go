@@ -41,7 +41,7 @@ func main() {
 	}
 	server := controller.NewServer(db, config)
 
-	clearDB(false, db)
+	clearDB(true, db)
 
 	//start server
 	log.Println("Started")
