@@ -3,6 +3,7 @@ package config
 type Config struct {
 	BoxConfig      BoxConfig
 	SengridConfig  SengridConfig
+	SmtpConfig     SmtpEmailConfig
 	SongFolder     int
 	CoverFolder    int
 	DefaultPicture int
@@ -26,8 +27,11 @@ type BoxConfig struct {
 }
 
 type SmtpEmailConfig struct {
-	ServerAddress string //e.g. smtp.gmail.com:587
-	UserName      string
-	Password      string
+	ServerAddress string // e.g. smtp.gmail.com:587
+	UserName      string // gmail address
+	Password      string // gmail password
 	Host          string // e.g. smtp.gmail.com
+	ToEmail       string // email address to send emails to
+	FromEmail     string // email address that this email is sent from.
+	// can be set to something else, but this might trigger spam filters.
 }

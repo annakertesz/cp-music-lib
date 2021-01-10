@@ -2,16 +2,17 @@ package services
 
 import (
 	"fmt"
-	"log"
-	"testing"
-
+	"github.com/annakertesz/cp-music-lib/config"
+	"github.com/annakertesz/cp-music-lib/models"
+	"github.com/annakertesz/cp-music-lib/services/smtpClient"
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
+	"log"
+	"testing"
 )
 
-
 func TestEmailSender(t *testing.T) {
-	SENDGRID_API_KEY:="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"
+	SENDGRID_API_KEY := "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"
 
 	from := mail.NewEmail("Example User", "test@example.com")
 	subject := "Sending with SendGrid is Fun"
@@ -30,3 +31,32 @@ func TestEmailSender(t *testing.T) {
 	}
 }
 
+func TestEmailSender_SendSongBuyEmail(t *testing.T) {
+	smtpConfig := config.SmtpEmailConfig{
+		ServerAddress: "smtp.gmail.com:587",
+		UserName:      "centralpublishingco@gmail.com",
+		Password:      "centraladm1n",
+		Host:          "smtp.gmail.com",
+		ToEmail:       "forianszm@gmail.com",
+		FromEmail:     "centralpublishingco@gmail.com",
+	}
+	sender := smtpClient.NewEmailSender(smtpConfig)
+	buySongObj := models.BuySongObj{
+		Title:  "test song title",
+		Artist: "test artist name",
+		Album:  "album name",
+		User: models.UserRO{
+			ID:        0,
+			Username:  "testUserName",
+			FirstName: "Joe",
+			LastName:  "smith",
+			Email:     "randomUser@example.com",
+			Phone:     "00 12 3456789",
+		},
+		Message: "test message",
+	}
+	err := sender.SendSongBuyEmail(buySongObj)
+	if err != nil {
+		panic(err)
+	}
+}

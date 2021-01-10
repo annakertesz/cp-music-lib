@@ -1,4 +1,4 @@
-package smtp
+package smtpClient
 
 import (
 	"fmt"
@@ -9,17 +9,17 @@ import (
 )
 
 type EmailSender struct {
-	senderName     string
-	senderMail     string
-	adminEmail     string
-	developerEmail string
-	smtpConfig     config.SmtpEmailConfig
+	smtpConfig config.SmtpEmailConfig
+}
+
+func NewEmailSender(config config.SmtpEmailConfig) EmailSender {
+	return EmailSender{smtpConfig:	config}
 }
 
 func (sender *EmailSender) SendVerifyEmail(user models.UserReqObj, verifyEndpoint string) error {
 	e := email.NewEmail()
-	e.From = fmt.Sprintf("%s <%s>", sender.senderName, sender.senderName)
-	e.To = []string{fmt.Sprintf("Central admin <%s>", sender.adminEmail)}
+	e.From = sender.smtpConfig.FromEmail
+	e.To = []string{fmt.Sprintf("Central admin <%s>", sender.smtpConfig.ToEmail)}
 	e.Subject = fmt.Sprintf("%v %v would like have access", user.FirstName, user.LastName)
 	e.Text = []byte(fmt.Sprintf(
 		"New user request: \n"+
@@ -43,8 +43,8 @@ func (sender *EmailSender) SendVerifyEmail(user models.UserReqObj, verifyEndpoin
 
 func (sender *EmailSender) SendSongBuyEmail(msg models.BuySongObj) error {
 	e := email.NewEmail()
-	e.From = fmt.Sprintf("%s <%s>", sender.senderName, sender.senderName)
-	e.To = []string{fmt.Sprintf("Central admin <%s>", sender.adminEmail)}
+	e.From = sender.smtpConfig.FromEmail
+	e.To = []string{fmt.Sprintf("Central admin <%s>", sender.smtpConfig.ToEmail)}
 	e.Subject = fmt.Sprintf("%v %v would like to buy a song", msg.User.FirstName, msg.User.LastName)
 	e.Text = []byte(fmt.Sprintf(
 		"New song request:\n"+
@@ -75,7 +75,7 @@ func (sender *EmailSender) sendEmail(email *email.Email) error {
 	err := email.Send(sender.smtpConfig.ServerAddress,
 		smtp.PlainAuth("", sender.smtpConfig.UserName, sender.smtpConfig.Password, sender.smtpConfig.Host))
 	if err != nil {
-		panic(err) // TODO ez igy OK?
+		panic(err)
 	}
 	return nil
 }
