@@ -64,9 +64,9 @@ func (server *Server) Routes() chi.Router {
 
 	//Songs
 	r.Get("/song", func(w http.ResponseWriter, r *http.Request) {
-		if authenticated(server.db, w, r) {
+		//if authenticated(server.db, w, r) {
 			getAllSongs(server.db, w, r)
-		}
+		//}
 	})
 	r.Get("/song/{songID}", func(w http.ResponseWriter, r *http.Request) {
 		//if authenticated(server.db, w, r) {
@@ -74,36 +74,35 @@ func (server *Server) Routes() chi.Router {
 		//}
 	})
 	r.Post("/song/buy", func(w http.ResponseWriter, r *http.Request) {
-		if authenticated(server.db, w, r) {
+		//if authenticated(server.db, w, r) {
 			buySong(server.db, server.EmailSender, w, r)
-		}
+		//}
 	})
 	r.Get("/song/findByAlbum", func(w http.ResponseWriter, r *http.Request) {
-		if authenticated(server.db, w, r) {
+		//if authenticated(server.db, w, r) {
 			getSongByAlbum(server.db, w, r)
-		}
+		//}
 	})
 	r.Get("/song/findByArtist", func(w http.ResponseWriter, r *http.Request) {
-		if authenticated(server.db, w, r) {
+		//if authenticated(server.db, w, r) {
 			getSongByArtist(server.db, w, r)
-		}
+		//}
 	})
 	r.Get("/song/findByTag", func(w http.ResponseWriter, r *http.Request) {
-		if authenticated(server.db, w, r) {
+		//if authenticated(server.db, w, r) {
 			getSongByTag(server.db, w, r)
-		}
+		//}
 	})
 	r.Post("/song/{songID}", func(w http.ResponseWriter, r *http.Request) {
-		if authenticated(server.db, w, r) {
+		//if authenticated(server.db, w, r) {
 			addSongToPlaylist(server.db, w, r)
-		}
+		//}
 	})
 	r.Delete("/song/{songID}", func(w http.ResponseWriter, r *http.Request) {
-		if authenticated(server.db, w, r) {
+		//if authenticated(server.db, w, r) {
 			removeSongFromPlaylist(server.db, w, r)
-		}
+		//}
 	})
-	//TODO
 	r.Get("/song/findByFreeSearch", func(w http.ResponseWriter, r *http.Request) {
 		//if authenticated(server.db, w, r) {
 			searchSong(server.db, w, r)
@@ -113,32 +112,32 @@ func (server *Server) Routes() chi.Router {
 	//Albums
 	r.Get("/album", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("album request")
-		if authenticated(server.db, w, r) {
+		//if authenticated(server.db, w, r) {
 			getAllAlbum(server.db, w, r)
-		}
+		//}
 
 	})
 	r.Get("/album/findByArtist", func(w http.ResponseWriter, r *http.Request) {
-		if authenticated(server.db, w, r) {
+		//if authenticated(server.db, w, r) {
 			getAlbumsByArtist(server.db, w, r)
-		}
+		//}
 	})
 	r.Get("/album/{albumID}", func(w http.ResponseWriter, r *http.Request) {
-		if authenticated(server.db, w, r) {
+		//if authenticated(server.db, w, r) {
 			getAlbumsById(server.db, w, r)
-		}
+		//}
 	})
 
 	//Artists
 	r.Get("/artist", func(w http.ResponseWriter, r *http.Request) {
-		if authenticated(server.db, w, r) {
+		//if authenticated(server.db, w, r) {
 			getAllArtist(server.db, w, r)
-		}
+		//}
 	})
 	r.Get("/artist/{artistID}", func(w http.ResponseWriter, r *http.Request) {
-		if authenticated(server.db, w, r) {
+		//if authenticated(server.db, w, r) {
 			getArtistById(server.db, w, r)
-		}
+		//}
 	})
 
 	//Tags
@@ -183,15 +182,15 @@ func (server *Server) Routes() chi.Router {
 		//}
 	})
 	r.Get("/playlist", func(w http.ResponseWriter, r *http.Request) {
-		if authenticated(server.db, w, r) {
+		//if authenticated(server.db, w, r) {
 			getAllPlaylist(server.db, w, r)
-		}
+		//}
 	})
 	////TODO
 	r.Get("/playlist/{playlistID}", func(w http.ResponseWriter, r *http.Request) {
-		if authenticated(server.db, w, r) {
+		//if authenticated(server.db, w, r) {
 			getPlaylistById(server.db, w, r)
-		}
+		//}
 	})
 	//r.Get("/playlist/{playlistID}/download", func(w http.ResponseWriter, r *http.Request) {
 	//	if authenticated(server.db, w, r) {
@@ -199,9 +198,9 @@ func (server *Server) Routes() chi.Router {
 	//	}
 	//})
 	r.Delete("/playlist/{playlistID}", func(w http.ResponseWriter, r *http.Request) {
-		if authenticated(server.db, w, r) {
+		//if authenticated(server.db, w, r) {
 			deletePlaylistByID(server.db, w, r)
-		}
+		//}
 	})
 
 	//User
