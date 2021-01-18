@@ -1,12 +1,18 @@
 package controller
 
 import (
+	"archive/zip"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/annakertesz/cp-music-lib/models"
+	"github.com/annakertesz/cp-music-lib/services"
+	box_lib "github.com/annakertesz/cp-music-lib/services/box-lib"
 	"github.com/go-chi/chi"
 	"github.com/jmoiron/sqlx"
+	"log"
 	"net/http"
+	"regexp"
 	"strconv"
 )
 
@@ -162,4 +168,75 @@ func playlistROListFromPlaylists(playlists []models.Playlist, db *sqlx.DB) ([]mo
 		playlistROs = append(playlistROs, *pl)
 	}
 	return playlistROs, nil
+}
+
+func createPlaylistZip(db *sqlx.DB, w http.ResponseWriter, r *http.Request, token string, partially bool) error {
+
+		param := chi.URLParam(r, "playlistID")
+		id, err := strconv.Atoi(param)
+		if err != nil {
+			fmt.Printf("\nsong id %v isnt a number", param)
+			w.WriteHeader(http.StatusBadRequest)
+			return err
+		}
+		playlist, err := models.GetPlaylistByID(db, id)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+		playlistRO, err := playlistROFromPlaylist(playlist, db)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+		songs := playlistRO.Songs
+	// Create a buffer to write our archive to.
+		buf := new(bytes.Buffer)
+
+		// Create a new zip archive.
+		zw := zip.NewWriter(buf)
+
+		// Add some files to the archive.
+		for _, song := range songs {
+			f, err := zw.Create(toAlphaNumeric(song.Title))
+			if err != nil {
+				log.Fatal(err)
+			}
+			resp, _, errModel := box_lib.DownloadFileBytes(token, song.ID)
+			if errModel != nil {
+				if partially {
+					services.HandleError(db, *errModel)
+					log.Printf("ERROR: failed download song for playlist - playlistID: %v, songID: %v", id, song.ID)
+					continue
+				} else {
+					return errModel.Err
+				}
+			}
+			_, err = f.Write([]byte(resp))
+			if err != nil {
+				if partially {
+					services.HandleError(db, *errModel)
+					log.Printf("ERROR: failed download song for playlist - playlistID: %v, songID: %v", id, song.ID)
+					continue
+				} else {
+					return errModel.Err
+				}
+			}
+		}
+
+		// Make sure to check the error on Close.
+		err = zw.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+		return nil
+}
+
+func toAlphaNumeric(s string) string{
+	// Make a Regex to say we only want letters and numbers
+	reg, err := regexp.Compile("[^a-zA-Z0-9]+")
+	if err != nil {
+		log.Fatal(err)
+	}
+	processedString := reg.ReplaceAllString(s, "")
+
+	return processedString
 }

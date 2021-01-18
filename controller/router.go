@@ -216,11 +216,15 @@ func (server *Server) Routes() chi.Router {
 			getPlaylistById(server.db, w, r)
 		//}
 	})
-	//r.Get("/playlist/{playlistID}/download", func(w http.ResponseWriter, r *http.Request) {
+	r.Get("/playlist/{playlistID}/download", func(w http.ResponseWriter, r *http.Request) {
 	//	if authenticated(server.db, w, r) {
-	//		getPlaylistById(server.db, w, r)
+		err := createPlaylistZip(server.db, w, r, server.BoxConfig.Token, false)
+		if err != nil {
+			server.GetBoxToken()
+			createPlaylistZip(server.db, w, r, server.BoxConfig.Token, true)
+		}
 	//	}
-	//})
+	})
 	r.Delete("/playlist/{playlistID}", func(w http.ResponseWriter, r *http.Request) {
 		//if authenticated(server.db, w, r) {
 			deletePlaylistByID(server.db, w, r)
