@@ -4,11 +4,6 @@
 	"GodepVersion": "v80",
 	"Deps": [
 		{
-			"ImportPath": "github.com/carlescere/scheduler",
-			"Comment": "0.1-16-gee74d2f",
-			"Rev": "ee74d2f83d82cd1d2e92ed3ec3dbaf162ca5ece5"
-		},
-		{
 			"ImportPath": "github.com/dgrijalva/jwt-go",
 			"Comment": "v3.2.0-20-gdc14462",
 			"Rev": "dc14462fd58732591c7fa58cc8496d6824316a82"
@@ -41,6 +36,11 @@
 			"ImportPath": "github.com/jmoiron/sqlx/reflectx",
 			"Comment": "v1.2.0-28-gee51494",
 			"Rev": "ee514944af4b0d1b90212831674e03df1b850998"
+		},
+		{
+			"ImportPath": "github.com/jordan-wright/email",
+			"Comment": "v4.0.0-8-g3656afa",
+			"Rev": "3656afaabac4c93d9039aee01a33642904eb0f8e"
 		},
 		{
 			"ImportPath": "github.com/lib/pq",
