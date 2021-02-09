@@ -16,6 +16,12 @@ type EmailSender struct {
 	smtpConfig     config.SmtpEmailConfig
 }
 
+func NewEmailSender(senderName string, senderMail string, adminEmail string, developerEmail string, smtpConfig config.SmtpEmailConfig) *EmailSender {
+	return &EmailSender{senderName: senderName, senderMail: senderMail, adminEmail: adminEmail, developerEmail: developerEmail, smtpConfig: smtpConfig}
+}
+
+
+
 func (sender *EmailSender) SendVerifyEmail(user models.UserReqObj, verifyEndpoint string) error {
 	e := email.NewEmail()
 	e.From = fmt.Sprintf("%s <%s>", sender.senderName, sender.senderName)

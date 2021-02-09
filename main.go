@@ -71,10 +71,6 @@ func getConfig() config.Config {
 		privateKey = string(privateKeyData)
 
 	}
-	sengridAPIKey, ok := os.LookupEnv("SENGRID_API_KEY")
-	if !ok {
-		panic("need box credentials: SENGRID_API_KEY")
-	}
 	senderName, ok := os.LookupEnv("SENDER_NAME")
 	if !ok {
 		panic("need box credentials: SENDER_NAME")
@@ -121,12 +117,17 @@ func getConfig() config.Config {
 			ClientSecret: clientSecret,
 			PrivateKey:   privateKey,
 		},
-		SengridConfig: config.SengridConfig{
-			SengridAPIKey:  sengridAPIKey,
+		EmailConfig: config.EmailConfig{
 			SenderName:     senderName,
 			SenderEmail:    senderEmail,
 			AdminEmail:     adminEmail,
 			DeveloperEmail: developerEmail,
+			SmtpConfig: config.SmtpEmailConfig{
+				ServerAddress: "a",
+				UserName:      "v",
+				Password:      "w",
+				Host:          "e",
+			},
 		},
 		SongFolder:    songFolder,
 		CoverFolder:   coverFolder,

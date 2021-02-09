@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"github.com/annakertesz/cp-music-lib/config"
 	"github.com/annakertesz/cp-music-lib/models"
-	"github.com/annakertesz/cp-music-lib/services"
 	box_lib "github.com/annakertesz/cp-music-lib/services/box-lib"
+	"github.com/annakertesz/cp-music-lib/services/smtp"
 	"github.com/annakertesz/cp-music-lib/services/updater"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
@@ -19,7 +19,7 @@ type Server struct {
 	coverFolder  int
 	defaultPicture int
 	BoxConfig    config.BoxConfig
-	EmailSender  services.EmailSender
+	EmailSender  *smtp.EmailSender
 }
 
 type e map[string]string
@@ -41,13 +41,19 @@ func NewServer(db *sqlx.DB, cfg config.Config) *Server {
 	}
 	boxCfg := cfg.BoxConfig
 	boxCfg.Token = token
-	emailSender := services.NewEmailSender(cfg.SengridConfig)
+	emailSender := smtp.NewEmailSender(
+		cfg.EmailConfig.SenderName,
+		cfg.EmailConfig.SenderEmail,
+		cfg.EmailConfig.AdminEmail,
+		cfg.EmailConfig.DeveloperEmail,
+		cfg.EmailConfig.SmtpConfig,
+		)
 	return &Server{
 		db:           db,
 		musicFolder:  cfg.SongFolder,
 		coverFolder:  cfg.CoverFolder,
 		defaultPicture: cfg.DefaultPicture,
-		EmailSender:  emailSender,
+		EmailSender:emailSender,
 		BoxConfig:    boxCfg,
 	}
 }
@@ -201,29 +207,29 @@ func (server *Server) Routes() chi.Router {
 
 	//Playlist
 	r.Post("/playlist", func(w http.ResponseWriter, r *http.Request) {
-		//if authenticated(server.db, w, r) {
+		if authenticated(server.db, w, r) {
 			createPlaylist(server.db, w, r)
-		//}
+		}
 	})
 	r.Get("/playlist", func(w http.ResponseWriter, r *http.Request) {
-		//if authenticated(server.db, w, r) {
+		if authenticated(server.db, w, r) {
 			getAllPlaylist(server.db, w, r)
-		//}
+		}
 	})
 	////TODO
 	r.Get("/playlist/{playlistID}", func(w http.ResponseWriter, r *http.Request) {
-		//if authenticated(server.db, w, r) {
+		if authenticated(server.db, w, r) {
 			getPlaylistById(server.db, w, r)
-		//}
+		}
 	})
 	r.Get("/playlist/{playlistID}/download", func(w http.ResponseWriter, r *http.Request) {
-	//	if authenticated(server.db, w, r) {
+		if authenticated(server.db, w, r) {
 		err := createPlaylistZip(server.db, w, r, server.BoxConfig.Token, false)
 		if err != nil {
 			server.GetBoxToken()
 			createPlaylistZip(server.db, w, r, server.BoxConfig.Token, true)
 		}
-	//	}
+		}
 	})
 	r.Delete("/playlist/{playlistID}", func(w http.ResponseWriter, r *http.Request) {
 		//if authenticated(server.db, w, r) {

@@ -16,9 +16,8 @@ type EmailSender struct {
 	developerEmail string
 }
 
-func NewEmailSender(config config.SengridConfig) EmailSender {
+func NewEmailSender(config config.EmailConfig) EmailSender {
 	return EmailSender{
-		apiKey:	config.SengridAPIKey,
 		senderName:	config.SenderName,
 		senderMail: config.SenderEmail,
 		adminEmail: config.AdminEmail,

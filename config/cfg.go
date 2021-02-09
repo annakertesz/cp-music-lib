@@ -2,7 +2,7 @@ package config
 
 type Config struct {
 	BoxConfig      BoxConfig
-	SengridConfig  SengridConfig
+	EmailConfig    EmailConfig
 	SongFolder     int
 	CoverFolder    int
 	DefaultPicture int
@@ -10,12 +10,12 @@ type Config struct {
 	Url            string
 }
 
-type SengridConfig struct {
-	SengridAPIKey  string
+type EmailConfig struct {
 	SenderName     string
 	SenderEmail    string
 	AdminEmail     string
 	DeveloperEmail string
+	SmtpConfig 	   SmtpEmailConfig
 }
 
 type BoxConfig struct {

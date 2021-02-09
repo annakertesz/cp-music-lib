@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/annakertesz/cp-music-lib/models"
-	"github.com/annakertesz/cp-music-lib/services"
+	"github.com/annakertesz/cp-music-lib/services/smtp"
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
@@ -25,7 +25,7 @@ func getUsers(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 	w.Write(b)
 }
 
-func createUser(db *sqlx.DB, emailSender services.EmailSender, w http.ResponseWriter, r *http.Request){
+func createUser(db *sqlx.DB, emailSender *smtp.EmailSender, w http.ResponseWriter, r *http.Request){
 	user, err := models.UnmarshalUser(r)
 	if err != nil {
 		http.Error(w, err.Error(), 404)
