@@ -80,7 +80,7 @@ func (server *Server) Routes() chi.Router {
 		AllowedOrigins: []string{"*"},
 		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
 		AllowedMethods:     []string{"GET", "POST", "DELETE", "OPTIONS", "HEAD"},
-		AllowedHeaders:     []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "Referer", "session", "Session"},
+		AllowedHeaders:     []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "Referer", "session", "Session", "User-Agent"},
 		ExposedHeaders:     []string{"Link"},
 		AllowCredentials:   true,
 		MaxAge:             300, // Maximum value not ignored by any of major browsers
@@ -94,49 +94,49 @@ func (server *Server) Routes() chi.Router {
 
 	//Songs
 	r.Get("/song", func(w http.ResponseWriter, r *http.Request) {
-		//if authenticated(server.db, w, r) {
+		if authenticated(server.db, w, r) {
 			getAllSongs(server.db, w, r)
-		//}
+		}
 	})
 	r.Get("/song/{songID}", func(w http.ResponseWriter, r *http.Request) {
-		//if authenticated(server.db, w, r) {
+		if authenticated(server.db, w, r) {
 			getSongByID(server.db, w, r)
-		//}
+		}
 	})
 	r.Post("/song/buy", func(w http.ResponseWriter, r *http.Request) {
-		//if authenticated(server.db, w, r) {
+		if authenticated(server.db, w, r) {
 			buySong(server.db, server.EmailSender, w, r)
-		//}
+		}
 	})
 	r.Get("/song/findByAlbum", func(w http.ResponseWriter, r *http.Request) {
-		//if authenticated(server.db, w, r) {
+		if authenticated(server.db, w, r) {
 			getSongByAlbum(server.db, w, r)
-		//}
+		}
 	})
 	r.Get("/song/findByArtist", func(w http.ResponseWriter, r *http.Request) {
-		//if authenticated(server.db, w, r) {
+		if authenticated(server.db, w, r) {
 			getSongByArtist(server.db, w, r)
-		//}
+		}
 	})
 	r.Get("/song/findByTag", func(w http.ResponseWriter, r *http.Request) {
-		//if authenticated(server.db, w, r) {
+		if authenticated(server.db, w, r) {
 			getSongByTag(server.db, w, r)
-		//}
+		}
 	})
 	r.Post("/song/{songID}", func(w http.ResponseWriter, r *http.Request) {
-		//if authenticated(server.db, w, r) {
+		if authenticated(server.db, w, r) {
 			addSongToPlaylist(server.db, w, r)
-		//}
+		}
 	})
 	r.Delete("/song/{songID}", func(w http.ResponseWriter, r *http.Request) {
-		//if authenticated(server.db, w, r) {
+		if authenticated(server.db, w, r) {
 			removeSongFromPlaylist(server.db, w, r)
-		//}
+		}
 	})
 	r.Get("/song/findByFreeSearch", func(w http.ResponseWriter, r *http.Request) {
-		//if authenticated(server.db, w, r) {
+		if authenticated(server.db, w, r) {
 			searchSong(server.db, w, r)
-		//}
+		}
 	})
 
 	//Albums
@@ -148,26 +148,26 @@ func (server *Server) Routes() chi.Router {
 
 	})
 	r.Get("/album/findByArtist", func(w http.ResponseWriter, r *http.Request) {
-		//if authenticated(server.db, w, r) {
+		if authenticated(server.db, w, r) {
 			getAlbumsByArtist(server.db, w, r)
-		//}
+		}
 	})
 	r.Get("/album/{albumID}", func(w http.ResponseWriter, r *http.Request) {
-		//if authenticated(server.db, w, r) {
+		if authenticated(server.db, w, r) {
 			getAlbumsById(server.db, w, r)
-		//}
+		}
 	})
 
 	//Artists
 	r.Get("/artist", func(w http.ResponseWriter, r *http.Request) {
-		//if authenticated(server.db, w, r) {
+		if authenticated(server.db, w, r) {
 			getAllArtist(server.db, w, r)
-		//}
+		}
 	})
 	r.Get("/artist/{artistID}", func(w http.ResponseWriter, r *http.Request) {
-		//if authenticated(server.db, w, r) {
+		if authenticated(server.db, w, r) {
 			getArtistById(server.db, w, r)
-		//}
+		}
 	})
 
 	//Tags
@@ -223,18 +223,18 @@ func (server *Server) Routes() chi.Router {
 		}
 	})
 	r.Get("/playlist/{playlistID}/download", func(w http.ResponseWriter, r *http.Request) {
-		if authenticated(server.db, w, r) {
+		//if authenticated(server.db, w, r) {
 		err := createPlaylistZip(server.db, w, r, server.BoxConfig.Token, false)
 		if err != nil {
 			server.GetBoxToken()
 			createPlaylistZip(server.db, w, r, server.BoxConfig.Token, true)
 		}
-		}
+		//}
 	})
 	r.Delete("/playlist/{playlistID}", func(w http.ResponseWriter, r *http.Request) {
-		//if authenticated(server.db, w, r) {
+		if authenticated(server.db, w, r) {
 			deletePlaylistByID(server.db, w, r)
-		//}
+		}
 	})
 
 	//User

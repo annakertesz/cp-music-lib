@@ -137,7 +137,7 @@ func GetSongsByPlaylist(db *sqlx.DB, playlistID int) ([]Song, error) {
 				song.song_album, 
 				song.song_hq_url, 
 				song.song_lq_url, 
-				song.song_name, 
+				song.song_name
 			FROM song JOIN playlist_song ON song.id = playlist_song.map_song 
 			WHERE playlist_song.map_playlist = $1`, playlistID,
 	)

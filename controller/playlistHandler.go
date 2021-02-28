@@ -196,28 +196,54 @@ func createPlaylistZip(db *sqlx.DB, w http.ResponseWriter, r *http.Request, toke
 
 		// Add some files to the archive.
 		for _, song := range songs {
-			f, err := zw.Create(toAlphaNumeric(song.Title))
+			f, err := zw.Create(toAlphaNumeric(song.Title) + ".mp3")
 			if err != nil {
 				log.Fatal(err)
 			}
-			resp, _, errModel := box_lib.DownloadFileBytes(token, song.ID)
-			if errModel != nil {
-				if partially {
-					services.HandleError(db, *errModel)
-					log.Printf("ERROR: failed download song for playlist - playlistID: %v, songID: %v", id, song.ID)
-					continue
-				} else {
-					return errModel.Err
+			if song.LqSong != nil {
+				id, err := strconv.Atoi(*song.LqSong)
+				resp, _, errModel := box_lib.DownloadFileBytes(token, id)
+				if errModel != nil {
+					if partially {
+						services.HandleError(db, *errModel)
+						log.Printf("ERROR: failed download song for playlist - playlistID: %v, songID: %v", id, song.ID)
+						continue
+					} else {
+						return errModel.Err
+					}
+				}
+				_, err = f.Write([]byte(resp))
+				if err != nil {
+					if partially {
+						services.HandleError(db, *errModel)
+						log.Printf("ERROR: failed download song for playlist - playlistID: %v, songID: %v", id, song.ID)
+						continue
+					} else {
+						return errModel.Err
+					}
 				}
 			}
-			_, err = f.Write([]byte(resp))
-			if err != nil {
-				if partially {
-					services.HandleError(db, *errModel)
-					log.Printf("ERROR: failed download song for playlist - playlistID: %v, songID: %v", id, song.ID)
-					continue
-				} else {
-					return errModel.Err
+			if song.LqInstr != nil {
+				id, err := strconv.Atoi(*song.LqInstr)
+				resp, _, errModel := box_lib.DownloadFileBytes(token, id)
+				if errModel != nil {
+					if partially {
+						services.HandleError(db, *errModel)
+						log.Printf("ERROR: failed download song for playlist - playlistID: %v, songID: %v", id, song.ID)
+						continue
+					} else {
+						return errModel.Err
+					}
+				}
+				_, err = f.Write([]byte(resp))
+				if err != nil {
+					if partially {
+						services.HandleError(db, *errModel)
+						log.Printf("ERROR: failed download song for playlist - playlistID: %v, songID: %v", id, song.ID)
+						continue
+					} else {
+						return errModel.Err
+					}
 				}
 			}
 		}
@@ -227,6 +253,9 @@ func createPlaylistZip(db *sqlx.DB, w http.ResponseWriter, r *http.Request, toke
 		if err != nil {
 			log.Fatal(err)
 		}
+		w.Write(buf.Bytes())
+		w.Header().Set("Content-Type", "application/zip")
+		w.Header().Set("Content-Disposition", "attachment")
 		return nil
 }
 

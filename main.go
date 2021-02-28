@@ -37,7 +37,7 @@ func main() {
 	}
 	port, ok := os.LookupEnv("PORT")
 	if !ok {
-		port = "8080"
+		port = "80"
 	}
 	server := controller.NewServer(db, config)
 
