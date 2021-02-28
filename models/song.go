@@ -211,12 +211,13 @@ func GetSongByEverything(keyword string, db *sqlx.DB)([]Song, error) {
 					song.song_album, 
 					song.song_hq_url, 
 					song.song_lq_url, 
-					song.song_name,
+					song.song_name
 				from tag_song 
 				join tag on tag.id = tag_song.map_tag join song on song.id = tag_song.map_song 
 				join album on song.song_album = album.id
 				join artist on album.album_artist = artist.id
-				where tag.tag_name ilike $1 or artist.artist_name ilike $1 or album.album_name ilike $1 or song.song_name ilike $1`, wildchart,
+				where tag.tag_name ilike $1 or artist.artist_name ilike $1 or album.album_name ilike $1 or song.song_name ilike $1 
+				group by song.id`, wildchart,
 	)
 	if err != nil {
 		log.Printf("error in query: %v", err.Error())

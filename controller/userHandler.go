@@ -84,6 +84,7 @@ func loginUser(db *sqlx.DB, w http.ResponseWriter, r *http.Request){
 		err := models.DeleteSessions(db, userID)
 		err = models.CreateSession(db, userID, uuid.String())
 		if err == nil {
+			fmt.Fprint(w, uuid.String())
 			w.WriteHeader(http.StatusOK)
 			return
 		}
